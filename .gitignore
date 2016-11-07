@@ -1,0 +1,10 @@
+.idea
+src/github.com
+src/golang.org
+src/gopkg.in
+bin
+pkg
+src/orcidaccessws/service_test.yml
+env.set
+env.unset
+buildtag.build-0
