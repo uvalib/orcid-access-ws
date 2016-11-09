@@ -1,6 +1,7 @@
 package api
 
 type HealthCheckResponse struct {
-	CheckType      HealthCheckResult `json:"ezid"`
+   DbCheck     HealthCheckResult `json:"mysql"`
+   OrcidCheck  HealthCheckResult `json:"orcid"`
 }
 

@@ -7,15 +7,26 @@ import (
     "orcidaccessws/api"
     "orcidaccessws/config"
     "orcidaccessws/logger"
+    "orcidaccessws/dao"
+    "orcidaccessws/handlers"
 )
 
-var statistics = api.Statistics{ }
+var Statistics = api.Statistics{ }
 
 func main( ) {
 
-    logger.Log( fmt.Sprintf( "===> version: '%s' <===", Version( ) ) )
+    logger.Log( fmt.Sprintf( "===> version: '%s' <===", handlers.Version( ) ) )
 
-	// setup router and serve...
+    // access the database
+    connectStr := fmt.Sprintf( "%s:%s@tcp(%s)/%s?allowOldPasswords=1&strict=true&sql_notes=false", config.Configuration.DbUser,
+        config.Configuration.DbPassphrase, config.Configuration.DbHost, config.Configuration.DbName )
+
+    err := dao.NewDB( connectStr )
+    if err != nil {
+        log.Fatal( err )
+    }
+
+    // setup router and serve...
     router := NewRouter( )
     log.Fatal( http.ListenAndServe( fmt.Sprintf( ":%s", config.Configuration.ServicePort ), router ) )
 }

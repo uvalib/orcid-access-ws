@@ -1,8 +1,7 @@
 package api
 
 type StatisticsResponse struct {
-    Status        int        `json:"status"`
-    Message       string     `json:"message"`
+    StandardResponse
     Details       Statistics `json:"statistics"`
 }
 

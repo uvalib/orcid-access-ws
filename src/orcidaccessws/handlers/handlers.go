@@ -1,18 +1,19 @@
-package main
+package handlers
 
-import (
-    "encoding/json"
-    "net/http"
-    "github.com/gorilla/mux"
-    "orcidaccessws/api"
-    "orcidaccessws/orcid"
-    "log"
-    "strings"
-    "orcidaccessws/authtoken"
-    "orcidaccessws/config"
-    "fmt"
-)
+//import (
+//    "encoding/json"
+//    "net/http"
+//    "github.com/gorilla/mux"
+//    "orcidaccessws/api"
+//    "orcidaccessws/orcid"
+//    "log"
+//    "strings"
+//    "orcidaccessws/authtoken"
+//    "orcidaccessws/config"
+//    "fmt"
+//)
 
+/*
 func IdLookup( w http.ResponseWriter, r *http.Request ) {
 
     vars := mux.Vars( r )
@@ -20,8 +21,8 @@ func IdLookup( w http.ResponseWriter, r *http.Request ) {
     token := r.URL.Query( ).Get( "auth" )
 
     // update the statistics
-    statistics.RequestCount++
-    statistics.LookupCount++
+    //statistics.RequestCount++
+    //statistics.LookupCount++
 
     // validate inbound parameters
     if parameterOK( doi ) == false || parameterOK( token ) == false {
@@ -46,8 +47,8 @@ func IdCreate( w http.ResponseWriter, r *http.Request ) {
     token := r.URL.Query( ).Get( "auth" )
 
     // update the statistics
-    statistics.RequestCount++
-    statistics.CreateCount++
+    //statistics.RequestCount++
+    //statistics.CreateCount++
 
     // validate inbound parameters
     if parameterOK( shoulder ) == false || parameterOK( token ) == false {
@@ -80,8 +81,8 @@ func IdUpdate( w http.ResponseWriter, r *http.Request ) {
     token := r.URL.Query( ).Get( "auth" )
 
     // update the statistics
-    statistics.RequestCount++
-    statistics.UpdateCount++
+    //statistics.RequestCount++
+    //statistics.UpdateCount++
 
     // validate inbound parameters
     if parameterOK( doi ) == false || parameterOK( token ) == false {
@@ -115,8 +116,8 @@ func IdDelete( w http.ResponseWriter, r *http.Request ) {
     token := r.URL.Query( ).Get( "auth" )
 
     // update the statistics
-    statistics.RequestCount++
-    statistics.DeleteCount++
+    //statistics.RequestCount++
+    //statistics.DeleteCount++
 
     // validate inbound parameters
     if parameterOK( doi ) == false || parameterOK( token ) == false {
@@ -143,8 +144,8 @@ func IdRevoke( w http.ResponseWriter, r *http.Request ) {
     fmt.Printf( "NEW REVOKE: %s\n", doi )
 
     // update the statistics
-    statistics.RequestCount++
-    statistics.RevokeCount++
+    //statistics.RequestCount++
+    //statistics.RevokeCount++
 
     // validate inbound parameters
     if parameterOK( doi ) == false || parameterOK( token ) == false {
@@ -168,46 +169,6 @@ func IdRevoke( w http.ResponseWriter, r *http.Request ) {
     }
 
     respond( w, status )
-}
-
-func Stats( w http.ResponseWriter, r *http.Request ) {
-
-    status := http.StatusOK
-
-    jsonResponse( w )
-    w.WriteHeader( status )
-
-    if err := json.NewEncoder(w).Encode( api.StatisticsResponse { Status: status, Message: http.StatusText( status ), Details: statistics } ); err != nil {
-        log.Fatal( err )
-    }
-}
-
-func HealthCheck( w http.ResponseWriter, r *http.Request ) {
-
-    // update the statistics
-    statistics.RequestCount++
-    statistics.HeartbeatCount++
-
-    status := orcid.GetStatus( )
-    healthy := status == http.StatusOK
-    message := ""
-
-    jsonResponse( w )
-    w.WriteHeader( status )
-
-    if err := json.NewEncoder(w).Encode( api.HealthCheckResponse { CheckType: api.HealthCheckResult{ Healthy: healthy, Message: message } } ); err != nil {
-        log.Fatal( err )
-    }
-}
-
-func GetVersion( w http.ResponseWriter, r *http.Request ) {
-
-    jsonResponse( w )
-    w.WriteHeader( http.StatusOK )
-
-    if err := json.NewEncoder(w).Encode( api.VersionResponse{ Version: Version( ) } ); err != nil {
-        log.Fatal( err )
-    }
 }
 
 func respond( w http.ResponseWriter, status int ) {
@@ -241,3 +202,5 @@ func jsonResponse( w http.ResponseWriter ) {
 func parameterOK( param string ) bool {
     return len( strings.TrimSpace( param ) ) != 0
 }
+
+*/

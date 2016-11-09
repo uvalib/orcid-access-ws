@@ -23,14 +23,14 @@ const USE_CROSS_REF_PROFILE = true
 func GetDoi( doi string ) ( api.Entity, int ) {
 
     // construct target URL
-    url := fmt.Sprintf( "%s/id/%s", config.Configuration.EzidServiceUrl, doi )
+    url := fmt.Sprintf( "%s/id/%s", config.Configuration.OrcidServiceUrl, doi )
 
     // issue the request
     start := time.Now( )
     resp, body, errs := gorequest.New( ).
         SetDebug( config.Configuration.Debug ).
         Get( url  ).
-        Timeout( time.Duration( config.Configuration.EzidServiceTimeout ) * time.Second ).
+        Timeout( time.Duration( config.Configuration.OrcidServiceTimeout ) * time.Second ).
         End( )
     duration := time.Since( start )
 
@@ -63,7 +63,7 @@ func CreateDoi( shoulder string, entity api.Entity, status string ) ( api.Entity
     logEntity( entity )
 
     // construct target URL
-    url := fmt.Sprintf( "%s/shoulder/%s", config.Configuration.EzidServiceUrl, shoulder )
+    url := fmt.Sprintf( "%s/shoulder/%s", config.Configuration.OrcidServiceUrl, shoulder )
 
     var body string
     var err error
@@ -84,10 +84,10 @@ func CreateDoi( shoulder string, entity api.Entity, status string ) ( api.Entity
     start := time.Now( )
     resp, body, errs := gorequest.New( ).
         SetDebug( config.Configuration.Debug ).
-        SetBasicAuth( config.Configuration.EzidUser, config.Configuration.EzidPassphrase ).
+        SetBasicAuth( config.Configuration.OrcidUser, config.Configuration.OrcidPassphrase ).
         Post( url  ).
         Send( body ).
-        Timeout( time.Duration( config.Configuration.EzidServiceTimeout ) * time.Second ).
+        Timeout( time.Duration( config.Configuration.OrcidServiceTimeout ) * time.Second ).
         Set( "Content-Type", "text/plain" ).
         End( )
     duration := time.Since( start )
@@ -121,7 +121,7 @@ func UpdateDoi( entity api.Entity, status string ) int {
     logEntity( entity )
 
     // construct target URL
-    url := fmt.Sprintf( "%s/id/%s", config.Configuration.EzidServiceUrl, entity.Id )
+    url := fmt.Sprintf( "%s/id/%s", config.Configuration.OrcidServiceUrl, entity.Id )
 
     var body string
     var err error
@@ -142,10 +142,10 @@ func UpdateDoi( entity api.Entity, status string ) int {
     start := time.Now( )
     resp, body, errs := gorequest.New( ).
         SetDebug( config.Configuration.Debug ).
-        SetBasicAuth( config.Configuration.EzidUser, config.Configuration.EzidPassphrase ).
+        SetBasicAuth( config.Configuration.OrcidUser, config.Configuration.OrcidPassphrase ).
         Post( url  ).
         Send( body ).
-        Timeout( time.Duration( config.Configuration.EzidServiceTimeout ) * time.Second ).
+        Timeout( time.Duration( config.Configuration.OrcidServiceTimeout ) * time.Second ).
         Set( "Content-Type", "text/plain" ).
         End( )
     duration := time.Since( start )
@@ -175,15 +175,15 @@ func UpdateDoi( entity api.Entity, status string ) int {
 func DeleteDoi( doi string ) int {
 
     // construct target URL
-    url := fmt.Sprintf( "%s/id/%s", config.Configuration.EzidServiceUrl, doi )
+    url := fmt.Sprintf( "%s/id/%s", config.Configuration.OrcidServiceUrl, doi )
 
     // issue the request
     start := time.Now( )
     resp, body, errs := gorequest.New( ).
         SetDebug( config.Configuration.Debug ).
-        SetBasicAuth( config.Configuration.EzidUser, config.Configuration.EzidPassphrase ).
+        SetBasicAuth( config.Configuration.OrcidUser, config.Configuration.OrcidPassphrase ).
         Delete( url  ).
-        Timeout( time.Duration( config.Configuration.EzidServiceTimeout ) * time.Second ).
+        Timeout( time.Duration( config.Configuration.OrcidServiceTimeout ) * time.Second ).
         End( )
     duration := time.Since( start )
 
@@ -212,14 +212,14 @@ func DeleteDoi( doi string ) int {
 func GetStatus( ) int {
 
     // construct target URL
-    url := fmt.Sprintf( "%s/status", config.Configuration.EzidServiceUrl )
+    url := fmt.Sprintf( "%s/status", config.Configuration.OrcidServiceUrl )
 
     // issue the request
     start := time.Now( )
     resp, body, errs := gorequest.New( ).
         SetDebug( config.Configuration.Debug ).
         Get( url  ).
-        Timeout( time.Duration( config.Configuration.EzidServiceTimeout ) * time.Second ).
+        Timeout( time.Duration( config.Configuration.OrcidServiceTimeout ) * time.Second ).
         End( )
     duration := time.Since( start )
 

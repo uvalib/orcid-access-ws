@@ -3,6 +3,7 @@ package main
 import (
    "net/http"
    "github.com/gorilla/mux"
+   "orcidaccessws/handlers"
 )
 
 type Route struct {
@@ -20,30 +21,38 @@ var routes = Routes{
         "HealthCheck",
         "GET",
         "/healthcheck",
-        HealthCheck,
+        handlers.HealthCheck,
     },
 
     Route{
-        "GetVersion",
+        "VersionGet",
         "GET",
         "/version",
-        GetVersion,
+        handlers.VersionGet,
     },
 
     Route{
         "Stats",
         "GET",
         "/statistics",
-        Stats,
+        handlers.StatsGet,
     },
 
     Route{
-        "IdLookup",
+        "GetOneOrcid",
         "GET",
-        "/{doi:.*}",
-        IdLookup,
+        "/cid/{id}",
+        handlers.GetOneOrcid,
     },
 
+    Route{
+        "GetOneOrcid",
+        "GET",
+        "/cid",
+        handlers.GetOneOrcid,
+    },
+
+        /*
     Route{
         "IdCreate",
         "POST",
@@ -71,6 +80,7 @@ var routes = Routes{
         "/{doi:.*}",
         IdDelete,
     },
+    */
 }
 
 func NewRouter( ) *mux.Router {
