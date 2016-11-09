@@ -49,7 +49,7 @@ var routes = Routes{
         "GetOneOrcid",
         "GET",
         "/cid",
-        handlers.GetOneOrcid,
+        handlers.GetAllOrcid,
     },
 
         /*

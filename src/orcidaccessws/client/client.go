@@ -83,9 +83,9 @@ func Statistics( endpoint string ) ( int, * api.Statistics ) {
     return resp.StatusCode, &r.Details
 }
 
-func Get( endpoint string, doi string, token string ) ( int, * api.Entity ) {
+func GetOneOrcid( endpoint string, id string, token string ) ( int, [] * api.Orcid ) {
 
-    url := fmt.Sprintf( "%s/%s?auth=%s", endpoint, doi, token )
+    url := fmt.Sprintf( "%s/cid/%s?auth=%s", endpoint, id, token )
     //fmt.Printf( "%s\n", url )
 
     resp, body, errs := gorequest.New( ).
@@ -100,15 +100,42 @@ func Get( endpoint string, doi string, token string ) ( int, * api.Entity ) {
 
     defer resp.Body.Close( )
 
-    r := api.StandardResponse{ }
+    r := api.OrcidResponse{ }
     err := json.Unmarshal( []byte( body ), &r )
     if err != nil {
         return http.StatusInternalServerError, nil
     }
 
-    return resp.StatusCode, r.Details
+    return resp.StatusCode, r.Orcids
 }
 
+func GetAllOrcid( endpoint string, token string ) ( int, [] * api.Orcid ) {
+
+    url := fmt.Sprintf( "%s/cid?auth=%s", endpoint, token )
+    //fmt.Printf( "%s\n", url )
+
+    resp, body, errs := gorequest.New( ).
+            SetDebug( API_DEBUG ).
+            Get( url ).
+            Timeout( time.Duration( 5 ) * time.Second ).
+            End( )
+
+    if errs != nil {
+        return http.StatusInternalServerError, nil
+    }
+
+    defer resp.Body.Close( )
+
+    r := api.OrcidResponse{ }
+    err := json.Unmarshal( []byte( body ), &r )
+    if err != nil {
+        return http.StatusInternalServerError, nil
+    }
+
+    return resp.StatusCode, r.Orcids
+}
+
+/*
 func Create( endpoint string, shoulder string, token string ) ( int, * api.Entity ) {
 
     url := fmt.Sprintf("%s/%s?auth=%s", endpoint, shoulder, token)
@@ -204,3 +231,5 @@ func Revoke( endpoint string, doi string, token string ) int {
 
     return resp.StatusCode
 }
+
+*/

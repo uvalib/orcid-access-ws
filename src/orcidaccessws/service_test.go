@@ -19,10 +19,8 @@ type TestConfig struct {
 
 var cfg = loadConfig( )
 
-var plausableDoi = "doi:10.5072/FK2QJ7DN9V"
-var badDoi = "badness"
-var goodShoulder = "doi:10.5072/FK2"
-var badShoulder = "abc:/blablabla"
+var goodCid = "dpg3k"
+var badCid = "badness"
 var goodToken = cfg.Token
 var badToken = "badness"
 var empty = " "
@@ -72,68 +70,89 @@ func TestStatistics( t *testing.T ) {
 }
 
 //
-// DOI get tests
+// get single ORCID tests
 //
 
-func TestGetHappyDay( t *testing.T ) {
+func TestGetOrcidHappyDay( t *testing.T ) {
 
-    doi := createGoodDoi( t )
     expected := http.StatusOK
-    status, entity := client.Get( cfg.Endpoint, doi, goodToken )
+    id := goodCid
+    status, orcids := client.GetOneOrcid( cfg.Endpoint, id, goodToken )
     if status != expected {
         t.Fatalf( "Expected %v, got %v\n", expected, status )
     }
 
-    if entity == nil {
-        t.Fatalf( "Expected to find entity %v and did not\n", doi )
+    if orcids == nil {
+        t.Fatalf( "Expected to find orcid for %s and did not\n", id )
     }
 
-    if emptyField( entity.Id ) ||
-       emptyField( entity.Url ) ||
-       emptyField( entity.Title ) {
-       //emptyField( entity.Publisher ) ||
-       //emptyField( entity.CreatorFirstName ) ||
-       //emptyField( entity.CreatorLastName ) ||
-       //emptyField( entity.CreatorDepartment ) ||
-       //emptyField( entity.CreatorInstitution ) ||
-       //emptyField( entity.PublicationDate ) ||
-       //emptyField( entity.ResourceType ) {
-       // fmt.Printf( "%t\n", entity )
-        t.Fatalf( "Expected non-empty field but one is empty\n" )
-    }
+    ensureValidOrcids( t, orcids )
 }
 
-func TestGetEmptyId( t *testing.T ) {
+func TestGetOrcidEmptyId( t *testing.T ) {
     expected := http.StatusBadRequest
-    status, _ := client.Get( cfg.Endpoint, empty, goodToken )
+    status, _ := client.GetOneOrcid( cfg.Endpoint, empty, goodToken )
     if status != expected {
         t.Fatalf( "Expected %v, got %v\n", expected, status )
     }
 }
 
-func TestGetBadId( t *testing.T ) {
+func TestGetOrcidNotFoundId( t *testing.T ) {
+    expected := http.StatusNotFound
+    status, _ := client.GetOneOrcid( cfg.Endpoint, badCid, goodToken )
+    if status != expected {
+        t.Fatalf( "Expected %v, got %v\n", expected, status )
+    }
+}
+
+func TestGetOrcidEmptyToken( t *testing.T ) {
     expected := http.StatusBadRequest
-    status, _ := client.Get( cfg.Endpoint, badDoi, goodToken )
+    status, _ := client.GetOneOrcid( cfg.Endpoint, goodCid, empty )
     if status != expected {
         t.Fatalf( "Expected %v, got %v\n", expected, status )
     }
 }
 
-func TestGetEmptyToken( t *testing.T ) {
-    expected := http.StatusBadRequest
-    status, _ := client.Get( cfg.Endpoint, plausableDoi, empty )
-    if status != expected {
-        t.Fatalf( "Expected %v, got %v\n", expected, status )
-    }
-}
-
-func TestGetBadToken( t *testing.T ) {
+func TestGetOrcidBadToken( t *testing.T ) {
     expected := http.StatusForbidden
-    status, _ := client.Get( cfg.Endpoint, plausableDoi, badToken )
+    status, _ := client.GetOneOrcid( cfg.Endpoint, goodCid, badToken )
     if status != expected {
         t.Fatalf( "Expected %v, got %v\n", expected, status )
     }
 }
+
+//
+// get all ORCID tests
+//
+
+func TestGetAllOrcidHappyDay( t *testing.T ) {
+
+    expected := http.StatusOK
+    status, orcids := client.GetAllOrcid( cfg.Endpoint, goodToken )
+    if status != expected {
+        t.Fatalf( "Expected %v, got %v\n", expected, status )
+    }
+
+    ensureValidOrcids( t, orcids )
+}
+
+func TestGetAllOrcidEmptyToken( t *testing.T ) {
+    expected := http.StatusBadRequest
+    status, _ := client.GetAllOrcid( cfg.Endpoint, empty )
+    if status != expected {
+        t.Fatalf( "Expected %v, got %v\n", expected, status )
+    }
+}
+
+func TestGetAllOrcidBadToken( t *testing.T ) {
+    expected := http.StatusForbidden
+    status, _ := client.GetAllOrcid( cfg.Endpoint, badToken )
+    if status != expected {
+        t.Fatalf( "Expected %v, got %v\n", expected, status )
+    }
+}
+
+/*
 
 //
 // DOI create tests
@@ -325,26 +344,27 @@ func TestRevokeBadToken( t *testing.T ) {
     }
 }
 
+*/
+
 //
 // helpers
 //
 
+func ensureValidOrcids( t *testing.T, orcids [] * api.Orcid ) {
+
+    for _, e := range orcids {
+        if emptyField( e.Id ) ||
+           emptyField( e.Cid ) ||
+           emptyField( e.Orcid ) ||
+           emptyField( e.CreatedAt ) {
+           log.Printf( "%t", e )
+           t.Fatalf( "Expected non-empty field but one is empty\n" )
+        }
+    }
+}
+
 func emptyField( field string ) bool {
     return len( strings.TrimSpace( field ) ) == 0
-}
-
-func testEntity( ) api.Entity {
-    return api.Entity{ Title: "my special title", Url: "http://google.com" }
-}
-
-func createGoodDoi( t *testing.T ) string {
-    status, entity := client.Create( cfg.Endpoint, goodShoulder, goodToken )
-    if status == http.StatusOK {
-        return entity.Id
-    }
-
-    t.Fatalf( "Unable to create new DOI\n" )
-    return ""
 }
 
 func loadConfig( ) TestConfig {
