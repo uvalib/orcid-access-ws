@@ -10,6 +10,9 @@ import (
     "strings"
     "orcidaccessws/api"
     //"fmt"
+    "time"
+    "math/rand"
+    "fmt"
 )
 
 type TestConfig struct {
@@ -255,6 +258,50 @@ func TestSearchOrcidBadToken( t *testing.T ) {
     }
 }
 
+//
+// set ORCID for user tests
+//
+
+func TestSetOrcidHappyDay( t *testing.T ) {
+    expected := http.StatusOK
+    status := client.SetOrcid( cfg.Endpoint, randomCid( ), randomOrcid( ), goodToken )
+    if status != expected {
+        t.Fatalf( "Expected %v, got %v\n", expected, status )
+    }
+}
+
+func TestSetOrcidEmptyId( t *testing.T ) {
+    expected := http.StatusBadRequest
+    status := client.SetOrcid( cfg.Endpoint, empty, goodOrcid, goodToken )
+    if status != expected {
+        t.Fatalf( "Expected %v, got %v\n", expected, status )
+    }
+}
+
+func TestSetOrcidEmptyOrcid( t *testing.T ) {
+    expected := http.StatusBadRequest
+    status := client.SetOrcid( cfg.Endpoint, goodCid, empty, goodToken )
+    if status != expected {
+        t.Fatalf( "Expected %v, got %v\n", expected, status )
+    }
+}
+
+func TestSetOrcidEmptyToken( t *testing.T ) {
+    expected := http.StatusBadRequest
+    status := client.SetOrcid( cfg.Endpoint, goodCid, goodOrcid, empty )
+    if status != expected {
+        t.Fatalf( "Expected %v, got %v\n", expected, status )
+    }
+}
+
+func TestSetOrcidBadToken( t *testing.T ) {
+    expected := http.StatusForbidden
+    status := client.SetOrcid( cfg.Endpoint, goodCid, goodOrcid, badToken )
+    if status != expected {
+        t.Fatalf( "Expected %v, got %v\n", expected, status )
+    }
+}
+
 /*
 
 //
@@ -452,6 +499,37 @@ func TestRevokeBadToken( t *testing.T ) {
 //
 // helpers
 //
+
+func randomOrcid( ) string {
+
+    // see the RNG
+    rand.Seed( time.Now( ).UnixNano( ) )
+
+    // list of possible characters
+    possible := []rune( "0123456789" )
+    return( fmt.Sprintf( "%s-%s-%s-%s", randomString( possible, 4 ), randomString( possible, 4 ),
+        randomString( possible, 4 ), randomString( possible, 4 ) ) )
+}
+
+func randomCid( ) string {
+
+    // see the RNG
+    rand.Seed( time.Now( ).UnixNano( ) )
+
+    // list of possible characters
+    possible := []rune( "abcdefghijklmnopqrstuvwxyz0123456789" )
+
+    return randomString( possible, 5 )
+}
+
+func randomString( possible []rune, sz int ) string {
+
+    b := make( []rune, sz )
+    for i := range b {
+        b[ i ] = possible[ rand.Intn( len( possible ) ) ]
+    }
+    return string( b )
+}
 
 func ensureValidOrcids( t *testing.T, orcids [] * api.Orcid ) {
     for _, e := range orcids {

@@ -187,6 +187,26 @@ func SearchOrcid( endpoint string, search string, token string ) ( int, [] * api
     return resp.StatusCode, r.Details
 }
 
+func SetOrcid( endpoint string, cid string, orcid string, token string ) int {
+
+    url := fmt.Sprintf( "%s/cid/%s/%s?auth=%s", endpoint, cid, orcid, token )
+    //fmt.Printf( "%s\n", url )
+
+    resp, _, errs := gorequest.New( ).
+            SetDebug( API_DEBUG ).
+            Put( url ).
+            Timeout( time.Duration( 5 ) * time.Second ).
+            End( )
+
+    if errs != nil {
+        return http.StatusInternalServerError
+    }
+
+    defer resp.Body.Close( )
+
+    return resp.StatusCode
+}
+
 /*
 func Create( endpoint string, shoulder string, token string ) ( int, * api.Entity ) {
 

@@ -66,6 +66,12 @@ var routes = Routes{
         handlers.SearchOrcid,
     },
 
+    Route{
+        "SetOrcid",
+        "PUT",
+        "/cid/{id}/{orcid}",
+        handlers.SetOrcid,
+    },
         /*
     Route{
         "IdRevoke",

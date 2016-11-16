@@ -77,6 +77,33 @@ func ( db *DB ) GetOrcidByCid( id string ) ( [] * api.Orcid, error ) {
     return orcidResults( rows )
 }
 
+//
+// set orcid by ID
+//
+func ( db *DB ) SetOrcidByCid( id string, orcid string ) error {
+
+    stmt, err := db.Prepare( "INSERT INTO orcids( cid, orcid ) VALUES(?,?)" )
+    if err != nil {
+        return err
+    }
+
+    _, err = stmt.Exec( id, orcid )
+    if err != nil {
+        return err
+    }
+
+//    lastId, err := res.LastInsertId( )
+//    if err != nil {
+//        return nil, err
+//    }
+
+//     = strconv.FormatInt( lastId, 10 )
+//    return &reg, nil
+
+    // all good
+    return nil
+}
+
 /*
 
 //
