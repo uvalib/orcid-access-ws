@@ -10,8 +10,8 @@ import (
 func HealthCheck( w http.ResponseWriter, r *http.Request ) {
 
     // update the statistics
-    //Statistics.RequestCount++
-    //Statistics.HeartbeatCount++
+    Statistics.RequestCount++
+    Statistics.HeartbeatCount++
 
     status := http.StatusOK
     db_err := dao.Database.Check( )

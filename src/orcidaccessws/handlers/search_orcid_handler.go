@@ -16,6 +16,7 @@ func SearchOrcid( w http.ResponseWriter, r *http.Request ) {
 
     // update the statistics
     Statistics.RequestCount++
+    Statistics.SearchOrcidDetailsCount++
 
     // parameters OK ?
     if NotEmpty( query ) == false || NotEmpty( token ) == false {

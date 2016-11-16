@@ -19,6 +19,7 @@ func SetOrcid( w http.ResponseWriter, r *http.Request ) {
 
     // update the statistics
     Statistics.RequestCount++
+    Statistics.SetOrcidCount++
 
     // parameters OK ?
     if NotEmpty( id ) == false || NotEmpty( orcid ) == false || NotEmpty( token ) == false {

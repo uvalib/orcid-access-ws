@@ -15,6 +15,7 @@ func GetAllOrcid( w http.ResponseWriter, r *http.Request ) {
 
     // update the statistics
     Statistics.RequestCount++
+    Statistics.GetOrcidCount++
 
     // parameters OK ?
     if NotEmpty( token ) == false {
