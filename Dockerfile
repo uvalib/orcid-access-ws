@@ -11,7 +11,7 @@ ENV TZ=EST5EDT
 RUN cp /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 # Specify home 
-ENV APP_HOME /entity-id-ws
+ENV APP_HOME /orcid-access-ws
 WORKDIR $APP_HOME
 
 # Create necessary directories
@@ -28,8 +28,7 @@ CMD scripts/entry.sh
 # Move in necessary assets
 COPY scripts/entry.sh $APP_HOME/scripts/entry.sh
 COPY data/container_bash_profile /home/webservice/.profile
-COPY bin/entity-id-ws.linux $APP_HOME/bin/entity-id-ws
-COPY data/crossref-template.xml $APP_HOME/data/crossref-template.xml
+COPY bin/orcid-access-ws.linux $APP_HOME/bin/orcid-access-ws
 
 # Add the build tag
 COPY buildtag.* $APP_HOME/
