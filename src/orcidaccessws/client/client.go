@@ -135,6 +135,58 @@ func GetAllOrcid( endpoint string, token string ) ( int, [] * api.Orcid ) {
     return resp.StatusCode, r.Orcids
 }
 
+func GetOrcidDetails( endpoint string, orcid string, token string ) ( int, [] * api.OrcidDetails ) {
+
+    url := fmt.Sprintf( "%s/orcid/%s?auth=%s", endpoint, orcid, token )
+    //fmt.Printf( "%s\n", url )
+
+    resp, body, errs := gorequest.New( ).
+            SetDebug( API_DEBUG ).
+            Get( url ).
+            Timeout( time.Duration( 5 ) * time.Second ).
+            End( )
+
+    if errs != nil {
+        return http.StatusInternalServerError, nil
+    }
+
+    defer resp.Body.Close( )
+
+    r := api.OrcidDetailsResponse{ }
+    err := json.Unmarshal( []byte( body ), &r )
+    if err != nil {
+        return http.StatusInternalServerError, nil
+    }
+
+    return resp.StatusCode, r.Details
+}
+
+func SearchOrcid( endpoint string, search string, token string ) ( int, [] * api.OrcidDetails ) {
+
+    url := fmt.Sprintf( "%s/orcid?q=%s&auth=%s", endpoint, search, token )
+    //fmt.Printf( "%s\n", url )
+
+    resp, body, errs := gorequest.New( ).
+            SetDebug( API_DEBUG ).
+            Get( url ).
+            Timeout( time.Duration( 5 ) * time.Second ).
+            End( )
+
+    if errs != nil {
+        return http.StatusInternalServerError, nil
+    }
+
+    defer resp.Body.Close( )
+
+    r := api.OrcidDetailsResponse{ }
+    err := json.Unmarshal( []byte( body ), &r )
+    if err != nil {
+        return http.StatusInternalServerError, nil
+    }
+
+    return resp.StatusCode, r.Details
+}
+
 /*
 func Create( endpoint string, shoulder string, token string ) ( int, * api.Entity ) {
 

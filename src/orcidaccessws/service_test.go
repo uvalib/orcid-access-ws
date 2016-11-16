@@ -23,6 +23,10 @@ var goodCid = "dpg3k"
 var badCid = "badness"
 var goodToken = cfg.Token
 var badToken = "badness"
+var goodOrcid = "0000-0002-0566-4186"
+var badOrcid = "9999-9999-0000-0000"
+var goodSearch = "Dave Goldstein"
+var badSearch = "hurunglyzit"
 var empty = " "
 
 //
@@ -147,6 +151,105 @@ func TestGetAllOrcidEmptyToken( t *testing.T ) {
 func TestGetAllOrcidBadToken( t *testing.T ) {
     expected := http.StatusForbidden
     status, _ := client.GetAllOrcid( cfg.Endpoint, badToken )
+    if status != expected {
+        t.Fatalf( "Expected %v, got %v\n", expected, status )
+    }
+}
+
+//
+// get ORCID details tests
+//
+
+func TestGetOrcidDetailsHappyDay( t *testing.T ) {
+
+    expected := http.StatusOK
+    id := goodOrcid
+    status, orcids := client.GetOrcidDetails( cfg.Endpoint, id, goodToken )
+    if status != expected {
+        t.Fatalf( "Expected %v, got %v\n", expected, status )
+    }
+
+    if orcids == nil {
+        t.Fatalf( "Expected to find orcid for %s and did not\n", id )
+    }
+
+    ensureValidOrcidDetails( t, orcids )
+}
+
+func TestGetOrcidDetailsEmptyId( t *testing.T ) {
+    expected := http.StatusBadRequest
+    status, _ := client.GetOrcidDetails( cfg.Endpoint, empty, goodToken )
+    if status != expected {
+        t.Fatalf( "Expected %v, got %v\n", expected, status )
+    }
+}
+
+func TestGetOrcidDetailsNotFoundId( t *testing.T ) {
+    expected := http.StatusNotFound
+    status, _ := client.GetOrcidDetails( cfg.Endpoint, badOrcid, goodToken )
+    if status != expected {
+        t.Fatalf( "Expected %v, got %v\n", expected, status )
+    }
+}
+
+func TestGetOrcidDetailsEmptyToken( t *testing.T ) {
+    expected := http.StatusBadRequest
+    status, _ := client.GetOrcidDetails( cfg.Endpoint, goodOrcid, empty )
+    if status != expected {
+        t.Fatalf( "Expected %v, got %v\n", expected, status )
+    }
+}
+
+func TestGetOrcidDetailsBadToken( t *testing.T ) {
+    expected := http.StatusForbidden
+    status, _ := client.GetOrcidDetails( cfg.Endpoint, goodOrcid, badToken )
+    if status != expected {
+        t.Fatalf( "Expected %v, got %v\n", expected, status )
+    }
+}
+
+//
+// search ORCID tests
+//
+
+func TestSearchOrcidHappyDay( t *testing.T ) {
+
+    expected := http.StatusOK
+    status, orcids := client.SearchOrcid( cfg.Endpoint, goodSearch, goodToken )
+    if status != expected {
+        t.Fatalf( "Expected %v, got %v\n", expected, status )
+    }
+
+    ensureValidOrcidDetails( t, orcids )
+}
+
+func TestSearchOrcidEmptySearch( t *testing.T ) {
+    expected := http.StatusBadRequest
+    status, _ := client.SearchOrcid( cfg.Endpoint, empty, goodToken )
+    if status != expected {
+        t.Fatalf( "Expected %v, got %v\n", expected, status )
+    }
+}
+
+func TestSearchOrcidNotFoundSearch( t *testing.T ) {
+    expected := http.StatusNotFound
+    status, _ := client.SearchOrcid( cfg.Endpoint, badSearch, goodToken )
+    if status != expected {
+        t.Fatalf( "Expected %v, got %v\n", expected, status )
+    }
+}
+
+func TestSearchOrcidEmptyToken( t *testing.T ) {
+    expected := http.StatusBadRequest
+    status, _ := client.SearchOrcid( cfg.Endpoint, goodSearch, empty )
+    if status != expected {
+        t.Fatalf( "Expected %v, got %v\n", expected, status )
+    }
+}
+
+func TestSearchOrcidBadToken( t *testing.T ) {
+    expected := http.StatusForbidden
+    status, _ := client.SearchOrcid( cfg.Endpoint, goodSearch, badToken )
     if status != expected {
         t.Fatalf( "Expected %v, got %v\n", expected, status )
     }
@@ -351,7 +454,6 @@ func TestRevokeBadToken( t *testing.T ) {
 //
 
 func ensureValidOrcids( t *testing.T, orcids [] * api.Orcid ) {
-
     for _, e := range orcids {
         if emptyField( e.Id ) ||
            emptyField( e.Cid ) ||
@@ -359,6 +461,19 @@ func ensureValidOrcids( t *testing.T, orcids [] * api.Orcid ) {
            emptyField( e.CreatedAt ) {
            log.Printf( "%t", e )
            t.Fatalf( "Expected non-empty field but one is empty\n" )
+        }
+    }
+}
+
+func ensureValidOrcidDetails( t *testing.T, orcids [] * api.OrcidDetails ) {
+    for _, e := range orcids {
+        //if emptyField( e.Id ) ||
+        //        emptyField( e.Cid ) ||
+        //        emptyField( e.Orcid ) ||
+        //        emptyField( e.CreatedAt ) {
+        if emptyField( e.Orcid ) {
+            log.Printf( "%t", e )
+            t.Fatalf( "Expected non-empty field but one is empty\n" )
         }
     }
 }

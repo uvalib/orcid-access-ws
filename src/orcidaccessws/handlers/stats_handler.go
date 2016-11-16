@@ -2,11 +2,11 @@ package handlers
 
 import (
     "net/http"
-//    "encoding/json"
-//    "orcidaccessws/api"
-//    "log"
+    "orcidaccessws/api"
 )
 
-func StatsGet( w http.ResponseWriter, r *http.Request ) {
+var Statistics = api.Statistics{ }
 
+func StatsGet( w http.ResponseWriter, r *http.Request ) {
+    encodeStatsResponse( w, Statistics )
 }

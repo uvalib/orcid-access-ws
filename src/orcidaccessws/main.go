@@ -4,14 +4,11 @@ import (
     "fmt"
     "log"
     "net/http"
-    "orcidaccessws/api"
     "orcidaccessws/config"
     "orcidaccessws/logger"
     "orcidaccessws/dao"
     "orcidaccessws/handlers"
 )
-
-var Statistics = api.Statistics{ }
 
 func main( ) {
 

@@ -11,7 +11,7 @@ import (
     //"orcidaccessws/logger"
 )
 
-func EncodeStandardResponse( w http.ResponseWriter, status int, message string ) {
+func encodeStandardResponse( w http.ResponseWriter, status int, message string ) {
 
     //logger.Log( fmt.Sprintf( "Status: %d (%s)\n", status, message ) )
     jsonAttributes( w )
@@ -22,7 +22,7 @@ func EncodeStandardResponse( w http.ResponseWriter, status int, message string )
     }
 }
 
-func EncodeOrcidResponse( w http.ResponseWriter, status int, message string, orcids [] * api.Orcid ) {
+func encodeOrcidResponse( w http.ResponseWriter, status int, message string, orcids [] * api.Orcid ) {
 
     //logger.Log( fmt.Sprintf( "Status: %d (%s)\n", status, message ) )
     jsonAttributes( w )
@@ -33,7 +33,18 @@ func EncodeOrcidResponse( w http.ResponseWriter, status int, message string, orc
     }
 }
 
-func EncodeHealthCheckResponse( w http.ResponseWriter, status int, dbmsg string, orcidmsg string ) {
+func encodeOrcidDetailsResponse( w http.ResponseWriter, status int, message string, details [] * api.OrcidDetails ) {
+
+    //logger.Log( fmt.Sprintf( "Status: %d (%s)\n", status, message ) )
+    jsonAttributes( w )
+    //    coorsAttributes( w )
+    w.WriteHeader( status )
+    if err := json.NewEncoder(w).Encode( api.OrcidDetailsResponse{ Status: status, Message: message, Details: details } ); err != nil {
+        log.Fatal( err )
+    }
+}
+
+func encodeHealthCheckResponse( w http.ResponseWriter, status int, dbmsg string, orcidmsg string ) {
 
     db_healthy, orcid_healthy := true, true
     if len( dbmsg ) != 0 {
@@ -51,16 +62,16 @@ func EncodeHealthCheckResponse( w http.ResponseWriter, status int, dbmsg string,
     }
 }
 
-func EncodeStatsResponse( w http.ResponseWriter ) {
+func encodeStatsResponse( w http.ResponseWriter, statistics api.Statistics ) {
 
     status := http.StatusOK
 
     jsonAttributes( w )
     w.WriteHeader( status )
 
-    //if err := json.NewEncoder(w).Encode( api.StatisticsResponse { Status: status, Message: http.StatusText( status ), Details: statistics } ); err != nil {
-    //    log.Fatal( err )
-    //}
+    if err := json.NewEncoder(w).Encode( api.StatisticsResponse { Status: status, Message: http.StatusText( status ), Details: statistics } ); err != nil {
+        log.Fatal( err )
+    }
 
 }
 

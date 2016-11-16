@@ -46,20 +46,27 @@ var routes = Routes{
     },
 
     Route{
-        "GetOneOrcid",
+        "GetAllOrcid",
         "GET",
         "/cid",
         handlers.GetAllOrcid,
     },
 
-        /*
     Route{
-        "IdCreate",
-        "POST",
-        "/{shoulder:.*}",
-        IdCreate,
+        "GetOrcidDetails",
+        "GET",
+        "/orcid/{id}",
+        handlers.GetOrcidDetails,
     },
 
+    Route{
+        "SearchOrcid",
+        "GET",
+        "/orcid",
+        handlers.SearchOrcid,
+    },
+
+        /*
     Route{
         "IdRevoke",
         "PUT",

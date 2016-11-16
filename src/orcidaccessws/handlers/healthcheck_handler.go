@@ -32,5 +32,5 @@ func HealthCheck( w http.ResponseWriter, r *http.Request ) {
         }
     }
 
-    EncodeHealthCheckResponse( w, status, db_msg, orcid_msg )
+    encodeHealthCheckResponse( w, status, db_msg, orcid_msg )
 }

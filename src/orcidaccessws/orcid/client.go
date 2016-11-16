@@ -17,6 +17,14 @@ const STATUS_UNAVAILABLE = "unavailable"
 
 const USE_CROSS_REF_PROFILE = true
 
+func GetOrcidDetails( orcid string ) ( [] * api.OrcidDetails, int ) {
+    return nil, http.StatusNotFound
+}
+
+func SearchOrcid( search string ) ( [] * api.OrcidDetails, int ) {
+    return nil, http.StatusNotFound
+}
+
 //
 // get entity details when provided a DOI
 //
