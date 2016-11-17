@@ -36,14 +36,14 @@ if [ -n "$ORCID_URL" ]; then
 fi
 
 # ORCID user name
-if [ -n "$ORCID_USER" ]; then
-   ORCIDUSER_OPT="--orciduser $ORCID_USER"
-fi
+#if [ -n "$ORCID_USER" ]; then
+#   ORCIDUSER_OPT="--orciduser $ORCID_USER"
+#fi
 
 # ORCID password
-if [ -n "$ORCID_PASSWD" ]; then
-   ORCIDPASSWD_OPT="--orcidpassword $ORCID_PASSWD"
-fi
+#if [ -n "$ORCID_PASSWD" ]; then
+#   ORCIDPASSWD_OPT="--orcidpassword $ORCID_PASSWD"
+#fi
 
 # token authentication service URL
 if [ -n "$TOKENAUTH_URL" ]; then

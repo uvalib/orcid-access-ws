@@ -89,7 +89,7 @@ func TestGetOrcidHappyDay( t *testing.T ) {
         t.Fatalf( "Expected %v, got %v\n", expected, status )
     }
 
-    if orcids == nil {
+    if orcids == nil || len( orcids ) == 0 {
         t.Fatalf( "Expected to find orcid for %s and did not\n", id )
     }
 
@@ -172,7 +172,7 @@ func TestGetOrcidDetailsHappyDay( t *testing.T ) {
         t.Fatalf( "Expected %v, got %v\n", expected, status )
     }
 
-    if orcids == nil {
+    if orcids == nil || len( orcids ) == 0 {
         t.Fatalf( "Expected to find orcid for %s and did not\n", id )
     }
 
