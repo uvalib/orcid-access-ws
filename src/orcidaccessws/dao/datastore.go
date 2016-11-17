@@ -67,14 +67,7 @@ func ( db *DB ) GetAllOrcid( ) ( [] * api.Orcid, error ) {
 // get all by ID (should only be 1)
 //
 func ( db *DB ) GetOrcidByCid( id string ) ( [] * api.Orcid, error ) {
-
-    rows, err := db.Query( "SELECT * FROM orcids WHERE cid = ? LIMIT 1", id )
-    if err != nil {
-        return nil, err
-    }
-    defer rows.Close( )
-
-    return orcidResults( rows )
+    return( getOrcidByCid( db, id ) )
 }
 
 //
@@ -82,26 +75,33 @@ func ( db *DB ) GetOrcidByCid( id string ) ( [] * api.Orcid, error ) {
 //
 func ( db *DB ) SetOrcidByCid( id string, orcid string ) error {
 
-    stmt, err := db.Prepare( "INSERT INTO orcids( cid, orcid ) VALUES(?,?)" )
+    orcids, err := getOrcidByCid( db, id )
     if err != nil {
         return err
     }
 
-    _, err = stmt.Exec( id, orcid )
-    if err != nil {
-        return err
+    // if we did not find a record, create a new one
+    if len( orcids ) == 0 {
+
+        stmt, err := db.Prepare( "INSERT INTO orcids( cid, orcid ) VALUES( ?,? )" )
+        if err != nil {
+            return err
+        }
+
+        _, err = stmt.Exec( id, orcid )
+    } else {
+
+        // we already have a record; do we actually need to do the update
+        if orcids[ 0 ].Orcid != orcid {
+            stmt, err := db.Prepare( "UPDATE orcids SET orcid = ?, updated_at = NOW( ) WHERE cid = ? LIMIT 1" )
+            if err != nil {
+                return err
+            }
+            _, err = stmt.Exec( orcid, id )
+        }
     }
 
-//    lastId, err := res.LastInsertId( )
-//    if err != nil {
-//        return nil, err
-//    }
-
-//     = strconv.FormatInt( lastId, 10 )
-//    return &reg, nil
-
-    // all good
-    return nil
+    return err
 }
 
 /*
@@ -305,6 +305,16 @@ func ( db *DB ) GetFieldMapperList( ) ( [] * Mapper, error ) {
 //
 // private implementation methods
 //
+
+func getOrcidByCid( db * DB, id string ) ( [] * api.Orcid, error ) {
+
+    rows, err := db.Query( "SELECT * FROM orcids WHERE cid = ? LIMIT 1", id )
+    if err != nil {
+       return nil, err
+    }
+    defer rows.Close( )
+    return orcidResults( rows )
+}
 
 func orcidResults( rows * sql.Rows ) ( [] * api.Orcid, error ) {
 

@@ -270,6 +270,23 @@ func TestSetOrcidHappyDay( t *testing.T ) {
     }
 }
 
+func TestSetOrcidDuplicate( t *testing.T ) {
+    expected := http.StatusOK
+    cid := randomCid( )
+    orcid1 := randomOrcid( )
+    orcid2 := randomOrcid( )
+
+    status := client.SetOrcid( cfg.Endpoint, cid, orcid1, goodToken )
+    if status != expected {
+        t.Fatalf( "Expected %v, got %v\n", expected, status )
+    }
+
+    status = client.SetOrcid( cfg.Endpoint, cid, orcid2, goodToken )
+    if status != expected {
+        t.Fatalf( "Expected %v, got %v\n", expected, status )
+    }
+}
+
 func TestSetOrcidEmptyId( t *testing.T ) {
     expected := http.StatusBadRequest
     status := client.SetOrcid( cfg.Endpoint, empty, goodOrcid, goodToken )
