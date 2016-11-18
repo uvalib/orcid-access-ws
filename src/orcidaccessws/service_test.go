@@ -29,7 +29,7 @@ var badToken = "badness"
 var goodOrcid = "0000-0002-0566-4186"
 var badOrcid = "9999-9999-0000-0000"
 var goodSearch = "Dave Goldstein"
-var badSearch = "hurunglyzit"
+var notFoundSearch = "hurunglyzit"
 var empty = " "
 
 //
@@ -236,7 +236,7 @@ func TestSearchOrcidEmptySearch( t *testing.T ) {
 
 func TestSearchOrcidNotFoundSearch( t *testing.T ) {
     expected := http.StatusNotFound
-    status, _ := client.SearchOrcid( cfg.Endpoint, badSearch, goodToken )
+    status, _ := client.SearchOrcid( cfg.Endpoint, notFoundSearch, goodToken )
     if status != expected {
         t.Fatalf( "Expected %v, got %v\n", expected, status )
     }
@@ -566,7 +566,11 @@ func ensureValidOrcidDetails( t *testing.T, orcids [] * api.OrcidDetails ) {
         //        emptyField( e.Cid ) ||
         //        emptyField( e.Orcid ) ||
         //        emptyField( e.CreatedAt ) {
-        if emptyField( e.Orcid ) {
+        if emptyField( e.Id ) ||
+           emptyField( e.Uri ) ||
+           //emptyField( e.DisplayName ) ||
+           emptyField( e.FirstName ) ||
+           emptyField( e.LastName ) {
             log.Printf( "%t", e )
             t.Fatalf( "Expected non-empty field but one is empty\n" )
         }
