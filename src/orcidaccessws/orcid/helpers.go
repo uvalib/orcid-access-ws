@@ -2,17 +2,61 @@ package orcid
 
 import (
     "fmt"
-    "strings"
-    "bytes"
-    "text/template"
+//    "strings"
+//    "bytes"
+//    "text/template"
     "orcidaccessws/api"
-    "orcidaccessws/config"
+//    "orcidaccessws/config"
+    //"orcidaccessws/logger"
+    //"gopkg.in/xmlpath.v1"
+    //"html"
+    "encoding/json"
+    "net/http"
     "orcidaccessws/logger"
-    "gopkg.in/xmlpath.v1"
-    "html"
+    "strings"
+    "errors"
 )
 
-const PLACEHOLDER_TBA = "(:tba)"
+func checkCommonResponse( body string ) ( int, error ) {
+
+    cr := orcidCommonResponse{ }
+    err := json.Unmarshal( []byte( body ), &cr )
+    if err != nil {
+        return http.StatusInternalServerError, err
+    }
+
+    // check protocol version to ensure we know what to do with this
+    if cr.Version != PROTOCOL_VERSION {
+        logger.Log( fmt.Sprintf( "ORCID protocol version not supported. Require: %s, received: %s", PROTOCOL_VERSION, cr.Version ) )
+        return http.StatusHTTPVersionNotSupported, nil
+    }
+
+    // is there an error string
+    if cr.Error.Value != "" {
+       if strings.HasPrefix( cr.Error.Value, "Not found" ) == true {
+           return http.StatusNotFound, nil
+       }
+
+       // not sure, just return a general error
+       return http.StatusInternalServerError, errors.New( cr.Error.Value )
+    }
+
+    return http.StatusOK, nil
+}
+
+func transformDetailsResponse( orcid string, profile orcidProfile ) [] * api.OrcidDetails {
+
+    results := make([ ] * api.OrcidDetails, 0 )
+    od := new( api.OrcidDetails )
+
+    od.Orcid = orcid
+    od.DisplayName = profile.Bio.PersonalDetails.CreditName.Value
+    od.FirstName = profile.Bio.PersonalDetails.GivenName.Value
+    od.LastName = profile.Bio.PersonalDetails.FamilyName.Value
+
+    return append( results, od )
+}
+/*
 
 //
 // log the contents of an entity record
@@ -309,3 +353,5 @@ func splitDate( date string ) ( string, string, string ) {
     }
     return YYYY, MM, DD
 }
+
+*/

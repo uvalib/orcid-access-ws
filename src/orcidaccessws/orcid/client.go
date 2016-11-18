@@ -11,52 +11,10 @@ import (
     "encoding/json"
 )
 
-//
-// v1.2 response structure
-//
-
-const PROTOCOL_VERSION = "1.2"
-
-type orcidQueryResponse struct {
-    Version             string                 `json:"message-version,omitempty"`
-    Profile             orcidProfile           `json:"orcid-profile,omitempty"`
-}
-
-type orcidVersionResponse struct {
-    Version             string                 `json:"message-version,omitempty"`
-}
-
-type orcidProfile struct {
-    Bio                 orcidBio               `json:"orcid-bio,omitempty"`
-}
-
-type orcidBio struct {
-    PersonalDetails     orcidPersonalDetails   `json:"orcid-bio,omitempty"`
-    Biography           valueVisibilityPair    `json:"biography,omitempty"`
-}
-
-type orcidPersonalDetails struct {
-    GivenName           valueVisibilityPair    `json:"given-names,omitempty"`
-    FamilyName          valueVisibilityPair    `json:"family-name,omitempty"`
-    CreditName          valueVisibilityPair    `json:"credit-name,omitempty"`
-}
-
-type valueVisibilityPair struct {
-    Value               string                 `json:"value,omitempty"`
-    Visibility          string                 `json:"visibility,omitempty"`
-}
-
-// status for the EZID objects
-const STATUS_PUBLIC = "public"
-const STATUS_RESERVED = "reserved"
-const STATUS_UNAVAILABLE = "unavailable"
-
-const USE_CROSS_REF_PROFILE = true
-
 func GetOrcidDetails( orcid string ) ( [] * api.OrcidDetails, int ) {
 
     // construct target URL
-    url := fmt.Sprintf( "%s/%s", config.Configuration.OrcidServiceUrl, orcid )
+    url := fmt.Sprintf( "%s/%s/orcid-profile", config.Configuration.OrcidServiceUrl, orcid )
     fmt.Printf( "%s\n", url )
 
     // issue the request
@@ -79,27 +37,23 @@ func GetOrcidDetails( orcid string ) ( [] * api.OrcidDetails, int ) {
 
     logger.Log( fmt.Sprintf( "Service (%s) returns http %d in %s", url, resp.StatusCode, duration ) )
 
-    // check the protocol version to ensure we support it
-    
-    vr := orcidVersionResponse{ }
-    err := json.Unmarshal( []byte( body ), &vr )
+    // check the common response elements
+    status, err := checkCommonResponse( body )
     if err != nil {
         return nil, http.StatusInternalServerError
     }
 
-    if vr.Version != PROTOCOL_VERSION {
-        logger.Log( fmt.Sprintf( "ORCID protocol version not supported. Require: %s, received: %s", PROTOCOL_VERSION, vr.Version ) )
-        return nil, http.StatusHTTPVersionNotSupported
+    if status != http.StatusOK {
+        return nil, status
     }
 
-    qr := orcidQueryResponse{ }
-    err = json.Unmarshal( []byte( body ), &qr )
+    pr := orcidProfileResponse{ }
+    err = json.Unmarshal( []byte( body ), &pr )
     if err != nil {
         return nil, http.StatusInternalServerError
     }
 
-    //response := transformDetailsResponse( r.Profile )
-    return nil, http.StatusNotFound
+    return transformDetailsResponse( orcid, pr.Profile ), http.StatusOK
 }
 
 func SearchOrcid( search string ) ( [] * api.OrcidDetails, int ) {
@@ -113,6 +67,7 @@ func SearchOrcid( search string ) ( [] * api.OrcidDetails, int ) {
 //
 // get entity details when provided a DOI
 //
+/*
 func GetDoi( doi string ) ( api.Entity, int ) {
 
     // construct target URL
@@ -334,3 +289,5 @@ func GetStatus( ) int {
     // all good...
     return http.StatusOK
 }
+
+*/
