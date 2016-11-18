@@ -10,7 +10,7 @@ import (
 
 func Validate( endpoint string, activity string, token string ) bool {
 
-    url := fmt.Sprintf( "%s/authorize/%s/%s/%s", endpoint, "entityidservice", activity, token )
+    url := fmt.Sprintf( "%s/authorize/%s/%s/%s", endpoint, "orcidaccessservice", activity, token )
     //log.Printf( "%s\n", url )
 
     start := time.Now( )
