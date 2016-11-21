@@ -9,13 +9,15 @@ import (
     "orcidaccessws/api"
     //"orcidaccessws/mapper"
     //"orcidaccessws/logger"
+    "strconv"
+    "fmt"
+    "orcidaccessws/logger"
 )
 
 func encodeStandardResponse( w http.ResponseWriter, status int, message string ) {
 
-    //logger.Log( fmt.Sprintf( "Status: %d (%s)\n", status, message ) )
+    logger.Log( fmt.Sprintf( "encodeStandardResponse status: %d (%s)", status, message ) )
     jsonAttributes( w )
-//    coorsAttributes( w )
     w.WriteHeader( status )
     if err := json.NewEncoder(w).Encode( api.StandardResponse{ Status: status, Message: message } ); err != nil {
         log.Fatal( err )
@@ -24,9 +26,8 @@ func encodeStandardResponse( w http.ResponseWriter, status int, message string )
 
 func encodeOrcidResponse( w http.ResponseWriter, status int, message string, orcids [] * api.Orcid ) {
 
-    //logger.Log( fmt.Sprintf( "Status: %d (%s)\n", status, message ) )
+    logger.Log( fmt.Sprintf( "encodeOrcidResponse status: %d (%s)", status, message ) )
     jsonAttributes( w )
-    //    coorsAttributes( w )
     w.WriteHeader( status )
     if err := json.NewEncoder(w).Encode( api.OrcidResponse{ Status: status, Message: message, Orcids: orcids } ); err != nil {
         log.Fatal( err )
@@ -35,9 +36,8 @@ func encodeOrcidResponse( w http.ResponseWriter, status int, message string, orc
 
 func encodeOrcidDetailsResponse( w http.ResponseWriter, status int, message string, details [] * api.OrcidDetails ) {
 
-    //logger.Log( fmt.Sprintf( "Status: %d (%s)\n", status, message ) )
+    logger.Log( fmt.Sprintf( "encodeOrcidDetailsResponse status: %d (%s)", status, message ) )
     jsonAttributes( w )
-    //    coorsAttributes( w )
     w.WriteHeader( status )
     if err := json.NewEncoder(w).Encode( api.OrcidDetailsResponse{ Status: status, Message: message, Details: details } ); err != nil {
         log.Fatal( err )
@@ -87,11 +87,13 @@ func jsonAttributes( w http.ResponseWriter ) {
     w.Header( ).Set( "Content-Type", "application/json; charset=UTF-8" )
 }
 
-func coorsAttributes( w http.ResponseWriter ) {
-    w.Header( ).Set( "Access-Control-Allow-Origin", "*" )
-    w.Header( ).Set( "Access-Control-Allow-Headers", "Content-Type" )
+func nonEmpty( param string ) bool {
+    return len( strings.TrimSpace( param ) ) != 0
 }
 
-func NotEmpty( param string ) bool {
-    return len( strings.TrimSpace( param ) ) != 0
+func isNumeric( param string ) bool {
+    if _, err := strconv.Atoi( param ); err == nil {
+        return true
+    }
+    return false
 }

@@ -11,7 +11,7 @@ import (
     "encoding/json"
 )
 
-func GetOrcidDetails( orcid string ) ( [] * api.OrcidDetails, int ) {
+func GetOrcidDetails( orcid string ) ( [] * api.OrcidDetails, int, error ) {
 
     // construct target URL
     url := fmt.Sprintf( "%s/%s/orcid-bio", config.Configuration.OrcidServiceUrl, orcid )
@@ -30,7 +30,7 @@ func GetOrcidDetails( orcid string ) ( [] * api.OrcidDetails, int ) {
     // check for errors
     if errs != nil {
         logger.Log( fmt.Sprintf( "ERROR: service (%s) returns %s in %s", url, errs, duration ) )
-        return nil, http.StatusInternalServerError
+        return nil, http.StatusInternalServerError, errs[ 0 ]
     }
 
     defer resp.Body.Close( )
@@ -40,27 +40,28 @@ func GetOrcidDetails( orcid string ) ( [] * api.OrcidDetails, int ) {
     // check the common response elements
     status, err := checkCommonResponse( body )
     if err != nil {
-        return nil, http.StatusInternalServerError
+        return nil, http.StatusInternalServerError, err
     }
 
     if status != http.StatusOK {
-        return nil, status
+        return nil, status, nil
     }
 
     pr := orcidProfileResponse{ }
     err = json.Unmarshal( []byte( body ), &pr )
     if err != nil {
         logger.Log( fmt.Sprintf( "ERROR: json unmarshal: %s", err ) )
-        return nil, http.StatusInternalServerError
+        return nil, http.StatusInternalServerError, err
     }
 
-    return transformDetailsResponse( pr.Profile ), http.StatusOK
+    return transformDetailsResponse( pr.Profile ), http.StatusOK, nil
 }
 
-func SearchOrcid( search string ) ( [] * api.OrcidDetails, int ) {
+func SearchOrcid( search string, start_ix string, max_results string ) ( [] * api.OrcidDetails, int, error ) {
 
     // construct target URL
-    url := fmt.Sprintf( "%s/search/orcid-bio?q=%s&start=0&rows=1", config.Configuration.OrcidServiceUrl, htmlEncode( search ) )
+    url := fmt.Sprintf( "%s/search/orcid-bio?q=%s&start=%s&rows=%s", config.Configuration.OrcidServiceUrl,
+        htmlEncode( search ), start_ix, max_results )
     fmt.Printf( "%s\n", url )
 
     // issue the request
@@ -76,7 +77,7 @@ func SearchOrcid( search string ) ( [] * api.OrcidDetails, int ) {
     // check for errors
     if errs != nil {
         logger.Log( fmt.Sprintf( "ERROR: service (%s) returns %s in %s", url, errs, duration ) )
-        return nil, http.StatusInternalServerError
+        return nil, http.StatusInternalServerError, errs[ 0 ]
     }
 
     defer resp.Body.Close( )
@@ -86,23 +87,23 @@ func SearchOrcid( search string ) ( [] * api.OrcidDetails, int ) {
     // check the common response elements
     status, err := checkCommonResponse( body )
     if err != nil {
-        return nil, http.StatusInternalServerError
+        return nil, http.StatusInternalServerError, err
     }
 
     if status != http.StatusOK {
-        return nil, status
+        return nil, status, err
     }
 
     sr := orcidSearchResponse{ }
     err = json.Unmarshal( []byte( body ), &sr )
     if err != nil {
         logger.Log( fmt.Sprintf( "ERROR: json unmarshal: %s", err ) )
-        return nil, http.StatusInternalServerError
+        return nil, http.StatusInternalServerError, err
     }
 
     if sr.SearchResults.TotalFound == 0 {
-        return nil, http.StatusNotFound
+        return nil, http.StatusNotFound, nil
     }
 
-    return transformSearchResponse( sr.SearchResults ), http.StatusOK
+    return transformSearchResponse( sr.SearchResults ), http.StatusOK, nil
 }

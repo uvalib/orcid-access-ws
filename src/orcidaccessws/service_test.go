@@ -13,6 +13,7 @@ import (
     "time"
     "math/rand"
     "fmt"
+    "strconv"
 )
 
 type TestConfig struct {
@@ -31,6 +32,10 @@ var badOrcid = "9999-9999-0000-0000"
 var goodSearch = "Dave Goldstein"
 var notFoundSearch = "hurunglyzit"
 var empty = " "
+var goodSearchStart = "0"
+var badSearchStart = "x"
+var goodSearchMax = "25"
+var badSearchMax = "x"
 
 //
 // healthcheck tests
@@ -176,7 +181,7 @@ func TestGetOrcidDetailsHappyDay( t *testing.T ) {
         t.Fatalf( "Expected to find orcid for %s and did not\n", id )
     }
 
-    ensureValidOrcidDetails( t, orcids )
+    _ = ensureValidOrcidDetails( t, orcids )
 }
 
 func TestGetOrcidDetailsEmptyId( t *testing.T ) {
@@ -218,17 +223,48 @@ func TestGetOrcidDetailsBadToken( t *testing.T ) {
 func TestSearchOrcidHappyDay( t *testing.T ) {
 
     expected := http.StatusOK
-    status, orcids := client.SearchOrcid( cfg.Endpoint, goodSearch, goodToken )
+    status, orcids := client.SearchOrcid( cfg.Endpoint, goodSearch, goodSearchStart, goodSearchMax, goodToken )
     if status != expected {
         t.Fatalf( "Expected %v, got %v\n", expected, status )
     }
 
-    ensureValidOrcidDetails( t, orcids )
+    _ = ensureValidOrcidDetails( t, orcids )
+}
+
+func TestSearchOrcidMaxRows( t *testing.T ) {
+
+    expected := http.StatusOK
+    status, orcids := client.SearchOrcid( cfg.Endpoint, goodSearch, goodSearchStart, goodSearchMax, goodToken )
+    if status != expected {
+        t.Fatalf( "Expected %v, got %v\n", expected, status )
+    }
+
+    expectedCount, _ := strconv.Atoi( goodSearchMax )
+    actualCount := ensureValidOrcidDetails( t, orcids )
+    if actualCount != expectedCount {
+        t.Fatalf( "Expected %v, got %v\n", expectedCount, actualCount )
+    }
+}
+
+func TestSearchOrcidBadStart( t *testing.T ) {
+    expected := http.StatusBadRequest
+    status, _ := client.SearchOrcid( cfg.Endpoint, goodSearch, badSearchStart, goodSearchMax, empty )
+    if status != expected {
+        t.Fatalf( "Expected %v, got %v\n", expected, status )
+    }
+}
+
+func TestSearchOrcidBadMax( t *testing.T ) {
+    expected := http.StatusBadRequest
+    status, _ := client.SearchOrcid( cfg.Endpoint, goodSearch, goodSearchStart, badSearchMax, empty )
+    if status != expected {
+        t.Fatalf( "Expected %v, got %v\n", expected, status )
+    }
 }
 
 func TestSearchOrcidEmptySearch( t *testing.T ) {
     expected := http.StatusBadRequest
-    status, _ := client.SearchOrcid( cfg.Endpoint, empty, goodToken )
+    status, _ := client.SearchOrcid( cfg.Endpoint, empty, goodSearchStart, goodSearchMax, goodToken )
     if status != expected {
         t.Fatalf( "Expected %v, got %v\n", expected, status )
     }
@@ -236,7 +272,7 @@ func TestSearchOrcidEmptySearch( t *testing.T ) {
 
 func TestSearchOrcidNotFoundSearch( t *testing.T ) {
     expected := http.StatusNotFound
-    status, _ := client.SearchOrcid( cfg.Endpoint, notFoundSearch, goodToken )
+    status, _ := client.SearchOrcid( cfg.Endpoint, notFoundSearch, goodSearchStart, goodSearchMax, goodToken )
     if status != expected {
         t.Fatalf( "Expected %v, got %v\n", expected, status )
     }
@@ -244,7 +280,7 @@ func TestSearchOrcidNotFoundSearch( t *testing.T ) {
 
 func TestSearchOrcidEmptyToken( t *testing.T ) {
     expected := http.StatusBadRequest
-    status, _ := client.SearchOrcid( cfg.Endpoint, goodSearch, empty )
+    status, _ := client.SearchOrcid( cfg.Endpoint, goodSearch, goodSearchStart, goodSearchMax, empty )
     if status != expected {
         t.Fatalf( "Expected %v, got %v\n", expected, status )
     }
@@ -252,7 +288,7 @@ func TestSearchOrcidEmptyToken( t *testing.T ) {
 
 func TestSearchOrcidBadToken( t *testing.T ) {
     expected := http.StatusForbidden
-    status, _ := client.SearchOrcid( cfg.Endpoint, goodSearch, badToken )
+    status, _ := client.SearchOrcid( cfg.Endpoint, goodSearch, goodSearchStart, goodSearchMax, badToken )
     if status != expected {
         t.Fatalf( "Expected %v, got %v\n", expected, status )
     }
@@ -319,200 +355,6 @@ func TestSetOrcidBadToken( t *testing.T ) {
     }
 }
 
-/*
-
-//
-// DOI create tests
-//
-
-func TestCreateHappyDay( t *testing.T ) {
-    expected := http.StatusOK
-    status, entity := client.Create( cfg.Endpoint, goodShoulder, goodToken)
-    if status != expected {
-        t.Fatalf("Expected %v, got %v\n", expected, status)
-    }
-
-    if entity == nil {
-        t.Fatalf("Expected to create entity successfully and did not\n" )
-    }
-
-    if emptyField( entity.Id ) {
-        t.Fatalf( "Expected non-empty ID field but it is empty\n" )
-    }
-}
-
-func TestCreateEmptyToken( t *testing.T ) {
-    expected := http.StatusBadRequest
-    status, _ := client.Create( cfg.Endpoint, goodShoulder, empty )
-    if status != expected {
-        t.Fatalf( "Expected %v, got %v\n", expected, status )
-    }
-}
-
-func TestCreateBadToken( t *testing.T ) {
-    expected := http.StatusForbidden
-    status, _ := client.Create( cfg.Endpoint, goodShoulder, badToken )
-    if status != expected {
-        t.Fatalf( "Expected %v, got %v\n", expected, status )
-    }
-}
-
-//
-// DOI update tests
-//
-
-func TestUpdateHappyDay( t *testing.T ) {
-
-    doi := createGoodDoi( t )
-    entity := testEntity( )
-    entity.Id = doi
-
-    expected := http.StatusOK
-    status := client.Update( cfg.Endpoint, entity, goodToken )
-    if status != expected {
-        t.Fatalf( "Expected %v, got %v\n", expected, status )
-    }
-}
-
-func TestUpdateEmptyId( t *testing.T ) {
-    entity := testEntity( )
-    entity.Id = empty
-    expected := http.StatusBadRequest
-    status := client.Update( cfg.Endpoint, entity, goodToken )
-    if status != expected {
-        t.Fatalf( "Expected %v, got %v\n", expected, status )
-    }
-}
-
-func TestUpdateBadId( t *testing.T ) {
-    expected := http.StatusBadRequest
-    status := client.Update( cfg.Endpoint, api.Entity{ Id: badDoi }, goodToken )
-    if status != expected {
-        t.Fatalf( "Expected %v, got %v\n", expected, status )
-    }
-}
-
-func TestUpdateEmptyToken( t *testing.T ) {
-    entity := testEntity( )
-    entity.Id = plausableDoi
-    expected := http.StatusBadRequest
-    status := client.Update( cfg.Endpoint, entity, empty )
-    if status != expected {
-        t.Fatalf( "Expected %v, got %v\n", expected, status )
-    }
-}
-
-func TestUpdateBadToken( t *testing.T ) {
-    entity := testEntity( )
-    entity.Id = plausableDoi
-    expected := http.StatusForbidden
-    status := client.Update( cfg.Endpoint, entity, badToken )
-    if status != expected {
-        t.Fatalf( "Expected %v, got %v\n", expected, status )
-    }
-}
-
-//
-// DOI delete tests
-//
-
-func TestDeleteHappyDay( t *testing.T ) {
-    expected := http.StatusOK
-    doi := createGoodDoi( t )
-    status := client.Delete( cfg.Endpoint, doi, goodToken )
-    if status != expected {
-        t.Fatalf( "Expected %v, got %v\n", expected, status )
-    }
-}
-
-func TestDeleteEmptyId( t *testing.T ) {
-    expected := http.StatusBadRequest
-    status := client.Delete( cfg.Endpoint, empty, goodToken )
-    if status != expected {
-        t.Fatalf( "Expected %v, got %v\n", expected, status )
-    }
-}
-
-func TestDeleteBadId( t *testing.T ) {
-    expected := http.StatusBadRequest
-    status := client.Delete( cfg.Endpoint, badDoi, goodToken )
-    if status != expected {
-        t.Fatalf( "Expected %v, got %v\n", expected, status )
-    }
-}
-
-func TestDeleteEmptyToken( t *testing.T ) {
-    expected := http.StatusBadRequest
-    status := client.Delete( cfg.Endpoint, plausableDoi, empty )
-    if status != expected {
-        t.Fatalf( "Expected %v, got %v\n", expected, status )
-    }
-}
-
-func TestDeleteBadToken( t *testing.T ) {
-    expected := http.StatusForbidden
-    status := client.Delete( cfg.Endpoint, plausableDoi, badToken )
-    if status != expected {
-        t.Fatalf( "Expected %v, got %v\n", expected, status )
-    }
-}
-
-//
-// DOI revoke tests
-//
-
-func TestRevokeHappyDay( t *testing.T ) {
-
-    expected := http.StatusOK
-    doi := createGoodDoi( t )
-    entity := testEntity( )
-    entity.Id = doi
-
-    status := client.Update( cfg.Endpoint, entity, goodToken )
-    if status != expected {
-        t.Fatalf( "Expected %v, got %v\n", expected, status )
-    }
-
-    status = client.Revoke( cfg.Endpoint, entity.Id, goodToken )
-    if status != expected {
-        t.Fatalf( "Expected %v, got %v\n", expected, status )
-    }
-}
-
-func TestRevokeEmptyId( t *testing.T ) {
-    expected := http.StatusBadRequest
-    status := client.Revoke( cfg.Endpoint, empty, goodToken )
-    if status != expected {
-        t.Fatalf( "Expected %v, got %v\n", expected, status )
-    }
-}
-
-func TestRevokeBadId( t *testing.T ) {
-    expected := http.StatusBadRequest
-    status := client.Revoke( cfg.Endpoint, badDoi, goodToken )
-    if status != expected {
-        t.Fatalf( "Expected %v, got %v\n", expected, status )
-    }
-}
-
-func TestRevokeEmptyToken( t *testing.T ) {
-    expected := http.StatusBadRequest
-    status := client.Revoke( cfg.Endpoint, plausableDoi, empty )
-    if status != expected {
-        t.Fatalf( "Expected %v, got %v\n", expected, status )
-    }
-}
-
-func TestRevokeBadToken( t *testing.T ) {
-    expected := http.StatusForbidden
-    status := client.Revoke( cfg.Endpoint, plausableDoi, badToken )
-    if status != expected {
-        t.Fatalf( "Expected %v, got %v\n", expected, status )
-    }
-}
-
-*/
-
 //
 // helpers
 //
@@ -560,7 +402,7 @@ func ensureValidOrcids( t *testing.T, orcids [] * api.Orcid ) {
     }
 }
 
-func ensureValidOrcidDetails( t *testing.T, orcids [] * api.OrcidDetails ) {
+func ensureValidOrcidDetails( t *testing.T, orcids [] * api.OrcidDetails ) int {
     for _, e := range orcids {
         //if emptyField( e.Id ) ||
         //        emptyField( e.Cid ) ||
@@ -575,6 +417,8 @@ func ensureValidOrcidDetails( t *testing.T, orcids [] * api.OrcidDetails ) {
             t.Fatalf( "Expected non-empty field but one is empty\n" )
         }
     }
+
+    return( len( orcids ) )
 }
 
 func emptyField( field string ) bool {

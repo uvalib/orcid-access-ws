@@ -161,9 +161,9 @@ func GetOrcidDetails( endpoint string, orcid string, token string ) ( int, [] * 
     return resp.StatusCode, r.Details
 }
 
-func SearchOrcid( endpoint string, search string, token string ) ( int, [] * api.OrcidDetails ) {
+func SearchOrcid( endpoint string, search string, start string, max string, token string ) ( int, [] * api.OrcidDetails ) {
 
-    url := fmt.Sprintf( "%s/orcid?q=%s&auth=%s", endpoint, search, token )
+    url := fmt.Sprintf( "%s/orcid?q=%s&start=%s&max=%s&auth=%s", endpoint, search, start, max, token )
     //fmt.Printf( "%s\n", url )
 
     resp, body, errs := gorequest.New( ).

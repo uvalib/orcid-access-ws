@@ -6,6 +6,7 @@ import (
     "orcidaccessws/authtoken"
     "orcidaccessws/config"
     "orcidaccessws/orcid"
+    "fmt"
 )
 
 func GetOrcidDetails( w http.ResponseWriter, r *http.Request ) {
@@ -19,7 +20,7 @@ func GetOrcidDetails( w http.ResponseWriter, r *http.Request ) {
     Statistics.GetOrcidDetailsCount++
 
     // parameters OK ?
-    if NotEmpty( id ) == false || NotEmpty( token ) == false {
+    if nonEmpty( id ) == false || nonEmpty( token ) == false {
         status := http.StatusBadRequest
         encodeOrcidDetailsResponse( w, status, http.StatusText( status ), nil )
         return
@@ -33,20 +34,14 @@ func GetOrcidDetails( w http.ResponseWriter, r *http.Request ) {
     }
 
     // get the ORCID details
-    orcids, status := orcid.GetOrcidDetails( id )
+    orcids, status, err := orcid.GetOrcidDetails( id )
 
     // we did got an error, return it
     if status != http.StatusOK {
-        encodeOrcidDetailsResponse( w, status, http.StatusText( status ), nil )
+        encodeOrcidDetailsResponse( w, status,
+            fmt.Sprintf( "%s (%s)", http.StatusText( status ), err ), nil )
         return
     }
-
-    // we did not find the item, return 404
-    //if orcid == nil {
-    //    status := http.StatusNotFound
-    //    encodeOrcidDetailsResponse( w, status, http.StatusText( status ), nil )
-    //    return
-    //}
 
     status = http.StatusOK
     encodeOrcidDetailsResponse( w, status, http.StatusText( status ), orcids )

@@ -22,7 +22,7 @@ func SetOrcid( w http.ResponseWriter, r *http.Request ) {
     Statistics.SetOrcidCount++
 
     // parameters OK ?
-    if NotEmpty( id ) == false || NotEmpty( orcid ) == false || NotEmpty( token ) == false {
+    if nonEmpty( id ) == false || nonEmpty( orcid ) == false || nonEmpty( token ) == false {
         status := http.StatusBadRequest
         encodeOrcidResponse( w, status, http.StatusText( status ), nil )
         return
@@ -38,7 +38,7 @@ func SetOrcid( w http.ResponseWriter, r *http.Request ) {
     // get the ORCID details
     err := dao.Database.SetOrcidByCid( id, orcid )
     if err != nil {
-        logger.Log( fmt.Sprintf( "ERROR: %s\n", err.Error( ) ) )
+        logger.Log( fmt.Sprintf( "ERROR: %s", err.Error( ) ) )
         status := http.StatusInternalServerError
         encodeOrcidResponse( w, status,
             fmt.Sprintf( "%s (%s)", http.StatusText( status ), err ),
