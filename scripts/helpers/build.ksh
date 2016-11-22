@@ -1,8 +1,11 @@
-export GOPATH=$(pwd)
+if [ -z "$GOPATH" ]; then
+   echo "ERROR: GOPATH is not defined"
+   exit 1
+fi
 
 res=0
 if [ $res -eq 0 ]; then
-  GOOS=darwin go build -o bin/orcid-access-ws.darwin orcidaccessws
+  GOOS=darwin go build -a -o bin/orcid-access-ws.darwin orcidaccessws
   res=$?
 fi
 
