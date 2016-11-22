@@ -28,7 +28,7 @@ func SearchOrcid( w http.ResponseWriter, r *http.Request ) {
     // parameters OK ?
     if nonEmpty( query ) == false || nonEmpty( token ) == false {
         status := http.StatusBadRequest
-        encodeOrcidDetailsResponse( w, status, http.StatusText( status ), nil )
+        encodeOrcidSearchResponse( w, status, http.StatusText( status ), nil, 0, 0, 0 )
         return
     }
 
@@ -43,29 +43,35 @@ func SearchOrcid( w http.ResponseWriter, r *http.Request ) {
     // validate parameters as necessary
     if isNumeric( start ) == false || isNumeric( count ) == false {
         status := http.StatusBadRequest
-        encodeOrcidDetailsResponse( w, status, http.StatusText( status ), nil )
+        encodeOrcidSearchResponse( w, status, http.StatusText( status ), nil, 0, 0, 0 )
         return
     }
 
     // validate the token
     if authtoken.Validate( config.Configuration.AuthTokenEndpoint, "getorcid", token ) == false {
         status := http.StatusForbidden
-        encodeOrcidDetailsResponse( w, status, http.StatusText( status ), nil )
+        encodeOrcidSearchResponse( w, status, http.StatusText( status ), nil, 0, 0, 0 )
         return
     }
 
     // get the ORCID details
-    orcids, status, err := orcid.SearchOrcid( query, start, count )
+    orcids, total, status, err := orcid.SearchOrcid( query, start, count )
 
-    // we did got an error, return it
-    if status != http.StatusOK {
-        encodeOrcidDetailsResponse( w, status,
-            fmt.Sprintf( "%s (%s)", http.StatusText( status ), err ), nil )
+    // we got an error, return it
+    if err != nil {
+        encodeOrcidSearchResponse( w, http.StatusInternalServerError,
+            fmt.Sprintf( "%s (%s)", http.StatusText( http.StatusInternalServerError ), err ), nil, 0, 0, 0 )
         return
     }
 
     logger.Log( fmt.Sprintf( "ORCID search: %d result(s) located", len( orcids ) ) )
 
-    status = http.StatusOK
-    encodeOrcidDetailsResponse( w, status, http.StatusText( status ), orcids )
+    // everything OK but found no items
+    if len( orcids ) == 0 {
+        status = http.StatusNotFound
+    } else {
+        status = http.StatusOK
+    }
+
+    encodeOrcidSearchResponse( w, status, http.StatusText( status ), orcids, asNumeric( start ), len( orcids ), total )
 }

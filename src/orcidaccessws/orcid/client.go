@@ -11,7 +11,7 @@ import (
     "encoding/json"
 )
 
-func GetOrcidDetails( orcid string ) ( [] * api.OrcidDetails, int, error ) {
+func GetOrcidDetails( orcid string ) ( * api.OrcidDetails, int, error ) {
 
     // construct target URL
     url := fmt.Sprintf( "%s/%s/orcid-bio", config.Configuration.OrcidServiceUrl, orcid )
@@ -54,10 +54,10 @@ func GetOrcidDetails( orcid string ) ( [] * api.OrcidDetails, int, error ) {
         return nil, http.StatusInternalServerError, err
     }
 
-    return transformDetailsResponse( pr.Profile ), http.StatusOK, nil
+    return transformDetailsResponse( &pr.Profile ), http.StatusOK, nil
 }
 
-func SearchOrcid( search string, start_ix string, max_results string ) ( [] * api.OrcidDetails, int, error ) {
+func SearchOrcid( search string, start_ix string, max_results string ) ( [] * api.OrcidDetails, int, int, error ) {
 
     // construct target URL
     url := fmt.Sprintf( "%s/search/orcid-bio?q=%s&start=%s&rows=%s", config.Configuration.OrcidServiceUrl,
@@ -77,7 +77,7 @@ func SearchOrcid( search string, start_ix string, max_results string ) ( [] * ap
     // check for errors
     if errs != nil {
         logger.Log( fmt.Sprintf( "ERROR: service (%s) returns %s in %s", url, errs, duration ) )
-        return nil, http.StatusInternalServerError, errs[ 0 ]
+        return nil, 0, http.StatusInternalServerError, errs[ 0 ]
     }
 
     defer resp.Body.Close( )
@@ -87,23 +87,23 @@ func SearchOrcid( search string, start_ix string, max_results string ) ( [] * ap
     // check the common response elements
     status, err := checkCommonResponse( body )
     if err != nil {
-        return nil, http.StatusInternalServerError, err
+        return nil, 0, http.StatusInternalServerError, err
     }
 
     if status != http.StatusOK {
-        return nil, status, err
+        return nil, 0, status, err
     }
 
     sr := orcidSearchResponse{ }
     err = json.Unmarshal( []byte( body ), &sr )
     if err != nil {
         logger.Log( fmt.Sprintf( "ERROR: json unmarshal: %s", err ) )
-        return nil, http.StatusInternalServerError, err
+        return nil, 0, http.StatusInternalServerError, err
     }
 
-    if sr.SearchResults.TotalFound == 0 {
-        return nil, http.StatusNotFound, nil
-    }
+    //if sr.SearchResults.Results == nil || len( sr.SearchResults.Results ) == 0 {
+    //    return nil, sr.SearchResults.TotalFound, http.StatusNotFound, nil
+    //}
 
-    return transformSearchResponse( sr.SearchResults ), http.StatusOK, nil
+    return transformSearchResponse( sr.SearchResults ), sr.SearchResults.TotalFound, http.StatusOK, nil
 }

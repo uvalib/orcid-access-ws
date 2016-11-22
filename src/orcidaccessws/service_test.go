@@ -9,7 +9,6 @@ import (
     "net/http"
     "strings"
     "orcidaccessws/api"
-    //"fmt"
     "time"
     "math/rand"
     "fmt"
@@ -172,16 +171,16 @@ func TestGetOrcidDetailsHappyDay( t *testing.T ) {
 
     expected := http.StatusOK
     id := goodOrcid
-    status, orcids := client.GetOrcidDetails( cfg.Endpoint, id, goodToken )
+    status, orcid := client.GetOrcidDetails( cfg.Endpoint, id, goodToken )
     if status != expected {
         t.Fatalf( "Expected %v, got %v\n", expected, status )
     }
 
-    if orcids == nil || len( orcids ) == 0 {
+    if orcid == nil {
         t.Fatalf( "Expected to find orcid for %s and did not\n", id )
     }
 
-    _ = ensureValidOrcidDetails( t, orcids )
+    ensureValidOrcidDetails( t, orcid )
 }
 
 func TestGetOrcidDetailsEmptyId( t *testing.T ) {
@@ -223,32 +222,28 @@ func TestGetOrcidDetailsBadToken( t *testing.T ) {
 func TestSearchOrcidHappyDay( t *testing.T ) {
 
     expected := http.StatusOK
-    status, orcids := client.SearchOrcid( cfg.Endpoint, goodSearch, goodSearchStart, goodSearchMax, goodToken )
+    status, orcids, total := client.SearchOrcid( cfg.Endpoint, goodSearch, goodSearchStart, goodSearchMax, goodToken )
     if status != expected {
         t.Fatalf( "Expected %v, got %v\n", expected, status )
     }
 
-    _ = ensureValidOrcidDetails( t, orcids )
+    ensureValidSearchResults( t, orcids, goodSearchMax, total )
 }
 
 func TestSearchOrcidMaxRows( t *testing.T ) {
 
     expected := http.StatusOK
-    status, orcids := client.SearchOrcid( cfg.Endpoint, goodSearch, goodSearchStart, goodSearchMax, goodToken )
+    status, orcids, total := client.SearchOrcid( cfg.Endpoint, goodSearch, goodSearchStart, goodSearchMax, goodToken )
     if status != expected {
         t.Fatalf( "Expected %v, got %v\n", expected, status )
     }
 
-    expectedCount, _ := strconv.Atoi( goodSearchMax )
-    actualCount := ensureValidOrcidDetails( t, orcids )
-    if actualCount != expectedCount {
-        t.Fatalf( "Expected %v, got %v\n", expectedCount, actualCount )
-    }
+    ensureValidSearchResults( t, orcids, goodSearchMax, total )
 }
 
 func TestSearchOrcidBadStart( t *testing.T ) {
     expected := http.StatusBadRequest
-    status, _ := client.SearchOrcid( cfg.Endpoint, goodSearch, badSearchStart, goodSearchMax, empty )
+    status, _, _ := client.SearchOrcid( cfg.Endpoint, goodSearch, badSearchStart, goodSearchMax, empty )
     if status != expected {
         t.Fatalf( "Expected %v, got %v\n", expected, status )
     }
@@ -256,7 +251,7 @@ func TestSearchOrcidBadStart( t *testing.T ) {
 
 func TestSearchOrcidBadMax( t *testing.T ) {
     expected := http.StatusBadRequest
-    status, _ := client.SearchOrcid( cfg.Endpoint, goodSearch, goodSearchStart, badSearchMax, empty )
+    status, _, _ := client.SearchOrcid( cfg.Endpoint, goodSearch, goodSearchStart, badSearchMax, empty )
     if status != expected {
         t.Fatalf( "Expected %v, got %v\n", expected, status )
     }
@@ -264,7 +259,7 @@ func TestSearchOrcidBadMax( t *testing.T ) {
 
 func TestSearchOrcidEmptySearch( t *testing.T ) {
     expected := http.StatusBadRequest
-    status, _ := client.SearchOrcid( cfg.Endpoint, empty, goodSearchStart, goodSearchMax, goodToken )
+    status, _, _ := client.SearchOrcid( cfg.Endpoint, empty, goodSearchStart, goodSearchMax, goodToken )
     if status != expected {
         t.Fatalf( "Expected %v, got %v\n", expected, status )
     }
@@ -272,7 +267,7 @@ func TestSearchOrcidEmptySearch( t *testing.T ) {
 
 func TestSearchOrcidNotFoundSearch( t *testing.T ) {
     expected := http.StatusNotFound
-    status, _ := client.SearchOrcid( cfg.Endpoint, notFoundSearch, goodSearchStart, goodSearchMax, goodToken )
+    status, _, _ := client.SearchOrcid( cfg.Endpoint, notFoundSearch, goodSearchStart, goodSearchMax, goodToken )
     if status != expected {
         t.Fatalf( "Expected %v, got %v\n", expected, status )
     }
@@ -280,7 +275,7 @@ func TestSearchOrcidNotFoundSearch( t *testing.T ) {
 
 func TestSearchOrcidEmptyToken( t *testing.T ) {
     expected := http.StatusBadRequest
-    status, _ := client.SearchOrcid( cfg.Endpoint, goodSearch, goodSearchStart, goodSearchMax, empty )
+    status, _, _ := client.SearchOrcid( cfg.Endpoint, goodSearch, goodSearchStart, goodSearchMax, empty )
     if status != expected {
         t.Fatalf( "Expected %v, got %v\n", expected, status )
     }
@@ -288,7 +283,7 @@ func TestSearchOrcidEmptyToken( t *testing.T ) {
 
 func TestSearchOrcidBadToken( t *testing.T ) {
     expected := http.StatusForbidden
-    status, _ := client.SearchOrcid( cfg.Endpoint, goodSearch, goodSearchStart, goodSearchMax, badToken )
+    status, _, _ := client.SearchOrcid( cfg.Endpoint, goodSearch, goodSearchStart, goodSearchMax, badToken )
     if status != expected {
         t.Fatalf( "Expected %v, got %v\n", expected, status )
     }
@@ -402,23 +397,31 @@ func ensureValidOrcids( t *testing.T, orcids [] * api.Orcid ) {
     }
 }
 
-func ensureValidOrcidDetails( t *testing.T, orcids [] * api.OrcidDetails ) int {
+func ensureValidSearchResults( t *testing.T, orcids [] * api.OrcidDetails, expectedMax string, totalFound int ) {
     for _, e := range orcids {
-        //if emptyField( e.Id ) ||
-        //        emptyField( e.Cid ) ||
-        //        emptyField( e.Orcid ) ||
-        //        emptyField( e.CreatedAt ) {
-        if emptyField( e.Id ) ||
-           emptyField( e.Uri ) ||
-           //emptyField( e.DisplayName ) ||
-           emptyField( e.FirstName ) ||
-           emptyField( e.LastName ) {
-            log.Printf( "%t", e )
-            t.Fatalf( "Expected non-empty field but one is empty\n" )
-        }
+        ensureValidOrcidDetails( t, e )
     }
 
-    return( len( orcids ) )
+    max, _ := strconv.Atoi( expectedMax )
+    actualCount := len( orcids )
+    if actualCount > max {
+        t.Fatalf( "Expected %v results, got %v\n", max, actualCount )
+    }
+
+    if totalFound < actualCount {
+        t.Fatalf( "Incorrect search total count, got %v\n", totalFound )
+    }
+}
+
+func ensureValidOrcidDetails( t *testing.T, orcid * api.OrcidDetails ) {
+    if emptyField( orcid.Id ) ||
+            emptyField( orcid.Uri ) ||
+            //emptyField( orcid.DisplayName ) ||
+            emptyField( orcid.FirstName ) ||
+            emptyField( orcid.LastName ) {
+        log.Printf( "%t", orcid )
+        t.Fatalf( "Expected non-empty field but one is empty\n" )
+    }
 }
 
 func emptyField( field string ) bool {

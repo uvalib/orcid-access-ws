@@ -34,7 +34,7 @@ func GetOrcidDetails( w http.ResponseWriter, r *http.Request ) {
     }
 
     // get the ORCID details
-    orcids, status, err := orcid.GetOrcidDetails( id )
+    orcid, status, err := orcid.GetOrcidDetails( id )
 
     // we did got an error, return it
     if status != http.StatusOK {
@@ -44,5 +44,5 @@ func GetOrcidDetails( w http.ResponseWriter, r *http.Request ) {
     }
 
     status = http.StatusOK
-    encodeOrcidDetailsResponse( w, status, http.StatusText( status ), orcids )
+    encodeOrcidDetailsResponse( w, status, http.StatusText( status ), orcid )
 }

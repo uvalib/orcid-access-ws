@@ -34,12 +34,24 @@ func encodeOrcidResponse( w http.ResponseWriter, status int, message string, orc
     }
 }
 
-func encodeOrcidDetailsResponse( w http.ResponseWriter, status int, message string, details [] * api.OrcidDetails ) {
+func encodeOrcidDetailsResponse( w http.ResponseWriter, status int, message string, details * api.OrcidDetails ) {
 
     logger.Log( fmt.Sprintf( "encodeOrcidDetailsResponse status: %d (%s)", status, message ) )
     jsonAttributes( w )
     w.WriteHeader( status )
     if err := json.NewEncoder(w).Encode( api.OrcidDetailsResponse{ Status: status, Message: message, Details: details } ); err != nil {
+        log.Fatal( err )
+    }
+}
+
+func encodeOrcidSearchResponse( w http.ResponseWriter, status int, message string, results [] * api.OrcidDetails,
+    start int, count int, total int ) {
+
+    logger.Log( fmt.Sprintf( "encodeOrcidSearchResponse status: %d (%s)", status, message ) )
+    jsonAttributes( w )
+    w.WriteHeader( status )
+    if err := json.NewEncoder(w).Encode( api.OrcidSearchResponse{ Status: status, Message: message, Results: results,
+        Start: start, Count: count, Total: total } ); err != nil {
         log.Fatal( err )
     }
 }
@@ -96,4 +108,9 @@ func isNumeric( param string ) bool {
         return true
     }
     return false
+}
+
+func asNumeric( param string ) int {
+    res, _ := strconv.Atoi( param )
+    return( res )
 }

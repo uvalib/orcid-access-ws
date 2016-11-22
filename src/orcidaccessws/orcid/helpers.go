@@ -39,22 +39,21 @@ func checkCommonResponse( body string ) ( int, error ) {
     return http.StatusOK, nil
 }
 
-func transformDetailsResponse( profile orcidProfile ) [] * api.OrcidDetails {
-    results := make([ ] * api.OrcidDetails, 0 )
-    return append( results, constructDetails( profile ) )
+func transformDetailsResponse( profile * orcidProfile ) * api.OrcidDetails {
+    return constructDetails( profile )
 }
 
 func transformSearchResponse( search orcidResults ) [] * api.OrcidDetails {
     results := make([ ] * api.OrcidDetails, 0 )
     for _, e := range search.Results {
-        od := constructDetails( e.Profile )
+        od := constructDetails( &e.Profile )
         od.Relevancy = fmt.Sprintf( "%.6f", e.Relevancy.Value )
         results = append( results, od )
     }
     return( results )
 }
 
-func constructDetails( profile orcidProfile ) * api.OrcidDetails {
+func constructDetails( profile * orcidProfile ) * api.OrcidDetails {
 
     od := new( api.OrcidDetails )
 
