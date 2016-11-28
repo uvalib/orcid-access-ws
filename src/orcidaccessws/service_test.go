@@ -70,14 +70,14 @@ func TestVersionCheck( t *testing.T ) {
 
 func TestStatistics( t *testing.T ) {
     expected := http.StatusOK
-    status, _ := client.Statistics( cfg.Endpoint )
+    status, stats := client.Statistics( cfg.Endpoint )
     if status != expected {
         t.Fatalf( "Expected %v, got %v\n", expected, status )
     }
 
-    //if len( version ) == 0 {
-    //    t.Fatalf( "Expected non-zero length version string\n" )
-    //}
+    if stats.RequestCount == 0 {
+        t.Fatalf( "Expected non-zero request count\n" )
+    }
 }
 
 //
@@ -88,7 +88,7 @@ func TestGetOrcidHappyDay( t *testing.T ) {
 
     expected := http.StatusOK
     id := goodCid
-    status, orcids := client.GetOneOrcid( cfg.Endpoint, id, goodToken )
+    status, orcids := client.GetOrcid( cfg.Endpoint, id, goodToken )
     if status != expected {
         t.Fatalf( "Expected %v, got %v\n", expected, status )
     }
@@ -102,7 +102,7 @@ func TestGetOrcidHappyDay( t *testing.T ) {
 
 func TestGetOrcidEmptyId( t *testing.T ) {
     expected := http.StatusBadRequest
-    status, _ := client.GetOneOrcid( cfg.Endpoint, empty, goodToken )
+    status, _ := client.GetOrcid( cfg.Endpoint, empty, goodToken )
     if status != expected {
         t.Fatalf( "Expected %v, got %v\n", expected, status )
     }
@@ -110,7 +110,7 @@ func TestGetOrcidEmptyId( t *testing.T ) {
 
 func TestGetOrcidNotFoundId( t *testing.T ) {
     expected := http.StatusNotFound
-    status, _ := client.GetOneOrcid( cfg.Endpoint, badCid, goodToken )
+    status, _ := client.GetOrcid( cfg.Endpoint, badCid, goodToken )
     if status != expected {
         t.Fatalf( "Expected %v, got %v\n", expected, status )
     }
@@ -118,7 +118,7 @@ func TestGetOrcidNotFoundId( t *testing.T ) {
 
 func TestGetOrcidEmptyToken( t *testing.T ) {
     expected := http.StatusBadRequest
-    status, _ := client.GetOneOrcid( cfg.Endpoint, goodCid, empty )
+    status, _ := client.GetOrcid( cfg.Endpoint, goodCid, empty )
     if status != expected {
         t.Fatalf( "Expected %v, got %v\n", expected, status )
     }
@@ -126,7 +126,7 @@ func TestGetOrcidEmptyToken( t *testing.T ) {
 
 func TestGetOrcidBadToken( t *testing.T ) {
     expected := http.StatusForbidden
-    status, _ := client.GetOneOrcid( cfg.Endpoint, goodCid, badToken )
+    status, _ := client.GetOrcid( cfg.Endpoint, goodCid, badToken )
     if status != expected {
         t.Fatalf( "Expected %v, got %v\n", expected, status )
     }
@@ -311,6 +311,8 @@ func TestSetOrcidDuplicate( t *testing.T ) {
     if status != expected {
         t.Fatalf( "Expected %v, got %v\n", expected, status )
     }
+
+    //status, details = client.GetOrcid( cfg.Endpoint, cid, goodToken )
 
     status = client.SetOrcid( cfg.Endpoint, cid, orcid2, goodToken )
     if status != expected {

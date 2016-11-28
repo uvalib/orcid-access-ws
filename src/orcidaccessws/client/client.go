@@ -83,7 +83,7 @@ func Statistics( endpoint string ) ( int, * api.Statistics ) {
     return resp.StatusCode, &r.Details
 }
 
-func GetOneOrcid( endpoint string, id string, token string ) ( int, [] * api.Orcid ) {
+func GetOrcid( endpoint string, id string, token string ) ( int, [] * api.Orcid ) {
 
     url := fmt.Sprintf( "%s/cid/%s?auth=%s", endpoint, id, token )
     //fmt.Printf( "%s\n", url )
