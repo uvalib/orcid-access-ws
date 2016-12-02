@@ -7,6 +7,8 @@ import (
     "net/http"
     "orcidaccessws/api"
     "encoding/json"
+    "io"
+    "io/ioutil"
 )
 
 const API_DEBUG = false
@@ -26,6 +28,7 @@ func HealthCheck( endpoint string ) int {
         return http.StatusInternalServerError
     }
 
+    defer io.Copy( ioutil.Discard, resp.Body )
     defer resp.Body.Close( )
 
     return resp.StatusCode
@@ -46,6 +49,7 @@ func VersionCheck( endpoint string ) ( int, string ) {
         return http.StatusInternalServerError, ""
     }
 
+    defer io.Copy( ioutil.Discard, resp.Body )
     defer resp.Body.Close( )
 
     r := api.VersionResponse{ }
@@ -72,6 +76,7 @@ func Statistics( endpoint string ) ( int, * api.Statistics ) {
         return http.StatusInternalServerError, nil
     }
 
+    defer io.Copy( ioutil.Discard, resp.Body )
     defer resp.Body.Close( )
 
     r := api.StatisticsResponse{ }
@@ -98,6 +103,7 @@ func GetOrcid( endpoint string, id string, token string ) ( int, [] * api.Orcid 
        return http.StatusInternalServerError, nil
     }
 
+    defer io.Copy( ioutil.Discard, resp.Body )
     defer resp.Body.Close( )
 
     r := api.OrcidResponse{ }
@@ -124,6 +130,7 @@ func GetAllOrcid( endpoint string, token string ) ( int, [] * api.Orcid ) {
         return http.StatusInternalServerError, nil
     }
 
+    defer io.Copy( ioutil.Discard, resp.Body )
     defer resp.Body.Close( )
 
     r := api.OrcidResponse{ }
@@ -150,6 +157,7 @@ func GetOrcidDetails( endpoint string, orcid string, token string ) ( int, * api
         return http.StatusInternalServerError, nil
     }
 
+    defer io.Copy( ioutil.Discard, resp.Body )
     defer resp.Body.Close( )
 
     r := api.OrcidDetailsResponse{ }
@@ -176,6 +184,7 @@ func SearchOrcid( endpoint string, search string, start string, max string, toke
         return http.StatusInternalServerError, nil, 0
     }
 
+    defer io.Copy( ioutil.Discard, resp.Body )
     defer resp.Body.Close( )
 
     r := api.OrcidSearchResponse{ }
@@ -202,6 +211,7 @@ func SetOrcid( endpoint string, cid string, orcid string, token string ) int {
         return http.StatusInternalServerError
     }
 
+    defer io.Copy( ioutil.Discard, resp.Body )
     defer resp.Body.Close( )
 
     return resp.StatusCode

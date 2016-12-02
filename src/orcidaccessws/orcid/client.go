@@ -9,6 +9,8 @@ import (
     "orcidaccessws/config"
     "orcidaccessws/logger"
     "encoding/json"
+    "io"
+    "io/ioutil"
 )
 
 func GetOrcidDetails( orcid string ) ( * api.OrcidDetails, int, error ) {
@@ -33,6 +35,7 @@ func GetOrcidDetails( orcid string ) ( * api.OrcidDetails, int, error ) {
         return nil, http.StatusInternalServerError, errs[ 0 ]
     }
 
+    defer io.Copy( ioutil.Discard, resp.Body )
     defer resp.Body.Close( )
 
     logger.Log( fmt.Sprintf( "Service (%s) returns http %d in %s", url, resp.StatusCode, duration ) )
@@ -80,6 +83,7 @@ func SearchOrcid( search string, start_ix string, max_results string ) ( [] * ap
         return nil, 0, http.StatusInternalServerError, errs[ 0 ]
     }
 
+    defer io.Copy( ioutil.Discard, resp.Body )
     defer resp.Body.Close( )
 
     logger.Log( fmt.Sprintf( "Service (%s) returns http %d in %s", url, resp.StatusCode, duration ) )
