@@ -15,8 +15,10 @@ type Config struct {
     DbPassphrase        string
     OrcidServiceUrl     string
     OrcidServiceTimeout int
-    OrcidUser           string
-    OrcidPassphrase     string
+    OrcidDomain         string
+
+    //OrcidUser           string
+    //OrcidPassphrase     string
     AuthTokenEndpoint   string
     Debug               bool
 }
@@ -26,6 +28,9 @@ var Configuration = LoadConfig( )
 func LoadConfig( ) Config {
 
     c := Config{ }
+
+    // not configurable at this point
+    c.OrcidDomain = "http://orcid.org"
 
     // process command line flags and setup configuration
     flag.StringVar( &c.ServicePort, "port", "8080", "The service listen port" )

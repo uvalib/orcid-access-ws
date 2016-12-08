@@ -3,10 +3,6 @@ package dao
 import (
     "database/sql"
     _ "github.com/go-sql-driver/mysql"
-//    "strconv"
-//    "fmt"
-//    "orcidaccessws/api"
-//    "orcidaccessws/logger"
     "orcidaccessws/api"
     "orcidaccessws/logger"
     "fmt"
@@ -137,6 +133,9 @@ func orcidResults( rows * sql.Rows ) ( [] * api.Orcid, error ) {
         if optionalUpdatedAt.Valid {
             reg.UpdatedAt = optionalUpdatedAt.String
         }
+
+        // hack for now...
+        reg.Uri = fmt.Sprintf( "http://orcid.org/%s", reg.Orcid )
 
         results = append( results, reg )
     }

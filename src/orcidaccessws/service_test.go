@@ -392,6 +392,7 @@ func ensureValidOrcids( t *testing.T, orcids [] * api.Orcid ) {
         if emptyField( e.Id ) ||
            emptyField( e.Cid ) ||
            emptyField( e.Orcid ) ||
+           emptyField( e.Uri ) ||
            emptyField( e.CreatedAt ) {
            log.Printf( "%t", e )
            t.Fatalf( "Expected non-empty field but one is empty\n" )
