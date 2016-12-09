@@ -57,7 +57,7 @@ func constructDetails( profile * orcidProfile ) * api.OrcidDetails {
 
     od := new( api.OrcidDetails )
 
-    od.Id = profile.Id.Id
+    od.Orcid = profile.Id.Id
     od.Uri = profile.Id.Uri
     od.DisplayName = profile.Bio.PersonalDetails.CreditName.Value
     od.FirstName = profile.Bio.PersonalDetails.GivenName.Value

@@ -417,7 +417,7 @@ func ensureValidSearchResults( t *testing.T, orcids [] * api.OrcidDetails, expec
 }
 
 func ensureValidOrcidDetails( t *testing.T, orcid * api.OrcidDetails ) {
-    if emptyField( orcid.Id ) ||
+    if emptyField( orcid.Orcid ) ||
             emptyField( orcid.Uri ) ||
             //emptyField( orcid.DisplayName ) ||
             emptyField( orcid.FirstName ) ||

@@ -2,7 +2,7 @@ package api
 
 type OrcidDetails struct {
     Relevancy             string   `json:"relevancy,omitempty"`
-    Id                    string   `json:"id,omitempty"`
+    Orcid                 string   `json:"orcid,omitempty"`
     Uri                   string   `json:"uri,omitempty"`
     DisplayName           string   `json:"display_name,omitempty"`
     FirstName             string   `json:"first_name,omitempty"`
