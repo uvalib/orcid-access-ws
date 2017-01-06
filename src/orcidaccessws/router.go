@@ -32,6 +32,13 @@ var routes = Routes{
     },
 
     Route{
+        "RuntimeInfo",
+        "GET",
+        "/runtime",
+        handlers.RuntimeInfo,
+    },
+
+    Route{
         "Stats",
         "GET",
         "/statistics",
