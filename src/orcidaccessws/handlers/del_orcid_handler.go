@@ -10,19 +10,18 @@ import (
     "orcidaccessws/logger"
 )
 
-func SetOrcid( w http.ResponseWriter, r *http.Request ) {
+func DeleteOrcid( w http.ResponseWriter, r *http.Request ) {
 
     vars := mux.Vars( r )
     id := vars[ "id" ]
-    orcid := vars[ "orcid" ]
     token := r.URL.Query( ).Get( "auth" )
 
     // update the statistics
     Statistics.RequestCount++
-    Statistics.SetOrcidCount++
+    Statistics.DelOrcidCount++
 
     // parameters OK ?
-    if nonEmpty( id ) == false || nonEmpty( orcid ) == false || nonEmpty( token ) == false {
+    if nonEmpty( id ) == false || nonEmpty( token ) == false {
         status := http.StatusBadRequest
         encodeStandardResponse( w, status, http.StatusText( status ) )
         return
@@ -36,7 +35,7 @@ func SetOrcid( w http.ResponseWriter, r *http.Request ) {
     }
 
     // get the ORCID details
-    err := dao.Database.SetOrcidByCid( id, orcid )
+    err := dao.Database.DelOrcidByCid( id )
     if err != nil {
         logger.Log( fmt.Sprintf( "ERROR: %s", err.Error( ) ) )
         status := http.StatusInternalServerError

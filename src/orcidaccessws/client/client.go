@@ -142,6 +142,33 @@ func GetOrcid( endpoint string, id string, token string ) ( int, [] * api.Orcid 
     return resp.StatusCode, r.Orcids
 }
 
+func DelOrcid( endpoint string, id string, token string ) int {
+
+    url := fmt.Sprintf( "%s/cid/%s?auth=%s", endpoint, id, token )
+    //fmt.Printf( "%s\n", url )
+
+    resp, body, errs := gorequest.New( ).
+            SetDebug( API_DEBUG ).
+            Delete( url ).
+            Timeout( time.Duration( 5 ) * time.Second ).
+            End( )
+
+    if errs != nil {
+        return http.StatusInternalServerError
+    }
+
+    defer io.Copy( ioutil.Discard, resp.Body )
+    defer resp.Body.Close( )
+
+    r := api.StandardResponse{ }
+    err := json.Unmarshal( []byte( body ), &r )
+    if err != nil {
+        return http.StatusInternalServerError
+    }
+
+    return resp.StatusCode
+}
+
 func GetAllOrcid( endpoint string, token string ) ( int, [] * api.Orcid ) {
 
     url := fmt.Sprintf( "%s/cid?auth=%s", endpoint, token )

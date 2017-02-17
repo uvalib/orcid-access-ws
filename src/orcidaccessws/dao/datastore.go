@@ -67,6 +67,21 @@ func ( db *DB ) GetOrcidByCid( id string ) ( [] * api.Orcid, error ) {
 }
 
 //
+// get all by ID (should only be 1)
+//
+func ( db *DB ) DelOrcidByCid( id string ) error {
+
+    stmt, err := db.Prepare( "DELETE FROM orcids WHERE cid = ? LIMIT 1" )
+    if err != nil {
+        return err
+    }
+
+    _, err = stmt.Exec( id )
+
+    return err
+}
+
+//
 // set orcid by ID
 //
 func ( db *DB ) SetOrcidByCid( id string, orcid string ) error {

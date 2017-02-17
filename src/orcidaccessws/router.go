@@ -79,28 +79,13 @@ var routes = Routes{
         "/cid/{id}/{orcid}",
         handlers.SetOrcid,
     },
-        /*
-    Route{
-        "IdRevoke",
-        "PUT",
-        "/revoke/{doi:.*}",
-        IdRevoke,
-    },
 
     Route{
-        "IdUpdate",
-        "PUT",
-        "/{doi:.*}",
-        IdUpdate,
-    },
-
-    Route{
-        "IdDelete",
+        "DeleteOrcid",
         "DELETE",
-        "/{doi:.*}",
-        IdDelete,
+        "/cid/{id}",
+        handlers.DeleteOrcid,
     },
-    */
 }
 
 func NewRouter( ) *mux.Router {

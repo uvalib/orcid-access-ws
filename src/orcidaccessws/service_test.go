@@ -239,6 +239,58 @@ func TestGetOrcidDetailsBadToken( t *testing.T ) {
 }
 
 //
+// delete ORCID tests
+//
+
+func TestDeleteOrcidHappyDay( t *testing.T ) {
+
+    expected := http.StatusOK
+
+    id := randomCid( )
+    status := client.SetOrcid( cfg.Endpoint, id, randomOrcid( ), goodToken )
+    if status != expected {
+        t.Fatalf( "Expected %v, got %v\n", expected, status )
+    }
+
+    status = client.DelOrcid( cfg.Endpoint, id, goodToken )
+    if status != expected {
+        t.Fatalf( "Expected %v, got %v\n", expected, status )
+    }
+}
+
+func TestDeleteOrcidEmptyId( t *testing.T ) {
+    expected := http.StatusBadRequest
+    status := client.DelOrcid( cfg.Endpoint, empty, goodToken )
+    if status != expected {
+        t.Fatalf( "Expected %v, got %v\n", expected, status )
+    }
+}
+
+//func TestDeleteOrcidNotFoundId( t *testing.T ) {
+//    expected := http.StatusNotFound
+//    status := client.DelOrcid( cfg.Endpoint, badCid, goodToken )
+//    if status != expected {
+//        t.Fatalf( "Expected %v, got %v\n", expected, status )
+//    }
+//}
+
+func TestDeleteOrcidEmptyToken( t *testing.T ) {
+    expected := http.StatusBadRequest
+    status := client.DelOrcid( cfg.Endpoint, goodCid, empty )
+    if status != expected {
+        t.Fatalf( "Expected %v, got %v\n", expected, status )
+    }
+}
+
+func TestDeleteOrcidBadToken( t *testing.T ) {
+    expected := http.StatusForbidden
+    status := client.DelOrcid( cfg.Endpoint, goodCid, badToken )
+    if status != expected {
+        t.Fatalf( "Expected %v, got %v\n", expected, status )
+    }
+}
+
+//
 // search ORCID tests
 //
 
