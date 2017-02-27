@@ -11,7 +11,8 @@ import (
     "io/ioutil"
 )
 
-const API_DEBUG = false
+var debugHttp = false
+var serviceTimeout = 5
 
 func HealthCheck( endpoint string ) int {
 
@@ -19,9 +20,9 @@ func HealthCheck( endpoint string ) int {
     //fmt.Printf( "%s\n", url )
 
     resp, _, errs := gorequest.New( ).
-       SetDebug( API_DEBUG ).
+       SetDebug( debugHttp ).
        Get( url ).
-       Timeout( time.Duration( 5 ) * time.Second ).
+       Timeout( time.Duration( serviceTimeout ) * time.Second ).
        End( )
 
     if errs != nil {
@@ -40,9 +41,9 @@ func VersionCheck( endpoint string ) ( int, string ) {
     //fmt.Printf( "%s\n", url )
 
     resp, body, errs := gorequest.New( ).
-    SetDebug( API_DEBUG ).
+    SetDebug( debugHttp ).
     Get( url ).
-    Timeout( time.Duration( 5 ) * time.Second ).
+    Timeout( time.Duration( serviceTimeout ) * time.Second ).
     End( )
 
     if errs != nil {
@@ -69,7 +70,7 @@ func RuntimeCheck( endpoint string ) ( int, * api.RuntimeResponse ) {
     resp, body, errs := gorequest.New( ).
             SetDebug( false ).
             Get( url  ).
-            Timeout( time.Duration( 5 ) * time.Second ).
+            Timeout( time.Duration( serviceTimeout ) * time.Second ).
             End( )
 
     if errs != nil {
@@ -94,9 +95,9 @@ func Statistics( endpoint string ) ( int, * api.Statistics ) {
     //fmt.Printf( "%s\n", url )
 
     resp, body, errs := gorequest.New( ).
-       SetDebug( API_DEBUG ).
+       SetDebug( debugHttp ).
        Get( url ).
-       Timeout( time.Duration( 5 ) * time.Second ).
+       Timeout( time.Duration( serviceTimeout ) * time.Second ).
        End( )
 
     if errs != nil {
@@ -121,9 +122,9 @@ func GetOrcid( endpoint string, id string, token string ) ( int, [] * api.Orcid 
     //fmt.Printf( "%s\n", url )
 
     resp, body, errs := gorequest.New( ).
-       SetDebug( API_DEBUG ).
+       SetDebug( debugHttp ).
        Get( url ).
-       Timeout( time.Duration( 5 ) * time.Second ).
+       Timeout( time.Duration( serviceTimeout ) * time.Second ).
        End( )
 
     if errs != nil {
@@ -148,9 +149,9 @@ func DelOrcid( endpoint string, id string, token string ) int {
     //fmt.Printf( "%s\n", url )
 
     resp, body, errs := gorequest.New( ).
-            SetDebug( API_DEBUG ).
+            SetDebug( debugHttp ).
             Delete( url ).
-            Timeout( time.Duration( 5 ) * time.Second ).
+            Timeout( time.Duration( serviceTimeout ) * time.Second ).
             End( )
 
     if errs != nil {
@@ -175,9 +176,9 @@ func GetAllOrcid( endpoint string, token string ) ( int, [] * api.Orcid ) {
     //fmt.Printf( "%s\n", url )
 
     resp, body, errs := gorequest.New( ).
-            SetDebug( API_DEBUG ).
+            SetDebug( debugHttp ).
             Get( url ).
-            Timeout( time.Duration( 5 ) * time.Second ).
+            Timeout( time.Duration( serviceTimeout ) * time.Second ).
             End( )
 
     if errs != nil {
@@ -202,9 +203,9 @@ func GetOrcidDetails( endpoint string, orcid string, token string ) ( int, * api
     //fmt.Printf( "%s\n", url )
 
     resp, body, errs := gorequest.New( ).
-            SetDebug( API_DEBUG ).
+            SetDebug( debugHttp ).
             Get( url ).
-            Timeout( time.Duration( 5 ) * time.Second ).
+            Timeout( time.Duration( serviceTimeout ) * time.Second ).
             End( )
 
     if errs != nil {
@@ -229,9 +230,9 @@ func SearchOrcid( endpoint string, search string, start string, max string, toke
     //fmt.Printf( "%s\n", url )
 
     resp, body, errs := gorequest.New( ).
-            SetDebug( API_DEBUG ).
+            SetDebug( debugHttp ).
             Get( url ).
-            Timeout( time.Duration( 5 ) * time.Second ).
+            Timeout( time.Duration( serviceTimeout ) * time.Second ).
             End( )
 
     if errs != nil {
@@ -256,9 +257,9 @@ func SetOrcid( endpoint string, cid string, orcid string, token string ) int {
     //fmt.Printf( "%s\n", url )
 
     resp, _, errs := gorequest.New( ).
-            SetDebug( API_DEBUG ).
+            SetDebug( debugHttp ).
             Put( url ).
-            Timeout( time.Duration( 5 ) * time.Second ).
+            Timeout( time.Duration( serviceTimeout ) * time.Second ).
             End( )
 
     if errs != nil {
