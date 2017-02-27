@@ -24,7 +24,7 @@ func GetOrcidDetails( orcid string ) ( * api.OrcidDetails, int, error ) {
     resp, body, errs := gorequest.New( ).
        SetDebug( config.Configuration.Debug ).
        Get( url  ).
-       Timeout( time.Duration( config.Configuration.OrcidServiceTimeout ) * time.Second ).
+       Timeout( time.Duration( config.Configuration.Timeout ) * time.Second ).
        Set( "Accept", "application/json" ).
        End( )
     duration := time.Since( start )
@@ -72,7 +72,7 @@ func SearchOrcid( search string, start_ix string, max_results string ) ( [] * ap
     resp, body, errs := gorequest.New( ).
             SetDebug( config.Configuration.Debug ).
             Get( url  ).
-            Timeout( time.Duration( config.Configuration.OrcidServiceTimeout ) * time.Second ).
+            Timeout( time.Duration( config.Configuration.Timeout ) * time.Second ).
             Set( "Accept", "application/json" ).
             End( )
     duration := time.Since( start )

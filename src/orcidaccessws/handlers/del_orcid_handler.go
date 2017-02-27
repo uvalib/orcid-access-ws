@@ -28,7 +28,7 @@ func DeleteOrcid( w http.ResponseWriter, r *http.Request ) {
     }
 
     // validate the token
-    if authtoken.Validate( config.Configuration.AuthTokenEndpoint, "setorcid", token ) == false {
+    if authtoken.Validate( config.Configuration.AuthTokenEndpoint, "setorcid", token, config.Configuration.Timeout ) == false {
         status := http.StatusForbidden
         encodeStandardResponse( w, status, http.StatusText( status ) )
         return

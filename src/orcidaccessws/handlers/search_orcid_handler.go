@@ -48,7 +48,7 @@ func SearchOrcid( w http.ResponseWriter, r *http.Request ) {
     }
 
     // validate the token
-    if authtoken.Validate( config.Configuration.AuthTokenEndpoint, "getorcid", token ) == false {
+    if authtoken.Validate( config.Configuration.AuthTokenEndpoint, "getorcid", token, config.Configuration.Timeout ) == false {
         status := http.StatusForbidden
         encodeOrcidSearchResponse( w, status, http.StatusText( status ), nil, 0, 0, 0 )
         return

@@ -51,8 +51,8 @@ if [ -n "$TOKENAUTH_URL" ]; then
 fi
 
 # ORCID service timeout
-if [ -n "$ORCID_TIMEOUT" ]; then
-   TIMEOUT_OPT="--timeout $ORCID_TIMEOUT"
+if [ -n "$SERVICE_TIMEOUT" ]; then
+   TIMEOUT_OPT="--timeout $SERVICE_TIMEOUT"
 fi
 
 # service debugging

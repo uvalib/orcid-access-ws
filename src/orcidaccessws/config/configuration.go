@@ -14,12 +14,12 @@ type Config struct {
     DbUser              string
     DbPassphrase        string
     OrcidServiceUrl     string
-    OrcidServiceTimeout int
     OrcidDomain         string
 
     //OrcidUser           string
     //OrcidPassphrase     string
     AuthTokenEndpoint   string
+    Timeout             int
     Debug               bool
 }
 
@@ -39,7 +39,7 @@ func LoadConfig( ) Config {
     flag.StringVar( &c.DbUser, "dbuser", "orcidaccess", "The database username" )
     flag.StringVar( &c.DbPassphrase, "dbpassword", "dbpassword", "The database passphrase")
     flag.StringVar( &c.OrcidServiceUrl, "orcidurl", "https://pub.orcid.org/v1.2", "The ORCID service URL" )
-    flag.IntVar( &c.OrcidServiceTimeout, "timeout", 15, "The service timeout (in seconds)")
+    flag.IntVar( &c.Timeout, "timeout", 15, "The external service timeout in seconds")
     //flag.StringVar( &c.OrcidUser, "orciduser", "apitest", "The EZID service username" )
     //flag.StringVar( &c.OrcidPassphrase, "orcidpassword", "apitest", "The ORCID service passphrase")
     flag.StringVar( &c.AuthTokenEndpoint, "tokenauth", "http://docker1.lib.virginia.edu:8200", "The token authentication endpoint")
@@ -53,10 +53,10 @@ func LoadConfig( ) Config {
     logger.Log( fmt.Sprintf( "DbUser:              %s", c.DbUser ) )
     logger.Log( fmt.Sprintf( "DbPassphrase:        %s", strings.Repeat( "*", len( c.DbPassphrase ) ) ) )
     logger.Log( fmt.Sprintf( "OrcidServiceUrl:     %s", c.OrcidServiceUrl ) )
-    logger.Log( fmt.Sprintf( "OrcidServiceTimeout: %d", c.OrcidServiceTimeout ) )
     //logger.Log( fmt.Sprintf( "OrcidUser:           %s", c.OrcidUser ) )
     //logger.Log( fmt.Sprintf( "OrcidPassphrase:     %s", c.OrcidPassphrase ) )
     logger.Log( fmt.Sprintf( "AuthTokenEndpoint    %s", c.AuthTokenEndpoint ) )
+    logger.Log( fmt.Sprintf( "Timeout:             %d", c.Timeout ) )
     logger.Log( fmt.Sprintf( "Debug                %t", c.Debug ) )
 
     return c
