@@ -1,54 +1,54 @@
 package handlers
 
 import (
-    "fmt"
-    "net/http"
-    "orcidaccessws/authtoken"
-    "orcidaccessws/config"
-    "orcidaccessws/dao"
-    "orcidaccessws/logger"
+	"fmt"
+	"net/http"
+	"orcidaccessws/authtoken"
+	"orcidaccessws/config"
+	"orcidaccessws/dao"
+	"orcidaccessws/logger"
 )
 
-func GetAllOrcid( w http.ResponseWriter, r *http.Request ) {
+func GetAllOrcid(w http.ResponseWriter, r *http.Request) {
 
-    token := r.URL.Query( ).Get( "auth" )
+	token := r.URL.Query().Get("auth")
 
-    // update the statistics
-    Statistics.RequestCount++
-    Statistics.GetOrcidCount++
+	// update the statistics
+	Statistics.RequestCount++
+	Statistics.GetOrcidCount++
 
-    // parameters OK ?
-    if nonEmpty( token ) == false {
-        status := http.StatusBadRequest
-        encodeOrcidResponse( w, status, http.StatusText( status ), nil )
-        return
-    }
+	// parameters OK ?
+	if nonEmpty(token) == false {
+		status := http.StatusBadRequest
+		encodeOrcidResponse(w, status, http.StatusText(status), nil)
+		return
+	}
 
-    // validate the token
-    if authtoken.Validate( config.Configuration.AuthTokenEndpoint, "getorcid", token, config.Configuration.Timeout ) == false {
-        status := http.StatusForbidden
-        encodeOrcidResponse( w, status, http.StatusText( status ), nil )
-        return
-    }
+	// validate the token
+	if authtoken.Validate(config.Configuration.AuthTokenEndpoint, "getorcid", token, config.Configuration.Timeout) == false {
+		status := http.StatusForbidden
+		encodeOrcidResponse(w, status, http.StatusText(status), nil)
+		return
+	}
 
-    // get the ORCID details
-    orcids, err := dao.Database.GetAllOrcid( )
-    if err != nil {
-        logger.Log( fmt.Sprintf( "ERROR: %s", err.Error( ) ) )
-        status := http.StatusInternalServerError
-        encodeOrcidResponse( w, status,
-            fmt.Sprintf( "%s (%s)", http.StatusText( status ), err ),
-            nil )
-        return
-    }
+	// get the ORCID details
+	orcids, err := dao.Database.GetAllOrcid()
+	if err != nil {
+		logger.Log(fmt.Sprintf("ERROR: %s", err.Error()))
+		status := http.StatusInternalServerError
+		encodeOrcidResponse(w, status,
+			fmt.Sprintf("%s (%s)", http.StatusText(status), err),
+			nil)
+		return
+	}
 
-    // we did not find the item, return 404
-    if orcids == nil || len( orcids ) == 0 {
-        status := http.StatusNotFound
-        encodeOrcidResponse( w, status, http.StatusText( status ), nil )
-        return
-    }
+	// we did not find the item, return 404
+	if orcids == nil || len(orcids) == 0 {
+		status := http.StatusNotFound
+		encodeOrcidResponse(w, status, http.StatusText(status), nil)
+		return
+	}
 
-    status := http.StatusOK
-    encodeOrcidResponse( w, status, http.StatusText( status ), orcids )
+	status := http.StatusOK
+	encodeOrcidResponse(w, status, http.StatusText(status), orcids)
 }
