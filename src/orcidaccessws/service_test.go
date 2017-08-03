@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"gopkg.in/yaml.v2"
 	"io/ioutil"
 	"log"
 	"math/rand"
@@ -13,6 +12,7 @@ import (
 	"strings"
 	"testing"
 	"time"
+    "gopkg.in/yaml.v2"
 )
 
 type TestConfig struct {
@@ -79,11 +79,12 @@ func TestRuntimeCheck(t *testing.T) {
 		t.Fatalf("Expected non-nil runtime info\n")
 	}
 
-	if runtime.AllocatedMemory == 0 ||
-		runtime.CpuCount == 0 ||
-		runtime.GoRoutineCount == 0 ||
-		runtime.ObjectCount == 0 {
-		t.Fatalf("Expected non-zero value in runtime info but one is zero\n")
+	if len( runtime.Version ) == 0 ||
+	   runtime.AllocatedMemory == 0 ||
+	   runtime.CpuCount == 0 ||
+	   runtime.GoRoutineCount == 0 ||
+	   runtime.ObjectCount == 0 {
+	   t.Fatalf("Expected non-zero value in runtime info but one is zero\n")
 	}
 }
 
