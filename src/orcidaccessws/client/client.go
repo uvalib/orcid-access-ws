@@ -134,7 +134,7 @@ func GetOrcidAttributes(endpoint string, id string, token string) (int, []*api.O
 	defer io.Copy(ioutil.Discard, resp.Body)
 	defer resp.Body.Close()
 
-	r := api.OrcidResponse{}
+	r := api.OrcidAttributesResponse{}
 	err := json.Unmarshal([]byte(body), &r)
 	if err != nil {
 		return http.StatusInternalServerError, nil
@@ -161,7 +161,7 @@ func GetAllOrcidAttributes(endpoint string, token string) (int, []*api.OrcidAttr
 	defer io.Copy(ioutil.Discard, resp.Body)
 	defer resp.Body.Close()
 
-	r := api.OrcidResponse{}
+	r := api.OrcidAttributesResponse{}
 	err := json.Unmarshal([]byte(body), &r)
 	if err != nil {
 		return http.StatusInternalServerError, nil

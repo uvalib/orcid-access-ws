@@ -29,7 +29,7 @@ func encodeOrcidAttributesResponse(w http.ResponseWriter, status int, message st
 	logger.Log(fmt.Sprintf("encodeOrcidAttributesResponse status: %d (%s)", status, message))
 	jsonAttributes(w)
 	w.WriteHeader(status)
-	if err := json.NewEncoder(w).Encode(api.OrcidResponse{Status: status, Message: message, Attributes: attributes}); err != nil {
+	if err := json.NewEncoder(w).Encode(api.OrcidAttributesResponse{Status: status, Message: message, Attributes: attributes}); err != nil {
 		log.Fatal(err)
 	}
 }
