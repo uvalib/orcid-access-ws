@@ -170,9 +170,9 @@ func GetAllOrcidAttributes(endpoint string, token string) (int, []*api.OrcidAttr
 	return resp.StatusCode, r.Attributes
 }
 
-func SetOrcidAttributes(endpoint string, cid string, orcid string, token string) int {
+func SetOrcidAttributes(endpoint string, cid string, attributes api.OrcidAttributes, token string) int {
 
-   url := fmt.Sprintf("%s/cid/%s/%s?auth=%s", endpoint, cid, orcid, token)
+   url := fmt.Sprintf("%s/cid/%s/%s?auth=%s", endpoint, cid, attributes.Orcid, token)
    //fmt.Printf( "%s\n", url )
 
    resp, _, errs := gorequest.New().

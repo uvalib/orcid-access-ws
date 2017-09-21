@@ -36,7 +36,7 @@ func SetOrcidAttributes(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// get the ORCID details
-	err := dao.Database.SetOrcidByCid(id, orcid)
+	err := dao.Database.SetOrcidAttributesByCid(id, orcid)
 	if err != nil {
 		logger.Log(fmt.Sprintf("ERROR: %s", err.Error()))
 		status := http.StatusInternalServerError
