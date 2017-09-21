@@ -24,12 +24,12 @@ func encodeStandardResponse(w http.ResponseWriter, status int, message string) {
 	}
 }
 
-func encodeOrcidResponse(w http.ResponseWriter, status int, message string, orcids []*api.Orcid) {
+func encodeOrcidAttributesResponse(w http.ResponseWriter, status int, message string, attributes []*api.OrcidAttributes) {
 
-	logger.Log(fmt.Sprintf("encodeOrcidResponse status: %d (%s)", status, message))
+	logger.Log(fmt.Sprintf("encodeOrcidAttributesResponse status: %d (%s)", status, message))
 	jsonAttributes(w)
 	w.WriteHeader(status)
-	if err := json.NewEncoder(w).Encode(api.OrcidResponse{Status: status, Message: message, Orcids: orcids}); err != nil {
+	if err := json.NewEncoder(w).Encode(api.OrcidResponse{Status: status, Message: message, Attributes: attributes}); err != nil {
 		log.Fatal(err)
 	}
 }

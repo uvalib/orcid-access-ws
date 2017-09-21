@@ -48,7 +48,7 @@ func (db *DB) Check() error {
 //
 // get all orcid records
 //
-func (db *DB) GetAllOrcid() ([]*api.Orcid, error) {
+func (db *DB) GetAllOrcid() ([]*api.OrcidAttributes, error) {
 
 	rows, err := db.Query("SELECT * FROM orcids ORDER BY id ASC")
 	if err != nil {
@@ -62,7 +62,7 @@ func (db *DB) GetAllOrcid() ([]*api.Orcid, error) {
 //
 // get all by ID (should only be 1)
 //
-func (db *DB) GetOrcidByCid(id string) ([]*api.Orcid, error) {
+func (db *DB) GetOrcidByCid(id string) ([]*api.OrcidAttributes, error) {
 	return (getOrcidByCid(db, id))
 }
 
@@ -119,7 +119,7 @@ func (db *DB) SetOrcidByCid(id string, orcid string) error {
 // private implementation methods
 //
 
-func getOrcidByCid(db *DB, id string) ([]*api.Orcid, error) {
+func getOrcidByCid(db *DB, id string) ([]*api.OrcidAttributes, error) {
 
 	rows, err := db.Query("SELECT * FROM orcids WHERE cid = ? LIMIT 1", id)
 	if err != nil {
@@ -129,13 +129,13 @@ func getOrcidByCid(db *DB, id string) ([]*api.Orcid, error) {
 	return orcidResults(rows)
 }
 
-func orcidResults(rows *sql.Rows) ([]*api.Orcid, error) {
+func orcidResults(rows *sql.Rows) ([]*api.OrcidAttributes, error) {
 
 	var optionalUpdatedAt sql.NullString
 
-	results := make([]*api.Orcid, 0)
+	results := make([]*api.OrcidAttributes, 0)
 	for rows.Next() {
-		reg := new(api.Orcid)
+		reg := new(api.OrcidAttributes)
 		err := rows.Scan(&reg.Id,
 			&reg.Cid,
 			&reg.Orcid,
@@ -158,6 +158,6 @@ func orcidResults(rows *sql.Rows) ([]*api.Orcid, error) {
 		return nil, err
 	}
 
-	logger.Log(fmt.Sprintf("Orcid request returns %d row(s)", len(results)))
+	logger.Log(fmt.Sprintf("OrcidAttributes request returns %d row(s)", len(results)))
 	return results, nil
 }

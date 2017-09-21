@@ -116,7 +116,7 @@ func Statistics(endpoint string) (int, *api.Statistics) {
 	return resp.StatusCode, &r.Details
 }
 
-func GetOrcid(endpoint string, id string, token string) (int, []*api.Orcid) {
+func GetOrcidAttributes(endpoint string, id string, token string) (int, []*api.OrcidAttributes) {
 
 	url := fmt.Sprintf("%s/cid/%s?auth=%s", endpoint, id, token)
 	//fmt.Printf( "%s\n", url )
@@ -140,37 +140,10 @@ func GetOrcid(endpoint string, id string, token string) (int, []*api.Orcid) {
 		return http.StatusInternalServerError, nil
 	}
 
-	return resp.StatusCode, r.Orcids
+	return resp.StatusCode, r.Attributes
 }
 
-func DelOrcid(endpoint string, id string, token string) int {
-
-	url := fmt.Sprintf("%s/cid/%s?auth=%s", endpoint, id, token)
-	//fmt.Printf( "%s\n", url )
-
-	resp, body, errs := gorequest.New().
-		SetDebug(debugHttp).
-		Delete(url).
-		Timeout(time.Duration(serviceTimeout) * time.Second).
-		End()
-
-	if errs != nil {
-		return http.StatusInternalServerError
-	}
-
-	defer io.Copy(ioutil.Discard, resp.Body)
-	defer resp.Body.Close()
-
-	r := api.StandardResponse{}
-	err := json.Unmarshal([]byte(body), &r)
-	if err != nil {
-		return http.StatusInternalServerError
-	}
-
-	return resp.StatusCode
-}
-
-func GetAllOrcid(endpoint string, token string) (int, []*api.Orcid) {
+func GetAllOrcidAttributes(endpoint string, token string) (int, []*api.OrcidAttributes) {
 
 	url := fmt.Sprintf("%s/cid?auth=%s", endpoint, token)
 	//fmt.Printf( "%s\n", url )
@@ -194,7 +167,55 @@ func GetAllOrcid(endpoint string, token string) (int, []*api.Orcid) {
 		return http.StatusInternalServerError, nil
 	}
 
-	return resp.StatusCode, r.Orcids
+	return resp.StatusCode, r.Attributes
+}
+
+func SetOrcidAttributes(endpoint string, cid string, orcid string, token string) int {
+
+   url := fmt.Sprintf("%s/cid/%s/%s?auth=%s", endpoint, cid, orcid, token)
+   //fmt.Printf( "%s\n", url )
+
+   resp, _, errs := gorequest.New().
+      SetDebug(debugHttp).
+      Put(url).
+      Timeout(time.Duration(serviceTimeout) * time.Second).
+      End()
+
+   if errs != nil {
+      return http.StatusInternalServerError
+   }
+
+   defer io.Copy(ioutil.Discard, resp.Body)
+   defer resp.Body.Close()
+
+   return resp.StatusCode
+}
+
+func DelOrcidAttributes(endpoint string, id string, token string) int {
+
+   url := fmt.Sprintf("%s/cid/%s?auth=%s", endpoint, id, token)
+   //fmt.Printf( "%s\n", url )
+
+   resp, body, errs := gorequest.New().
+      SetDebug(debugHttp).
+      Delete(url).
+      Timeout(time.Duration(serviceTimeout) * time.Second).
+      End()
+
+   if errs != nil {
+      return http.StatusInternalServerError
+   }
+
+   defer io.Copy(ioutil.Discard, resp.Body)
+   defer resp.Body.Close()
+
+   r := api.StandardResponse{}
+   err := json.Unmarshal([]byte(body), &r)
+   if err != nil {
+      return http.StatusInternalServerError
+   }
+
+   return resp.StatusCode
 }
 
 func GetOrcidDetails(endpoint string, orcid string, token string) (int, *api.OrcidDetails) {
@@ -249,25 +270,4 @@ func SearchOrcid(endpoint string, search string, start string, max string, token
 	}
 
 	return resp.StatusCode, r.Results, r.Total
-}
-
-func SetOrcid(endpoint string, cid string, orcid string, token string) int {
-
-	url := fmt.Sprintf("%s/cid/%s/%s?auth=%s", endpoint, cid, orcid, token)
-	//fmt.Printf( "%s\n", url )
-
-	resp, _, errs := gorequest.New().
-		SetDebug(debugHttp).
-		Put(url).
-		Timeout(time.Duration(serviceTimeout) * time.Second).
-		End()
-
-	if errs != nil {
-		return http.StatusInternalServerError
-	}
-
-	defer io.Copy(ioutil.Discard, resp.Body)
-	defer resp.Body.Close()
-
-	return resp.StatusCode
 }

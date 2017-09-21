@@ -10,7 +10,7 @@ import (
 	"orcidaccessws/logger"
 )
 
-func DeleteOrcid(w http.ResponseWriter, r *http.Request) {
+func DeleteOrcidAttributes(w http.ResponseWriter, r *http.Request) {
 
 	vars := mux.Vars(r)
 	id := vars["id"]

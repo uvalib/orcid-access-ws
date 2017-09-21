@@ -46,17 +46,17 @@ var routes = Routes{
 	},
 
 	Route{
-		"GetOneOrcid",
+		"GetOrcidAttributes",
 		"GET",
 		"/cid/{id}",
-		handlers.GetOneOrcid,
+		handlers.GetOrcidAttributes,
 	},
 
 	Route{
-		"GetAllOrcid",
+		"GetAllOrcidAttributes",
 		"GET",
 		"/cid",
-		handlers.GetAllOrcid,
+		handlers.GetAllOrcidAttributes,
 	},
 
 	Route{
@@ -74,17 +74,17 @@ var routes = Routes{
 	},
 
 	Route{
-		"SetOrcid",
+		"SetOrcidAttributes",
 		"PUT",
 		"/cid/{id}/{orcid}",
-		handlers.SetOrcid,
+		handlers.SetOrcidAttributes,
 	},
 
 	Route{
-		"DeleteOrcid",
+		"DeleteOrcidAttributes",
 		"DELETE",
 		"/cid/{id}",
-		handlers.DeleteOrcid,
+		handlers.DeleteOrcidAttributes,
 	},
 }
 

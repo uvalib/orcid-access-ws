@@ -10,7 +10,7 @@ import (
 	"orcidaccessws/logger"
 )
 
-func SetOrcid(w http.ResponseWriter, r *http.Request) {
+func SetOrcidAttributes(w http.ResponseWriter, r *http.Request) {
 
 	vars := mux.Vars(r)
 	id := vars["id"]

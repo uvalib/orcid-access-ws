@@ -105,14 +105,14 @@ func TestStatistics(t *testing.T) {
 }
 
 //
-// get single ORCID tests
+// get ORCID attribute tests
 //
 
-func TestGetOrcidHappyDay(t *testing.T) {
+func TestGetOrcidAttributesHappyDay(t *testing.T) {
 
 	expected := http.StatusOK
 	id := goodCid
-	status, orcids := client.GetOrcid(cfg.Endpoint, id, goodToken)
+	status, orcids := client.GetOrcidAttributes(cfg.Endpoint, id, goodToken)
 	if status != expected {
 		t.Fatalf("Expected %v, got %v\n", expected, status)
 	}
@@ -121,67 +121,182 @@ func TestGetOrcidHappyDay(t *testing.T) {
 		t.Fatalf("Expected to find orcid for %s and did not\n", id)
 	}
 
-	ensureValidOrcids(t, orcids)
+	ensureValidOrcidsAttributes(t, orcids)
 }
 
-func TestGetOrcidEmptyId(t *testing.T) {
+func TestGetOrcidAttributesEmptyId(t *testing.T) {
 	expected := http.StatusBadRequest
-	status, _ := client.GetOrcid(cfg.Endpoint, empty, goodToken)
+	status, _ := client.GetOrcidAttributes(cfg.Endpoint, empty, goodToken)
 	if status != expected {
 		t.Fatalf("Expected %v, got %v\n", expected, status)
 	}
 }
 
-func TestGetOrcidNotFoundId(t *testing.T) {
+func TestGetOrcidAttributesNotFoundId(t *testing.T) {
 	expected := http.StatusNotFound
-	status, _ := client.GetOrcid(cfg.Endpoint, badCid, goodToken)
+	status, _ := client.GetOrcidAttributes(cfg.Endpoint, badCid, goodToken)
 	if status != expected {
 		t.Fatalf("Expected %v, got %v\n", expected, status)
 	}
 }
 
-func TestGetOrcidEmptyToken(t *testing.T) {
+func TestGetOrcidAttributesEmptyToken(t *testing.T) {
 	expected := http.StatusBadRequest
-	status, _ := client.GetOrcid(cfg.Endpoint, goodCid, empty)
+	status, _ := client.GetOrcidAttributes(cfg.Endpoint, goodCid, empty)
 	if status != expected {
 		t.Fatalf("Expected %v, got %v\n", expected, status)
 	}
 }
 
-func TestGetOrcidBadToken(t *testing.T) {
+func TestGetOrcidAttributesBadToken(t *testing.T) {
 	expected := http.StatusForbidden
-	status, _ := client.GetOrcid(cfg.Endpoint, goodCid, badToken)
+	status, _ := client.GetOrcidAttributes(cfg.Endpoint, goodCid, badToken)
 	if status != expected {
 		t.Fatalf("Expected %v, got %v\n", expected, status)
 	}
 }
 
 //
-// get all ORCID tests
+// get all ORCID attributes tests
 //
 
-func TestGetAllOrcidHappyDay(t *testing.T) {
+func TestGetAllOrcidAttributesHappyDay(t *testing.T) {
 
 	expected := http.StatusOK
-	status, orcids := client.GetAllOrcid(cfg.Endpoint, goodToken)
+	status, orcids := client.GetAllOrcidAttributes(cfg.Endpoint, goodToken)
 	if status != expected {
 		t.Fatalf("Expected %v, got %v\n", expected, status)
 	}
 
-	ensureValidOrcids(t, orcids)
+	ensureValidOrcidsAttributes(t, orcids)
 }
 
-func TestGetAllOrcidEmptyToken(t *testing.T) {
+func TestGetAllOrcidAttributesEmptyToken(t *testing.T) {
 	expected := http.StatusBadRequest
-	status, _ := client.GetAllOrcid(cfg.Endpoint, empty)
+	status, _ := client.GetAllOrcidAttributes(cfg.Endpoint, empty)
 	if status != expected {
 		t.Fatalf("Expected %v, got %v\n", expected, status)
 	}
 }
 
-func TestGetAllOrcidBadToken(t *testing.T) {
+func TestGetAllOrcidAttributesBadToken(t *testing.T) {
 	expected := http.StatusForbidden
-	status, _ := client.GetAllOrcid(cfg.Endpoint, badToken)
+	status, _ := client.GetAllOrcidAttributes(cfg.Endpoint, badToken)
+	if status != expected {
+		t.Fatalf("Expected %v, got %v\n", expected, status)
+	}
+}
+
+//
+// set ORCID attributes tests
+//
+
+func TestSetOrcidAttributesHappyDay(t *testing.T) {
+	expected := http.StatusOK
+	status := client.SetOrcidAttributes(cfg.Endpoint, randomCid(), randomOrcid(), goodToken)
+	if status != expected {
+		t.Fatalf("Expected %v, got %v\n", expected, status)
+	}
+}
+
+func TestSetOrcidAttributesDuplicate(t *testing.T) {
+	expected := http.StatusOK
+	cid := randomCid()
+	orcid1 := randomOrcid()
+	orcid2 := randomOrcid()
+
+	status := client.SetOrcidAttributes(cfg.Endpoint, cid, orcid1, goodToken)
+	if status != expected {
+		t.Fatalf("Expected %v, got %v\n", expected, status)
+	}
+
+	//status, details = client.GetOrcidAttributes( cfg.Endpoint, cid, goodToken )
+
+	status = client.SetOrcidAttributes(cfg.Endpoint, cid, orcid2, goodToken)
+	if status != expected {
+		t.Fatalf("Expected %v, got %v\n", expected, status)
+	}
+}
+
+func TestSetOrcidAttributesEmptyId(t *testing.T) {
+	expected := http.StatusBadRequest
+	status := client.SetOrcidAttributes(cfg.Endpoint, empty, goodOrcid, goodToken)
+	if status != expected {
+		t.Fatalf("Expected %v, got %v\n", expected, status)
+	}
+}
+
+func TestSetOrcidAttributesEmptyOrcid(t *testing.T) {
+	expected := http.StatusBadRequest
+	status := client.SetOrcidAttributes(cfg.Endpoint, goodCid, empty, goodToken)
+	if status != expected {
+		t.Fatalf("Expected %v, got %v\n", expected, status)
+	}
+}
+
+func TestSetOrcidAttributesEmptyToken(t *testing.T) {
+	expected := http.StatusBadRequest
+	status := client.SetOrcidAttributes(cfg.Endpoint, goodCid, goodOrcid, empty)
+	if status != expected {
+		t.Fatalf("Expected %v, got %v\n", expected, status)
+	}
+}
+
+func TestSetOrcidAttributesBadToken(t *testing.T) {
+	expected := http.StatusForbidden
+	status := client.SetOrcidAttributes(cfg.Endpoint, goodCid, goodOrcid, badToken)
+	if status != expected {
+		t.Fatalf("Expected %v, got %v\n", expected, status)
+	}
+}
+
+//
+// delete ORCID attributes tests
+//
+
+func TestDeleteOrcidAtributesHappyDay(t *testing.T) {
+
+	expected := http.StatusOK
+
+	id := randomCid()
+	status := client.SetOrcidAttributes(cfg.Endpoint, id, randomOrcid(), goodToken)
+	if status != expected {
+		t.Fatalf("Expected %v, got %v\n", expected, status)
+	}
+
+	status = client.DelOrcidAttributes(cfg.Endpoint, id, goodToken)
+	if status != expected {
+		t.Fatalf("Expected %v, got %v\n", expected, status)
+	}
+}
+
+func TestDeleteOrcidAttributesEmptyId(t *testing.T) {
+	expected := http.StatusBadRequest
+	status := client.DelOrcidAttributes(cfg.Endpoint, empty, goodToken)
+	if status != expected {
+		t.Fatalf("Expected %v, got %v\n", expected, status)
+	}
+}
+
+//func TestDeleteOrcidAttributesNotFoundId( t *testing.T ) {
+//    expected := http.StatusNotFound
+//    status := client.DelOrcidAttributes( cfg.Endpoint, badCid, goodToken )
+//    if status != expected {
+//        t.Fatalf( "Expected %v, got %v\n", expected, status )
+//    }
+//}
+
+func TestDeleteOrcidAttributesEmptyToken(t *testing.T) {
+	expected := http.StatusBadRequest
+	status := client.DelOrcidAttributes(cfg.Endpoint, goodCid, empty)
+	if status != expected {
+		t.Fatalf("Expected %v, got %v\n", expected, status)
+	}
+}
+
+func TestDeleteOrcidAttributesBadToken(t *testing.T) {
+	expected := http.StatusForbidden
+	status := client.DelOrcidAttributes(cfg.Endpoint, goodCid, badToken)
 	if status != expected {
 		t.Fatalf("Expected %v, got %v\n", expected, status)
 	}
@@ -234,58 +349,6 @@ func TestGetOrcidDetailsEmptyToken(t *testing.T) {
 func TestGetOrcidDetailsBadToken(t *testing.T) {
 	expected := http.StatusForbidden
 	status, _ := client.GetOrcidDetails(cfg.Endpoint, goodOrcid, badToken)
-	if status != expected {
-		t.Fatalf("Expected %v, got %v\n", expected, status)
-	}
-}
-
-//
-// delete ORCID tests
-//
-
-func TestDeleteOrcidHappyDay(t *testing.T) {
-
-	expected := http.StatusOK
-
-	id := randomCid()
-	status := client.SetOrcid(cfg.Endpoint, id, randomOrcid(), goodToken)
-	if status != expected {
-		t.Fatalf("Expected %v, got %v\n", expected, status)
-	}
-
-	status = client.DelOrcid(cfg.Endpoint, id, goodToken)
-	if status != expected {
-		t.Fatalf("Expected %v, got %v\n", expected, status)
-	}
-}
-
-func TestDeleteOrcidEmptyId(t *testing.T) {
-	expected := http.StatusBadRequest
-	status := client.DelOrcid(cfg.Endpoint, empty, goodToken)
-	if status != expected {
-		t.Fatalf("Expected %v, got %v\n", expected, status)
-	}
-}
-
-//func TestDeleteOrcidNotFoundId( t *testing.T ) {
-//    expected := http.StatusNotFound
-//    status := client.DelOrcid( cfg.Endpoint, badCid, goodToken )
-//    if status != expected {
-//        t.Fatalf( "Expected %v, got %v\n", expected, status )
-//    }
-//}
-
-func TestDeleteOrcidEmptyToken(t *testing.T) {
-	expected := http.StatusBadRequest
-	status := client.DelOrcid(cfg.Endpoint, goodCid, empty)
-	if status != expected {
-		t.Fatalf("Expected %v, got %v\n", expected, status)
-	}
-}
-
-func TestDeleteOrcidBadToken(t *testing.T) {
-	expected := http.StatusForbidden
-	status := client.DelOrcid(cfg.Endpoint, goodCid, badToken)
 	if status != expected {
 		t.Fatalf("Expected %v, got %v\n", expected, status)
 	}
@@ -366,69 +429,6 @@ func TestSearchOrcidBadToken(t *testing.T) {
 }
 
 //
-// set ORCID for user tests
-//
-
-func TestSetOrcidHappyDay(t *testing.T) {
-	expected := http.StatusOK
-	status := client.SetOrcid(cfg.Endpoint, randomCid(), randomOrcid(), goodToken)
-	if status != expected {
-		t.Fatalf("Expected %v, got %v\n", expected, status)
-	}
-}
-
-func TestSetOrcidDuplicate(t *testing.T) {
-	expected := http.StatusOK
-	cid := randomCid()
-	orcid1 := randomOrcid()
-	orcid2 := randomOrcid()
-
-	status := client.SetOrcid(cfg.Endpoint, cid, orcid1, goodToken)
-	if status != expected {
-		t.Fatalf("Expected %v, got %v\n", expected, status)
-	}
-
-	//status, details = client.GetOrcid( cfg.Endpoint, cid, goodToken )
-
-	status = client.SetOrcid(cfg.Endpoint, cid, orcid2, goodToken)
-	if status != expected {
-		t.Fatalf("Expected %v, got %v\n", expected, status)
-	}
-}
-
-func TestSetOrcidEmptyId(t *testing.T) {
-	expected := http.StatusBadRequest
-	status := client.SetOrcid(cfg.Endpoint, empty, goodOrcid, goodToken)
-	if status != expected {
-		t.Fatalf("Expected %v, got %v\n", expected, status)
-	}
-}
-
-func TestSetOrcidEmptyOrcid(t *testing.T) {
-	expected := http.StatusBadRequest
-	status := client.SetOrcid(cfg.Endpoint, goodCid, empty, goodToken)
-	if status != expected {
-		t.Fatalf("Expected %v, got %v\n", expected, status)
-	}
-}
-
-func TestSetOrcidEmptyToken(t *testing.T) {
-	expected := http.StatusBadRequest
-	status := client.SetOrcid(cfg.Endpoint, goodCid, goodOrcid, empty)
-	if status != expected {
-		t.Fatalf("Expected %v, got %v\n", expected, status)
-	}
-}
-
-func TestSetOrcidBadToken(t *testing.T) {
-	expected := http.StatusForbidden
-	status := client.SetOrcid(cfg.Endpoint, goodCid, goodOrcid, badToken)
-	if status != expected {
-		t.Fatalf("Expected %v, got %v\n", expected, status)
-	}
-}
-
-//
 // helpers
 //
 
@@ -463,7 +463,7 @@ func randomString(possible []rune, sz int) string {
 	return string(b)
 }
 
-func ensureValidOrcids(t *testing.T, orcids []*api.Orcid) {
+func ensureValidOrcidsAttributes(t *testing.T, orcids []*api.OrcidAttributes) {
 	for _, e := range orcids {
 		if emptyField(e.Id) ||
 			emptyField(e.Cid) ||
