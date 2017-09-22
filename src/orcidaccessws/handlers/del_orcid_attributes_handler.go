@@ -20,8 +20,8 @@ func DeleteOrcidAttributes(w http.ResponseWriter, r *http.Request) {
 	Statistics.RequestCount++
 	Statistics.DelOrcidCount++
 
-	// parameters OK ?
-	if nonEmpty(id) == false || nonEmpty(token) == false {
+	// parameters OK?
+	if isEmpty(id) || isEmpty(token) {
 		status := http.StatusBadRequest
 		encodeStandardResponse(w, status, http.StatusText(status))
 		return

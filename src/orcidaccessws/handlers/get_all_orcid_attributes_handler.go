@@ -17,8 +17,8 @@ func GetAllOrcidAttributes(w http.ResponseWriter, r *http.Request) {
 	Statistics.RequestCount++
 	Statistics.GetOrcidCount++
 
-	// parameters OK ?
-	if nonEmpty(token) == false {
+	// parameters OK?
+	if isEmpty(token) {
 		status := http.StatusBadRequest
 		encodeOrcidAttributesResponse(w, status, http.StatusText(status), nil)
 		return

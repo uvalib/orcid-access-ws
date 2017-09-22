@@ -107,8 +107,8 @@ func jsonAttributes(w http.ResponseWriter) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 }
 
-func nonEmpty(param string) bool {
-	return len(strings.TrimSpace(param)) != 0
+func isEmpty(param string) bool {
+	return len(strings.TrimSpace(param)) == 0
 }
 
 func isNumeric(param string) bool {

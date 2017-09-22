@@ -67,7 +67,7 @@ func (db *DB) GetOrcidAttributesByCid(id string) ([]*api.OrcidAttributes, error)
 }
 
 //
-// get all by ID (should only be 1)
+// delete by ID (should only be 1)
 //
 func (db *DB) DelOrcidAttributesByCid(id string) error {
 
@@ -82,34 +82,42 @@ func (db *DB) DelOrcidAttributesByCid(id string) error {
 }
 
 //
-// set orcid by ID
+// set orcid attributes by ID
 //
-func (db *DB) SetOrcidAttributesByCid(id string, orcid string) error {
+func (db *DB) SetOrcidAttributesByCid(id string, attributes api.OrcidAttributes ) error {
 
-   attributes, err := getOrcidAttributesByCid(db, id)
+   existing, err := getOrcidAttributesByCid(db, id)
    if err != nil {
       return err
    }
 
    // if we did not find a record, create a new one
-   if len(attributes) == 0 {
+   if len(existing) == 0 {
 
-      stmt, err := db.Prepare("INSERT INTO orcid_attributes( cid, orcid ) VALUES( ?,? )")
+      stmt, err := db.Prepare("INSERT INTO orcid_attributes( cid, orcid, oauth_access, oauth_refresh, oauth_scope ) VALUES( ?,?,?,?,? )")
       if err != nil {
          return err
       }
 
-      _, err = stmt.Exec(id, orcid)
+      _, err = stmt.Exec(
+         id,
+         attributes.Orcid,
+         attributes.OauthAccessToken,
+         attributes.OauthRefreshToken,
+         attributes.OauthScope )
+
    } else {
 
-      // we already have a record; do we actually need to do the update
-      if attributes[0].Orcid != orcid {
-         stmt, err := db.Prepare("UPDATE orcid_attributes SET orcid = ?, updated_at = NOW( ) WHERE cid = ? LIMIT 1")
-         if err != nil {
-            return err
-         }
-         _, err = stmt.Exec(orcid, id)
+      stmt, err := db.Prepare("UPDATE orcid_attributes SET orcid = ?, oauth_access = ?, oauth_refresh = ?, oauth_scope = ?, updated_at = NOW( ) WHERE cid = ? LIMIT 1")
+      if err != nil {
+         return err
       }
+      _, err = stmt.Exec(
+         attributes.Orcid,
+         attributes.OauthAccessToken,
+         attributes.OauthRefreshToken,
+         attributes.OauthScope,
+         id )
    }
 
    return err

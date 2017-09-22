@@ -76,7 +76,7 @@ var routes = Routes{
 	Route{
 		"SetOrcidAttributes",
 		"PUT",
-		"/cid/{id}/{orcid}",
+		"/cid/{id}",
 		handlers.SetOrcidAttributes,
 	},
 

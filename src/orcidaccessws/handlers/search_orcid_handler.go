@@ -25,18 +25,18 @@ func SearchOrcid(w http.ResponseWriter, r *http.Request) {
 	Statistics.RequestCount++
 	Statistics.SearchOrcidDetailsCount++
 
-	// parameters OK ?
-	if nonEmpty(query) == false || nonEmpty(token) == false {
+	// parameters OK?
+	if isEmpty(query) || isEmpty(token) {
 		status := http.StatusBadRequest
 		encodeOrcidSearchResponse(w, status, http.StatusText(status), nil, 0, 0, 0)
 		return
 	}
 
 	// check the supplied parameters and set defaults as necessary
-	if nonEmpty(start) == false {
+	if isEmpty(start) {
 		start = DEFAULT_SEARCH_START_IX
 	}
-	if nonEmpty(count) == false {
+	if isEmpty(count) {
 		count = DEFAULT_SEARCH_MAX_RESULTS
 	}
 

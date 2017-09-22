@@ -172,13 +172,15 @@ func GetAllOrcidAttributes(endpoint string, token string) (int, []*api.OrcidAttr
 
 func SetOrcidAttributes(endpoint string, cid string, attributes api.OrcidAttributes, token string) int {
 
-   url := fmt.Sprintf("%s/cid/%s/%s?auth=%s", endpoint, cid, attributes.Orcid, token)
+   url := fmt.Sprintf("%s/cid/%s?auth=%s", endpoint, cid, token)
    //fmt.Printf( "%s\n", url )
 
    resp, _, errs := gorequest.New().
       SetDebug(debugHttp).
       Put(url).
+      Send(attributes).
       Timeout(time.Duration(serviceTimeout) * time.Second).
+      Set("Content-Type", "application/json").
       End()
 
    if errs != nil {
