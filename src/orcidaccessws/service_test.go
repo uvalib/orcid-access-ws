@@ -191,16 +191,29 @@ func TestGetAllOrcidAttributesBadToken(t *testing.T) {
 // set ORCID attributes tests
 //
 
-func TestSetOrcidAttributesHappyDay(t *testing.T) {
+func TestSetOrcidAttributesNew(t *testing.T) {
    expected := http.StatusOK
+   id := randomCid()
    attributes := randomOrcidAttributes()
-   status := client.SetOrcidAttributes(cfg.Endpoint, randomCid(), attributes, goodToken)
+
+   status := client.SetOrcidAttributes(cfg.Endpoint, id, attributes, goodToken)
    if status != expected {
       t.Fatalf("Expected %v, got %v\n", expected, status)
    }
+
+   status, current := client.GetOrcidAttributes(cfg.Endpoint, id, goodToken)
+   if status != expected {
+      t.Fatalf("Expected %v, got %v\n", expected, status)
+   }
+
+   if current == nil || len(current) == 0 {
+      t.Fatalf("Expected to find orcid for %s and did not\n", attributes.Id)
+   }
+
+   ensureIdenticalOrcidsAttributes( t, current[ 0 ], &attributes )
 }
 
-func TestSetOrcidAttributesDuplicate(t *testing.T) {
+func TestSetOrcidAttributesUpdate(t *testing.T) {
    expected := http.StatusOK
    cid := randomCid()
    attributes1 := randomOrcidAttributes()
@@ -211,12 +224,32 @@ func TestSetOrcidAttributesDuplicate(t *testing.T) {
       t.Fatalf("Expected %v, got %v\n", expected, status)
    }
 
-   //status, details = client.GetOrcidAttributes( cfg.Endpoint, cid, goodToken )
+   status, current := client.GetOrcidAttributes(cfg.Endpoint, cid, goodToken)
+   if status != expected {
+      t.Fatalf("Expected %v, got %v\n", expected, status)
+   }
+
+   if current == nil || len(current) == 0 {
+      t.Fatalf("Expected to find orcid for %s and did not\n", attributes1.Id)
+   }
+
+   ensureIdenticalOrcidsAttributes( t, current[ 0 ], &attributes1 )
 
    status = client.SetOrcidAttributes(cfg.Endpoint, cid, attributes2, goodToken)
    if status != expected {
       t.Fatalf("Expected %v, got %v\n", expected, status)
    }
+
+   status, current = client.GetOrcidAttributes(cfg.Endpoint, cid, goodToken)
+   if status != expected {
+      t.Fatalf("Expected %v, got %v\n", expected, status)
+   }
+
+   if current == nil || len(current) == 0 {
+      t.Fatalf("Expected to find orcid for %s and did not\n", attributes2.Id)
+   }
+
+   ensureIdenticalOrcidsAttributes( t, current[ 0 ], &attributes2 )
 }
 
 func TestSetOrcidAttributesEmptyId(t *testing.T) {
@@ -475,6 +508,19 @@ func randomString(possible []rune, sz int) string {
       b[i] = possible[rand.Intn(len(possible))]
    }
    return string(b)
+}
+
+func ensureIdenticalOrcidsAttributes(t *testing.T, attributes1 *api.OrcidAttributes, attributes2 *api.OrcidAttributes ) {
+
+   //log.Printf("%t", attributes1)
+   //log.Printf("%t", attributes2)
+
+   if attributes1.Orcid != attributes2.Orcid ||
+      attributes1.OauthAccessToken != attributes2.OauthAccessToken ||
+      attributes1.OauthRefreshToken != attributes2.OauthRefreshToken ||
+      attributes1.OauthScope != attributes2.OauthScope {
+      t.Fatalf("Expected identical attributes but they are not\n")
+   }
 }
 
 func ensureValidOrcidsAttributes(t *testing.T, orcids []*api.OrcidAttributes) {
