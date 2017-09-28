@@ -1,0 +1,55 @@
+
+<?xml version="1.0" encoding="UTF-8"?>
+<work:work
+	xmlns:common="http://www.orcid.org/ns/common" xmlns:work="http://www.orcid.org/ns/work"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.orcid.org/ns/work /work-2.0.xsd ">	
+
+	<work:title>
+		<common:title>Connecting Data Repositories</common:title>
+	</work:title>
+
+	<work:short-description>Words from the Abstract goes here</work:short-description>
+
+	<work:type>journal-article</work:type>
+
+	<common:publication-date>
+		<common:year>2012</common:year>
+		<common:month>10</common:month>
+		<common:day>01</common:day>
+	</common:publication-date>
+
+	<common:external-ids>
+		<common:external-id>
+			<common:external-id-type>doi</common:external-id-type>
+			<common:external-id-value>10.18130/20120404</common:external-id-value>			
+			<common:external-id-url>https://doi.org/10.18130/20120404</common:external-id-url>
+			<common:external-id-relationship>self</common:external-id-relationship>
+		</common:external-id>
+	</common:external-ids>
+
+	<work:contributors>
+		<work:contributor>
+			<work:credit-name>Sherry Lake</work:credit-name>
+			<work:contributor-attributes>
+				<work:contributor-sequence>first</work:contributor-sequence>
+				<work:contributor-role>author</work:contributor-role>
+			</work:contributor-attributes>
+		</work:contributor>
+		<work:contributor>
+			<work:credit-name>Andrew Sallans</work:credit-name>
+			<work:contributor-attributes>
+				<work:contributor-sequence>additional</work:contributor-sequence>
+				<work:contributor-role>author</work:contributor-role>
+			</work:contributor-attributes>
+		</work:contributor>
+		<work:contributor>
+			<work:credit-name>Susan Borda</work:credit-name>
+			<work:contributor-attributes>
+				<work:contributor-sequence>additional</work:contributor-sequence>
+				<work:contributor-role>author</work:contributor-role>
+			</work:contributor-attributes>
+		</work:contributor>
+	</work:contributors>
+
+</work:work>

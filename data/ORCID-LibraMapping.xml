@@ -1,0 +1,71 @@
+
+<?xml version="1.0" encoding="UTF-8"?>
+<work:work
+	xmlns:common="http://www.orcid.org/ns/common" xmlns:work="http://www.orcid.org/ns/work"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.orcid.org/ns/work /work-2.0.xsd ">	
+
+<!-- title is required -->
+	<work:title>
+		<common:title>TITLE</common:title>
+	</work:title>
+
+<!-- description is not required, but including since abstract is required in Libra -->
+	<work:short-description>ABSTRACT</work:short-description>
+
+<!-- type is required -->
+	<work:type>RESOURCE-TYPE(need to map LibraOC types to the “ORCID” types)</work:type>
+
+<!-- publication-date is NOT required -->
+<!-- only send, if nothing entered in Libra “Publication Date” Use Create Date here --> 
+<!-- do not use if "Publication Date" has text, because it is free text -->
+	<common:publication-date>
+		<common:year>YYYY</common:year>
+		<common:month>MM</common:month>
+		<common:day>DD</common:day>
+	</common:publication-date>
+
+<!-- identifier is required -->
+	<common:external-ids>
+		<common:external-id>
+<!--  type stays "doi" -->
+			<common:external-id-type>doi</common:external-id-type>
+			<common:external-id-value>DOI (base)</common:external-id-value>			
+			<common:external-id-url>FULL DOI URL</common:external-id-url>
+<!-- relationship is "self" -->
+			<common:external-id-relationship>self</common:external-id-relationship>
+		</common:external-id>
+	</common:external-ids>
+
+<!-- Contributor is for the author(s) -->
+
+	<work:contributors>
+
+<!-- this is the 1st (or only) author name in the list -->
+<!-- "sequence" and "role" does not change -->
+		<work:contributor>
+			<work:credit-name>FIRSTNAME LASTNAME</work:credit-name>
+			<work:contributor-attributes>
+				<work:contributor-sequence>first</work:contributor-sequence>
+				<work:contributor-role>author</work:contributor-role>
+			</work:contributor-attributes>
+		</work:contributor>
+
+<!-- add new work:contributor for each "author" -->
+<!-- "sequence and "role" does not change -->
+		<work:contributor>
+			<work:credit-name>FIRSTNAME LASTNAME</work:credit-name>
+			<work:contributor-attributes>
+				<work:contributor-sequence>additional</work:contributor-sequence>
+				<work:contributor-role>author</work:contributor-role>
+			</work:contributor-attributes>
+		</work:contributor>
+
+<!-- end of contributors "authors" -->
+	</work:contributors>
+
+</work:work>
+
+
+
+</work:work>
