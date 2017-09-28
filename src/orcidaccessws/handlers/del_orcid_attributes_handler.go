@@ -18,7 +18,7 @@ func DeleteOrcidAttributes(w http.ResponseWriter, r *http.Request) {
 
 	// update the statistics
 	Statistics.RequestCount++
-	Statistics.DelOrcidCount++
+	Statistics.DelOrcidAttribsCount++
 
 	// parameters OK?
 	if isEmpty(id) || isEmpty(token) {
