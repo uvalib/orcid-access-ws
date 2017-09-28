@@ -16,7 +16,7 @@ func TestDeleteOrcidAtributesHappyDay(t *testing.T) {
 
    id := randomCid()
    attributes := randomOrcidAttributes()
-   status := client.SetOrcidAttributes(cfg.Endpoint, id, attributes, goodToken)
+   status := client.SetOrcidAttributes(cfg.Endpoint, id, goodToken, attributes )
    if status != expected {
       t.Fatalf("Expected %v, got %v\n", expected, status)
    }

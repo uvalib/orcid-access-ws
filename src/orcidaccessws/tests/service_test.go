@@ -77,6 +77,11 @@ func randomString(possible []rune, sz int) string {
    return string(b)
 }
 
+func newActivity( ) api.ActivityUpdate {
+
+   return api.ActivityUpdate{ }
+}
+
 func ensureIdenticalOrcidsAttributes(t *testing.T, attributes1 *api.OrcidAttributes, attributes2 *api.OrcidAttributes ) {
 
    //log.Printf("%t", attributes1)

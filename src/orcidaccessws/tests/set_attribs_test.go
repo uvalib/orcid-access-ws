@@ -16,7 +16,7 @@ func TestSetOrcidAttributesNew(t *testing.T) {
    id := randomCid()
    attributes := randomOrcidAttributes()
 
-   status := client.SetOrcidAttributes(cfg.Endpoint, id, attributes, goodToken)
+   status := client.SetOrcidAttributes(cfg.Endpoint, id, goodToken, attributes )
    if status != expected {
       t.Fatalf("Expected %v, got %v\n", expected, status)
    }
@@ -39,7 +39,7 @@ func TestSetOrcidAttributesUpdate(t *testing.T) {
    attributes1 := randomOrcidAttributes()
    attributes2 := randomOrcidAttributes()
 
-   status := client.SetOrcidAttributes(cfg.Endpoint, cid, attributes1, goodToken)
+   status := client.SetOrcidAttributes(cfg.Endpoint, cid, goodToken, attributes1 )
    if status != expected {
       t.Fatalf("Expected %v, got %v\n", expected, status)
    }
@@ -55,7 +55,7 @@ func TestSetOrcidAttributesUpdate(t *testing.T) {
 
    ensureIdenticalOrcidsAttributes( t, current[ 0 ], &attributes1 )
 
-   status = client.SetOrcidAttributes(cfg.Endpoint, cid, attributes2, goodToken)
+   status = client.SetOrcidAttributes(cfg.Endpoint, cid, goodToken, attributes2 )
    if status != expected {
       t.Fatalf("Expected %v, got %v\n", expected, status)
    }
@@ -75,7 +75,7 @@ func TestSetOrcidAttributesUpdate(t *testing.T) {
 func TestSetOrcidAttributesEmptyId(t *testing.T) {
    expected := http.StatusBadRequest
    attributes := randomOrcidAttributes()
-   status := client.SetOrcidAttributes(cfg.Endpoint, empty, attributes, goodToken)
+   status := client.SetOrcidAttributes(cfg.Endpoint, empty, goodToken, attributes )
    if status != expected {
       t.Fatalf("Expected %v, got %v\n", expected, status)
    }
@@ -84,7 +84,7 @@ func TestSetOrcidAttributesEmptyId(t *testing.T) {
 func TestSetOrcidAttributesEmptyOrcid(t *testing.T) {
    expected := http.StatusBadRequest
    attributes := api.OrcidAttributes{ Orcid: empty }
-   status := client.SetOrcidAttributes(cfg.Endpoint, goodCid, attributes, goodToken)
+   status := client.SetOrcidAttributes(cfg.Endpoint, goodCid, goodToken, attributes )
    if status != expected {
       t.Fatalf("Expected %v, got %v\n", expected, status)
    }
@@ -93,7 +93,7 @@ func TestSetOrcidAttributesEmptyOrcid(t *testing.T) {
 func TestSetOrcidAttributesEmptyToken(t *testing.T) {
    expected := http.StatusBadRequest
    attributes := randomOrcidAttributes()
-   status := client.SetOrcidAttributes(cfg.Endpoint, goodCid, attributes, empty)
+   status := client.SetOrcidAttributes(cfg.Endpoint, goodCid, empty, attributes )
    if status != expected {
       t.Fatalf("Expected %v, got %v\n", expected, status)
    }
@@ -102,7 +102,7 @@ func TestSetOrcidAttributesEmptyToken(t *testing.T) {
 func TestSetOrcidAttributesBadToken(t *testing.T) {
    expected := http.StatusForbidden
    attributes := randomOrcidAttributes()
-   status := client.SetOrcidAttributes(cfg.Endpoint, goodCid, attributes, badToken)
+   status := client.SetOrcidAttributes(cfg.Endpoint, goodCid, badToken, attributes )
    if status != expected {
       t.Fatalf("Expected %v, got %v\n", expected, status)
    }

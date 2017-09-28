@@ -116,9 +116,9 @@ func Statistics(endpoint string) (int, *api.Statistics) {
 	return resp.StatusCode, &r.Details
 }
 
-func GetOrcidAttributes(endpoint string, id string, token string) (int, []*api.OrcidAttributes) {
+func GetOrcidAttributes(endpoint string, cid string, token string) (int, []*api.OrcidAttributes) {
 
-	url := fmt.Sprintf("%s/cid/%s?auth=%s", endpoint, id, token)
+	url := fmt.Sprintf("%s/cid/%s?auth=%s", endpoint, cid, token)
 	//fmt.Printf( "%s\n", url )
 
 	resp, body, errs := gorequest.New().
@@ -170,7 +170,7 @@ func GetAllOrcidAttributes(endpoint string, token string) (int, []*api.OrcidAttr
 	return resp.StatusCode, r.Attributes
 }
 
-func SetOrcidAttributes(endpoint string, cid string, attributes api.OrcidAttributes, token string) int {
+func SetOrcidAttributes(endpoint string, cid string, token string, attributes api.OrcidAttributes ) int {
 
    url := fmt.Sprintf("%s/cid/%s?auth=%s", endpoint, cid, token)
    //fmt.Printf( "%s\n", url )
@@ -193,9 +193,9 @@ func SetOrcidAttributes(endpoint string, cid string, attributes api.OrcidAttribu
    return resp.StatusCode
 }
 
-func DelOrcidAttributes(endpoint string, id string, token string) int {
+func DelOrcidAttributes(endpoint string, cid string, token string) int {
 
-   url := fmt.Sprintf("%s/cid/%s?auth=%s", endpoint, id, token)
+   url := fmt.Sprintf("%s/cid/%s?auth=%s", endpoint, cid, token)
    //fmt.Printf( "%s\n", url )
 
    resp, body, errs := gorequest.New().
@@ -218,6 +218,35 @@ func DelOrcidAttributes(endpoint string, id string, token string) int {
    }
 
    return resp.StatusCode
+}
+
+func UpdateActivity(endpoint string, cid string, token string, activity api.ActivityUpdate ) ( int, string ) {
+
+   url := fmt.Sprintf("%s/cid/%s/activity?auth=%s", endpoint, cid, token)
+   //fmt.Printf( "%s\n", url )
+
+   resp, body, errs := gorequest.New().
+      SetDebug(debugHttp).
+      Put(url).
+      Send(activity).
+      Timeout(time.Duration(serviceTimeout) * time.Second).
+      Set("Content-Type", "application/json").
+      End()
+
+   if errs != nil {
+      return http.StatusInternalServerError, ""
+   }
+
+   defer io.Copy(ioutil.Discard, resp.Body)
+   defer resp.Body.Close()
+
+   r := api.UpdateActivityResponse{}
+   err := json.Unmarshal([]byte(body), &r)
+   if err != nil {
+      return http.StatusInternalServerError, ""
+   }
+
+   return resp.StatusCode, r.UpdateCode
 }
 
 func GetOrcidDetails(endpoint string, orcid string, token string) (int, *api.OrcidDetails) {
@@ -273,3 +302,7 @@ func SearchOrcid(endpoint string, search string, start string, max string, token
 
 	return resp.StatusCode, r.Results, r.Total
 }
+
+//
+// end of file
+//
