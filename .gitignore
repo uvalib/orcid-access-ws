@@ -2,6 +2,6 @@
 /src/github.com
 /bin
 /pkg
-/src/orcidaccessws/service_test.yml
+/src/orcidaccessws/tests/service_test.yml
 /env.*
 /buildtag.build-0

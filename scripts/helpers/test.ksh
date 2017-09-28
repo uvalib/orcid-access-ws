@@ -8,4 +8,4 @@ if [ $# -ge 1 ]; then
    RUN="-run $*"
 fi
 
-go test -v orcidaccessws $RUN
+go test -v orcidaccessws/tests $RUN
