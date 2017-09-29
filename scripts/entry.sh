@@ -3,9 +3,8 @@ DBHOST_OPT=""
 DBNAME_OPT=""
 DBUSER_OPT=""
 DBPASSWD_OPT=""
-ORCIDURL_OPT=""
-ORCIDUSER_OPT=""
-ORCIDPASSWD_OPT=""
+ORCID_PUBLIC_URL_OPT=""
+ORCID_SECURE_URL_OPT=""
 TOKENURL_OPT=""
 TIMEOUT_OPT=""
 DEBUG_OPT=""
@@ -30,20 +29,15 @@ if [ -n "$DBPASSWD" ]; then
    DBPASSWD_OPT="--dbpassword $DBPASSWD"
 fi
 
-# ORCID endpoint URL
-if [ -n "$ORCID_URL" ]; then
-   ORCIDURL_OPT="--orcidurl $ORCID_URL"
+# ORCID public endpoint URL
+if [ -n "$ORCID_PUBLIC_API_URL" ]; then
+   ORCID_PUBLIC_URL_OPT="--orcidpublicurl $ORCID_PUBLIC_API_URL"
 fi
 
-# ORCID user name
-#if [ -n "$ORCID_USER" ]; then
-#   ORCIDUSER_OPT="--orciduser $ORCID_USER"
-#fi
-
-# ORCID password
-#if [ -n "$ORCID_PASSWD" ]; then
-#   ORCIDPASSWD_OPT="--orcidpassword $ORCID_PASSWD"
-#fi
+# ORCID secure endpoint URL
+if [ -n "$ORCID_SECURE_API_URL" ]; then
+   ORCID_SECURE_URL_OPT="--orcidsecureurl $ORCID_SECURE_API_URL"
+fi
 
 # token authentication service URL
 if [ -n "$TOKENAUTH_URL" ]; then
@@ -60,7 +54,7 @@ if [ -n "$ORCIDACCESS_DEBUG" ]; then
    DEBUG_OPT="--debug"
 fi
 
-bin/orcid-access-ws $DBHOST_OPT $DBNAME_OPT $DBUSER_OPT $DBPASSWD_OPT $ORCIDURL_OPT $ORCIDUSER_OPT $ORCIDPASSWD_OPT $TOKENURL_OPT $TIMEOUT_OPT $DEBUG_OPT
+bin/orcid-access-ws $DBHOST_OPT $DBNAME_OPT $DBUSER_OPT $DBPASSWD_OPT $ORCID_PUBLIC_URL_OPT $ORCID_SECURE_URL_OPT $TOKENURL_OPT $TIMEOUT_OPT $DEBUG_OPT
 
 #
 # end of file
