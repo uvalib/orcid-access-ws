@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <work:work
-	xmlns:common="http://www.orcid.org/ns/common" xmlns:work="http://www.orcid.org/ns/work"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.orcid.org/ns/work /work-2.0.xsd ">
+        xmlns:common="http://www.orcid.org/ns/common"
+        xmlns:work="http://www.orcid.org/ns/work"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.orcid.org/ns/work /work-2.0.xsd">
 
 	{{if .Title }}
 	<work:title>
@@ -32,12 +33,12 @@
 	</common:publication-date>
 	{{ end }}
 
-	{{if .Identifier | and .Uri }}
+	{{if .Identifier | and .Url }}
 	<common:external-ids>
 		<common:external-id>
 			<common:external-id-type>doi</common:external-id-type>
 			<common:external-id-value>{{ .Identifier }}</common:external-id-value>
-			<common:external-id-url>{{ .Uri }}</common:external-id-url>
+			<common:external-id-url>{{ .Url }}</common:external-id-url>
 			<common:external-id-relationship>self</common:external-id-relationship>
 		</common:external-id>
 	</common:external-ids>
@@ -51,7 +52,7 @@
 
 			<work:credit-name>{{ $element.FirstName }} {{ $element.LastName }}</work:credit-name>
 			<work:contributor-attributes>
-				{{if $element.Index == 0 }}
+				{{if eq $element.Index 0 }}
 				<work:contributor-sequence>first</work:contributor-sequence>
 				{{ else }}
 				<work:contributor-sequence>additional</work:contributor-sequence>
