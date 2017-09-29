@@ -1,0 +1,57 @@
+package handlers
+
+import (
+   "fmt"
+   "github.com/gorilla/mux"
+   "net/http"
+   "orcidaccessws/authtoken"
+   "orcidaccessws/config"
+   "orcidaccessws/dao"
+   "orcidaccessws/logger"
+)
+
+func UpdateActivity(w http.ResponseWriter, r *http.Request) {
+
+   vars := mux.Vars(r)
+   id := vars["id"]
+   token := r.URL.Query().Get("auth")
+
+   // update the statistics
+   Statistics.RequestCount++
+   Statistics.UpdateActivityCount++
+
+   // parameters OK?
+   if isEmpty(id) || isEmpty(token) {
+      status := http.StatusBadRequest
+      encodeUpdateActivityResponse(w, status, http.StatusText(status), "" )
+      return
+   }
+
+   // validate the token
+   if authtoken.Validate(config.Configuration.AuthTokenEndpoint, "getorcid", token, config.Configuration.Timeout) == false {
+      status := http.StatusForbidden
+      encodeUpdateActivityResponse(w, status, http.StatusText(status), "")
+      return
+   }
+
+   // get the ORCID details
+   attributes, err := dao.Database.GetOrcidAttributesByCid(id)
+   if err != nil {
+      logger.Log(fmt.Sprintf("ERROR: %s", err.Error()))
+      status := http.StatusInternalServerError
+      encodeUpdateActivityResponse(w, status,
+         fmt.Sprintf("%s (%s)", http.StatusText(status), err),
+         "")
+      return
+   }
+
+   // we did not find the item, return 404
+   if attributes == nil || len(attributes) == 0 {
+      status := http.StatusNotFound
+      encodeUpdateActivityResponse(w, status, http.StatusText(status), "")
+      return
+   }
+
+   status := http.StatusOK
+   encodeUpdateActivityResponse(w, status, http.StatusText(status), "12345")
+}

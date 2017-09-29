@@ -14,7 +14,7 @@ func TestUpdateActivityNew(t *testing.T) {
 
    expected := http.StatusOK
    id := goodCid
-   newActivity := newActivity( )
+   newActivity := workActivity( )
    status, code := client.UpdateActivity(cfg.Endpoint, id, goodToken, newActivity )
    if status != expected {
       t.Fatalf("Expected %v, got %v\n", expected, status)
@@ -29,7 +29,7 @@ func TestUpdateActivityUpdate(t *testing.T) {
 
    expected := http.StatusOK
    id := goodCid
-   newActivity := newActivity( )
+   newActivity := workActivity( )
    status, code := client.UpdateActivity(cfg.Endpoint, id, goodToken, newActivity )
    if status != expected {
       t.Fatalf("Expected %v, got %v\n", expected, status)
@@ -56,7 +56,7 @@ func TestUpdateActivityUpdate(t *testing.T) {
 
 func TestUpdateActivityEmptyId(t *testing.T) {
    expected := http.StatusBadRequest
-   newActivity := newActivity( )
+   newActivity := workActivity( )
    status, _ := client.UpdateActivity(cfg.Endpoint, empty, goodToken, newActivity )
    if status != expected {
       t.Fatalf("Expected %v, got %v\n", expected, status)
@@ -65,7 +65,7 @@ func TestUpdateActivityEmptyId(t *testing.T) {
 
 func TestUpdateActivityNotFoundId(t *testing.T) {
    expected := http.StatusNotFound
-   newActivity := newActivity( )
+   newActivity := workActivity( )
    status, _ := client.UpdateActivity(cfg.Endpoint, badCid, goodToken, newActivity )
    if status != expected {
       t.Fatalf("Expected %v, got %v\n", expected, status)
@@ -74,7 +74,7 @@ func TestUpdateActivityNotFoundId(t *testing.T) {
 
 func TestUpdateActivityEmptyToken(t *testing.T) {
    expected := http.StatusBadRequest
-   newActivity := newActivity( )
+   newActivity := workActivity( )
    status, _ := client.UpdateActivity(cfg.Endpoint, goodCid, empty, newActivity )
    if status != expected {
       t.Fatalf("Expected %v, got %v\n", expected, status)
@@ -83,7 +83,7 @@ func TestUpdateActivityEmptyToken(t *testing.T) {
 
 func TestUpdateActivityBadToken(t *testing.T) {
    expected := http.StatusForbidden
-   newActivity := newActivity( )
+   newActivity := workActivity( )
    status, _ := client.UpdateActivity(cfg.Endpoint, goodCid, badToken, newActivity )
    if status != expected {
       t.Fatalf("Expected %v, got %v\n", expected, status)

@@ -11,6 +11,7 @@ import (
    "testing"
    "time"
     "gopkg.in/yaml.v2"
+   //"orcidaccessws/orcid"
 )
 
 type config struct {
@@ -34,6 +35,10 @@ var badSearchStart = "x"
 var goodSearchMax = "25"
 var badSearchMax = "x"
 
+var lc_alpha_chars = "abcdefghijklmnopqrstuvwxyz"
+var numeric_chars = "0123456789"
+var numeric_and_lc_alpha_chars = numeric_chars + lc_alpha_chars
+
 //
 // test helpers
 //
@@ -44,12 +49,12 @@ func randomOrcidAttributes() api.OrcidAttributes {
    rand.Seed(time.Now().UnixNano())
 
    // list of possible characters for the ORCID
-   possible := []rune("0123456789")
+   possible := []rune( numeric_chars )
    orcid := fmt.Sprintf("%s-%s-%s-%s", randomString(possible, 4), randomString(possible, 4),
       randomString(possible, 4), randomString(possible, 4))
 
    // list of possible characters for the access tokens
-   possible = []rune("abcdefghijklmnopqrstuvwxyz0123456789")
+   possible = []rune( numeric_and_lc_alpha_chars )
    oauth_access := randomString(possible, 32 )
    oauth_renew := randomString(possible, 32 )
    oauth_scope := "/my/scope"
@@ -63,9 +68,52 @@ func randomCid() string {
    rand.Seed(time.Now().UnixNano())
 
    // list of possible characters
-   possible := []rune("abcdefghijklmnopqrstuvwxyz0123456789")
+   possible := []rune( numeric_and_lc_alpha_chars )
 
    return randomString(possible, 5)
+}
+
+func randomUpdateCode() string {
+
+   // see the RNG
+   rand.Seed(time.Now().UnixNano())
+
+   // list of possible characters
+   possible := []rune( numeric_chars )
+
+   return randomString(possible, 6)
+}
+
+func workActivity( ) api.ActivityUpdate {
+
+   // see the RNG
+   rand.Seed(time.Now().UnixNano())
+
+   possible := []rune( lc_alpha_chars )
+   title := fmt.Sprintf( "Title: %s", randomString(possible, 32 ) )
+   abstract := fmt.Sprintf( "Abstract: %s", randomString(possible, 32 ) )
+   pub_date := "2017-03-05"
+   url := "http://google.com"
+   persons := makePeople( 2 )
+   rt := "xxx"
+
+   work := api.WorkSchema { Title: title, Abstract: abstract, PublicationDate: pub_date, Url: url, Authors: persons, ResourceType: rt }
+   return api.ActivityUpdate{ Work: work }
+}
+
+func makePeople( number int ) []api.Person {
+
+   people := make( []api.Person, number, number )
+   for ix := 0; ix < number; ix++ {
+
+      p := api.Person{
+         Index:     ix,
+         FirstName: fmt.Sprintf( "first-%d", ix + 1 ),
+         LastName:  fmt.Sprintf( "last-%d", ix + 1 ),
+      }
+      people[ix] = p
+   }
+   return people
 }
 
 func randomString(possible []rune, sz int) string {
@@ -75,11 +123,6 @@ func randomString(possible []rune, sz int) string {
       b[i] = possible[rand.Intn(len(possible))]
    }
    return string(b)
-}
-
-func newActivity( ) api.ActivityUpdate {
-
-   return api.ActivityUpdate{ }
 }
 
 func ensureIdenticalOrcidsAttributes(t *testing.T, attributes1 *api.OrcidAttributes, attributes2 *api.OrcidAttributes ) {

@@ -81,6 +81,13 @@ var routes = Routes{
 	},
 
 	Route{
+		"UpdateActivity",
+		"PUT",
+		"/cid/{id}/activity",
+		handlers.UpdateActivity,
+	},
+
+	Route{
 		"DeleteOrcidAttributes",
 		"DELETE",
 		"/cid/{id}",

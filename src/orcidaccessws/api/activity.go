@@ -18,7 +18,6 @@ type WorkSchema struct {
    PublicationDate string   `json:"publication_date,omitempty"`
    Url             string   `json:"url,omitempty"`
    Authors         []Person `json:"authors,omitempty"`
-   GeneralType     string   `json:"general_type,omitempty"`
    ResourceType    string   `json:"resource_type,omitempty"`
 }
 
