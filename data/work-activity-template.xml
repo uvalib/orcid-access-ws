@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<work:work
+	xmlns:common="http://www.orcid.org/ns/common" xmlns:work="http://www.orcid.org/ns/work"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.orcid.org/ns/work /work-2.0.xsd ">
+
+	{{if .Title }}
+	<work:title>
+		<common:title>{{ .Title }}</common:title>
+	</work:title>
+	{{ end }}
+
+	{{if .Abstract }}
+	<work:short-description>{{ .Abstract }}</work:short-description>
+	{{ end }}
+
+	{{if .ResourceType }}
+	<work:type>{{ .ResourceType }}</work:type>
+	{{ end }}
+
+	{{if .PublicationYear | or .PublicationMonth | or .PublicationDay }}
+	<common:publication-date>
+		{{if .PublicationYear }}
+		<common:year>{{ .PublicationYear }}</common:year>
+		{{ end }}
+		{{if .PublicationMonth }}
+		<common:month>{{ .PublicationMonth }}</common:month>
+		{{ end }}
+		{{if .PublicationDay }}
+		<common:day>{{ .PublicationDay }}</common:day>
+		{{ end }}
+	</common:publication-date>
+	{{ end }}
+
+	{{if .Identifier | and .Uri }}
+	<common:external-ids>
+		<common:external-id>
+			<common:external-id-type>doi</common:external-id-type>
+			<common:external-id-value>{{ .Identifier }}</common:external-id-value>
+			<common:external-id-url>{{ .Uri }}</common:external-id-url>
+			<common:external-id-relationship>self</common:external-id-relationship>
+		</common:external-id>
+	</common:external-ids>
+	{{ end }}
+
+	{{if .Authors }}
+	<work:contributors>
+		{{range $element := .Authors }}
+		<work:contributor>
+			{{if $element.FirstName | and $element.LastName }}
+
+			<work:credit-name>{{ $element.FirstName }} {{ $element.LastName }}</work:credit-name>
+			<work:contributor-attributes>
+				{{if $element.Index == 0 }}
+				<work:contributor-sequence>first</work:contributor-sequence>
+				{{ else }}
+				<work:contributor-sequence>additional</work:contributor-sequence>
+				{{ end }}
+
+				<work:contributor-role>author</work:contributor-role>
+			</work:contributor-attributes>
+			{{ end }}
+
+		</work:contributor>
+
+		{{ end }}
+	</work:contributors>
+	{{ end }}
+
+</work:work>
