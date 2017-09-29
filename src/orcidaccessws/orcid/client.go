@@ -13,10 +13,21 @@ import (
 	"time"
 )
 
+//
+// update the
+//
+func UpdateOrcidActivity( orcid string, oauth_token string, activity api.ActivityUpdate ) ( string, int, error ) {
+
+	return "12345", http.StatusOK, nil
+}
+
+//
+// get details for the specified ORCID
+//
 func GetOrcidDetails(orcid string) (*api.OrcidDetails, int, error) {
 
 	// construct target URL
-	url := fmt.Sprintf("%s/%s/orcid-bio", config.Configuration.OrcidServiceUrl, orcid)
+	url := fmt.Sprintf("%s/%s/orcid-bio", config.Configuration.OrcidPublicUrl, orcid)
 	//fmt.Printf( "%s\n", url )
 
 	// issue the request
@@ -60,10 +71,13 @@ func GetOrcidDetails(orcid string) (*api.OrcidDetails, int, error) {
 	return transformDetailsResponse(&pr.Profile), http.StatusOK, nil
 }
 
+//
+// search ORCID given the supplied parameters and return the set of ORCID details that match
+//
 func SearchOrcid(search string, start_ix string, max_results string) ([]*api.OrcidDetails, int, int, error) {
 
 	// construct target URL
-	url := fmt.Sprintf("%s/search/orcid-bio?q=%s&start=%s&rows=%s", config.Configuration.OrcidServiceUrl,
+	url := fmt.Sprintf("%s/search/orcid-bio?q=%s&start=%s&rows=%s", config.Configuration.OrcidPublicUrl,
 		htmlEncode(search), start_ix, max_results)
 	fmt.Printf("%s\n", url)
 

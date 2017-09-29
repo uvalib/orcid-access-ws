@@ -54,6 +54,39 @@ func TestUpdateActivityUpdate(t *testing.T) {
    }
 }
 
+func TestUpdateActivityEmptyWorkTitle(t *testing.T) {
+   expected := http.StatusBadRequest
+   id := goodCid
+   newActivity := workActivity( )
+   newActivity.Work.Title = ""
+   status, _ := client.UpdateActivity(cfg.Endpoint, id, goodToken, newActivity )
+   if status != expected {
+      t.Fatalf("Expected %v, got %v\n", expected, status)
+   }
+}
+
+func TestUpdateActivityEmptyWorkResourceType(t *testing.T) {
+   expected := http.StatusBadRequest
+   id := goodCid
+   newActivity := workActivity( )
+   newActivity.Work.ResourceType = ""
+   status, _ := client.UpdateActivity(cfg.Endpoint, id, goodToken, newActivity )
+   if status != expected {
+      t.Fatalf("Expected %v, got %v\n", expected, status)
+   }
+}
+
+func TestUpdateActivityEmptyWorkUrl(t *testing.T) {
+   expected := http.StatusBadRequest
+   id := goodCid
+   newActivity := workActivity( )
+   newActivity.Work.Url = ""
+   status, _ := client.UpdateActivity(cfg.Endpoint, id, goodToken, newActivity )
+   if status != expected {
+      t.Fatalf("Expected %v, got %v\n", expected, status)
+   }
+}
+
 func TestUpdateActivityEmptyId(t *testing.T) {
    expected := http.StatusBadRequest
    newActivity := workActivity( )
