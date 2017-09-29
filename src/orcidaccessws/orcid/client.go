@@ -1,16 +1,16 @@
 package orcid
 
 import (
-	"encoding/json"
-	"fmt"
-	"github.com/parnurzeal/gorequest"
-	"io"
-	"io/ioutil"
-	"net/http"
-	"orcidaccessws/api"
-	"orcidaccessws/config"
-	"orcidaccessws/logger"
-	"time"
+   "encoding/json"
+   "fmt"
+   "github.com/parnurzeal/gorequest"
+   "io"
+   "io/ioutil"
+   "net/http"
+   "orcidaccessws/api"
+   "orcidaccessws/config"
+   "orcidaccessws/logger"
+   "time"
 )
 
 //
@@ -18,7 +18,51 @@ import (
 //
 func UpdateOrcidActivity( orcid string, oauth_token string, activity api.ActivityUpdate ) ( string, int, error ) {
 
-	return "12345", http.StatusOK, nil
+   logActivityUpdateRequest( activity )
+
+   // construct target URL
+   url := fmt.Sprintf("%s/%s/work", config.Configuration.OrcidSecureUrl, orcid)
+   if len( activity.UpdateCode ) != 0 {
+      url = fmt.Sprintf( "%s/%s", url, activity.UpdateCode )
+   }
+   //fmt.Printf( "%s\n", url )
+
+   // build the request body
+   requestBody, err := makeUpdateActivityBody( activity )
+
+   // check for errors
+   if err != nil {
+      logger.Log(fmt.Sprintf("ERROR: creating service payload %s", err))
+      return "", http.StatusBadRequest, err
+   }
+
+   // construct the auth field
+   auth := fmt.Sprintf( "Bearer %s", oauth_token )
+
+   // issue the request
+   start := time.Now()
+   resp, _, errs := gorequest.New().
+      SetDebug(config.Configuration.Debug).
+      Post( url ).
+      Send( requestBody ).
+      Timeout( time.Duration(config.Configuration.Timeout)*time.Second ).
+      Set("Content-Type", "application/vnd.orcid+xml" ).
+      Set("Authorization", auth ).
+      End()
+   duration := time.Since(start)
+
+   // check for errors
+   if errs != nil {
+      logger.Log(fmt.Sprintf("ERROR: service (%s) returns %s in %s", url, errs, duration))
+      return "", http.StatusInternalServerError, err
+   }
+
+   defer io.Copy(ioutil.Discard, resp.Body)
+   defer resp.Body.Close()
+
+   logger.Log(fmt.Sprintf("Service (%s) returns http %d in %s", url, resp.StatusCode, duration))
+
+   return "12345", http.StatusOK, nil
 }
 
 //
@@ -26,49 +70,49 @@ func UpdateOrcidActivity( orcid string, oauth_token string, activity api.Activit
 //
 func GetOrcidDetails(orcid string) (*api.OrcidDetails, int, error) {
 
-	// construct target URL
-	url := fmt.Sprintf("%s/%s/orcid-bio", config.Configuration.OrcidPublicUrl, orcid)
-	//fmt.Printf( "%s\n", url )
+   // construct target URL
+   url := fmt.Sprintf("%s/%s/orcid-bio", config.Configuration.OrcidPublicUrl, orcid)
+   //fmt.Printf( "%s\n", url )
 
-	// issue the request
-	start := time.Now()
-	resp, body, errs := gorequest.New().
-		SetDebug(config.Configuration.Debug).
-		Get(url).
-		Timeout(time.Duration(config.Configuration.Timeout)*time.Second).
-		Set("Accept", "application/json").
-		End()
-	duration := time.Since(start)
+   // issue the request
+   start := time.Now()
+   resp, body, errs := gorequest.New().
+      SetDebug(config.Configuration.Debug).
+      Get(url).
+      Timeout(time.Duration(config.Configuration.Timeout)*time.Second).
+      Set("Accept", "application/json").
+      End()
+   duration := time.Since(start)
 
-	// check for errors
-	if errs != nil {
-		logger.Log(fmt.Sprintf("ERROR: service (%s) returns %s in %s", url, errs, duration))
-		return nil, http.StatusInternalServerError, errs[0]
-	}
+   // check for errors
+   if errs != nil {
+      logger.Log(fmt.Sprintf("ERROR: service (%s) returns %s in %s", url, errs, duration))
+      return nil, http.StatusInternalServerError, errs[0]
+   }
 
-	defer io.Copy(ioutil.Discard, resp.Body)
-	defer resp.Body.Close()
+   defer io.Copy(ioutil.Discard, resp.Body)
+   defer resp.Body.Close()
 
-	logger.Log(fmt.Sprintf("Service (%s) returns http %d in %s", url, resp.StatusCode, duration))
+   logger.Log(fmt.Sprintf("Service (%s) returns http %d in %s", url, resp.StatusCode, duration))
 
-	// check the common response elements
-	status, err := checkCommonResponse(body)
-	if err != nil {
-		return nil, http.StatusInternalServerError, err
-	}
+   // check the common response elements
+   status, err := checkCommonResponse(body)
+   if err != nil {
+      return nil, http.StatusInternalServerError, err
+   }
 
-	if status != http.StatusOK {
-		return nil, status, nil
-	}
+   if status != http.StatusOK {
+      return nil, status, nil
+   }
 
-	pr := orcidProfileResponse{}
-	err = json.Unmarshal([]byte(body), &pr)
-	if err != nil {
-		logger.Log(fmt.Sprintf("ERROR: json unmarshal: %s", err))
-		return nil, http.StatusInternalServerError, err
-	}
+   pr := orcidProfileResponse{}
+   err = json.Unmarshal([]byte(body), &pr)
+   if err != nil {
+      logger.Log(fmt.Sprintf("ERROR: json unmarshal: %s", err))
+      return nil, http.StatusInternalServerError, err
+   }
 
-	return transformDetailsResponse(&pr.Profile), http.StatusOK, nil
+   return transformDetailsResponse(&pr.Profile), http.StatusOK, nil
 }
 
 //
@@ -76,52 +120,52 @@ func GetOrcidDetails(orcid string) (*api.OrcidDetails, int, error) {
 //
 func SearchOrcid(search string, start_ix string, max_results string) ([]*api.OrcidDetails, int, int, error) {
 
-	// construct target URL
-	url := fmt.Sprintf("%s/search/orcid-bio?q=%s&start=%s&rows=%s", config.Configuration.OrcidPublicUrl,
-		htmlEncode(search), start_ix, max_results)
-	fmt.Printf("%s\n", url)
+   // construct target URL
+   url := fmt.Sprintf("%s/search/orcid-bio?q=%s&start=%s&rows=%s", config.Configuration.OrcidPublicUrl,
+      htmlEncodeString(search), start_ix, max_results)
+   fmt.Printf("%s\n", url)
 
-	// issue the request
-	start := time.Now()
-	resp, body, errs := gorequest.New().
-		SetDebug(config.Configuration.Debug).
-		Get(url).
-		Timeout(time.Duration(config.Configuration.Timeout)*time.Second).
-		Set("Accept", "application/json").
-		End()
-	duration := time.Since(start)
+   // issue the request
+   start := time.Now()
+   resp, body, errs := gorequest.New().
+      SetDebug(config.Configuration.Debug).
+      Get(url).
+      Timeout(time.Duration(config.Configuration.Timeout)*time.Second).
+      Set("Accept", "application/json").
+      End()
+   duration := time.Since(start)
 
-	// check for errors
-	if errs != nil {
-		logger.Log(fmt.Sprintf("ERROR: service (%s) returns %s in %s", url, errs, duration))
-		return nil, 0, http.StatusInternalServerError, errs[0]
-	}
+   // check for errors
+   if errs != nil {
+      logger.Log(fmt.Sprintf("ERROR: service (%s) returns %s in %s", url, errs, duration))
+      return nil, 0, http.StatusInternalServerError, errs[0]
+   }
 
-	defer io.Copy(ioutil.Discard, resp.Body)
-	defer resp.Body.Close()
+   defer io.Copy(ioutil.Discard, resp.Body)
+   defer resp.Body.Close()
 
-	logger.Log(fmt.Sprintf("Service (%s) returns http %d in %s", url, resp.StatusCode, duration))
+   logger.Log(fmt.Sprintf("Service (%s) returns http %d in %s", url, resp.StatusCode, duration))
 
-	// check the common response elements
-	status, err := checkCommonResponse(body)
-	if err != nil {
-		return nil, 0, http.StatusInternalServerError, err
-	}
+   // check the common response elements
+   status, err := checkCommonResponse(body)
+   if err != nil {
+      return nil, 0, http.StatusInternalServerError, err
+   }
 
-	if status != http.StatusOK {
-		return nil, 0, status, err
-	}
+   if status != http.StatusOK {
+      return nil, 0, status, err
+   }
 
-	sr := orcidSearchResponse{}
-	err = json.Unmarshal([]byte(body), &sr)
-	if err != nil {
-		logger.Log(fmt.Sprintf("ERROR: json unmarshal: %s", err))
-		return nil, 0, http.StatusInternalServerError, err
-	}
+   sr := orcidSearchResponse{}
+   err = json.Unmarshal([]byte(body), &sr)
+   if err != nil {
+      logger.Log(fmt.Sprintf("ERROR: json unmarshal: %s", err))
+      return nil, 0, http.StatusInternalServerError, err
+   }
 
-	//if sr.SearchResults.Results == nil || len( sr.SearchResults.Results ) == 0 {
-	//    return nil, sr.SearchResults.TotalFound, http.StatusNotFound, nil
-	//}
+   //if sr.SearchResults.Results == nil || len( sr.SearchResults.Results ) == 0 {
+   //    return nil, sr.SearchResults.TotalFound, http.StatusNotFound, nil
+   //}
 
-	return transformSearchResponse(sr.SearchResults), sr.SearchResults.TotalFound, http.StatusOK, nil
+   return transformSearchResponse(sr.SearchResults), sr.SearchResults.TotalFound, http.StatusOK, nil
 }

@@ -90,8 +90,8 @@ func workActivity( ) api.ActivityUpdate {
    rand.Seed(time.Now().UnixNano())
 
    possible := []rune( lc_alpha_chars )
-   title := fmt.Sprintf( "Title: %s", randomString(possible, 32 ) )
-   abstract := fmt.Sprintf( "Abstract: %s", randomString(possible, 32 ) )
+   title := fmt.Sprintf( "Title-%s", randomString(possible, 32 ) )
+   abstract := fmt.Sprintf( "Abstract-%s", randomString(possible, 32 ) )
    pub_date := "2017-03-05"
    url := "http://google.com"
    persons := makePeople( 2 )
