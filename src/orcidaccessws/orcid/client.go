@@ -12,6 +12,7 @@ import (
    "orcidaccessws/logger"
    "time"
    "github.com/pkg/errors"
+   "strings"
 )
 
 var emptyUpdateCode = ""
@@ -23,9 +24,12 @@ func UpdateOrcidActivity( orcid string, oauth_token string, activity api.Activit
 
    logActivityUpdateRequest( activity )
 
+   // determine if we are creating a new activity or updating an existing one
+   existingActivity := len( activity.UpdateCode ) != 0
+
    // construct target URL
    url := fmt.Sprintf("%s/%s/work", config.Configuration.OrcidSecureUrl, orcid)
-   if len( activity.UpdateCode ) != 0 {
+   if existingActivity == true {
       url = fmt.Sprintf( "%s/%s", url, activity.UpdateCode )
    }
    fmt.Printf( "%s\n", url )
@@ -44,21 +48,36 @@ func UpdateOrcidActivity( orcid string, oauth_token string, activity api.Activit
 
    // issue the request
    start := time.Now()
-   resp, body, errs := gorequest.New().
-      SetDebug(config.Configuration.Debug).
-      Post( url ).
-      Send( requestBody ).
-      Timeout( time.Duration(config.Configuration.Timeout)*time.Second ).
-      Set("Accept", "application/json").
-      Set("Content-Type", "application/vnd.orcid+xml" ).
-      Set("Authorization", auth ).
-      End()
+   var resp gorequest.Response
+   var body string
+   var errs []error
+   if existingActivity == true {
+      resp, body, errs = gorequest.New().
+         SetDebug(config.Configuration.Debug).
+         Put( url ).
+         Set("Accept", "application/json").
+         Set("Content-Type", "application/xml").
+         Set("Authorization", auth).
+         Send(requestBody).
+         Timeout(time.Duration(config.Configuration.Timeout) * time.Second).
+         End( )
+   } else {
+      resp, body, errs = gorequest.New().
+         SetDebug(config.Configuration.Debug).
+         Post( url ).
+         Set("Accept", "application/json").
+         Set("Content-Type", "application/xml").
+         Set("Authorization", auth).
+         Send(requestBody).
+         Timeout(time.Duration(config.Configuration.Timeout) * time.Second).
+         End( )
+   }
    duration := time.Since(start)
 
    // check for errors
    if errs != nil {
       logger.Log(fmt.Sprintf("ERROR: service (%s) returns %s in %s", url, errs, duration))
-      return emptyUpdateCode, http.StatusInternalServerError, err
+      return emptyUpdateCode, http.StatusInternalServerError, errs[0]
    }
 
    defer io.Copy(ioutil.Discard, resp.Body)
@@ -66,7 +85,23 @@ func UpdateOrcidActivity( orcid string, oauth_token string, activity api.Activit
 
    logger.Log(fmt.Sprintf("Service (%s) returns http %d in %s", url, resp.StatusCode, duration))
 
-   // decode the response
+   // the happy update path; just return the original update code
+   if existingActivity == true && resp.StatusCode == http.StatusOK {
+      return activity.UpdateCode, http.StatusOK, nil
+   }
+
+   // the happy create path, pull the push code from the location header
+   if existingActivity == false && resp.StatusCode == http.StatusCreated {
+      tokens := strings.Split( resp.Header.Get("Location" ), "/" )
+      if len( tokens ) != 0 {
+         return tokens[ len( tokens ) - 1 ], http.StatusOK, nil
+      }
+
+      // unexpected, return an error
+      return emptyUpdateCode, http.StatusInternalServerError, errors.New( "Unexpected/missing location header in response" )
+   }
+
+   // something unexpected happened, decode the response
    aur := activityUpdateResponse{}
    err = json.Unmarshal([]byte(body), &aur)
    if err != nil {
@@ -74,14 +109,21 @@ func UpdateOrcidActivity( orcid string, oauth_token string, activity api.Activit
       return emptyUpdateCode, http.StatusInternalServerError, err
    }
 
-   // if ORCID reported an error
+   //
+   // ORCID reported an error
+   //
    if len( aur.Error ) != 0 {
-      logger.Log(fmt.Sprintf("ERROR: Service (%s) reports: %s (%s)", aur.Error, aur.ErrorDescription ))
+      logger.Log(fmt.Sprintf("ERROR: service reports %s (%s)", aur.Error, aur.ErrorDescription ))
       return emptyUpdateCode, resp.StatusCode, errors.New( aur.ErrorDescription )
    }
 
-//   logger.Log(fmt.Sprintf("RESPONSE BODY: %s", body))
-   return "12345", http.StatusOK, nil
+   if aur.ResponseCode != http.StatusOK {
+      logger.Log(fmt.Sprintf("ERROR: service reports: %d (%s)", aur.ResponseCode, aur.DeveloperMessage ))
+      return emptyUpdateCode, aur.ResponseCode, errors.New( aur.DeveloperMessage )
+   }
+
+   // unclear why we are here but an error occurred
+   return emptyUpdateCode, http.StatusInternalServerError, errors.New( "Unhandled error case" )
 }
 
 //
@@ -98,8 +140,8 @@ func GetOrcidDetails(orcid string) (*api.OrcidDetails, int, error) {
    resp, body, errs := gorequest.New().
       SetDebug(config.Configuration.Debug).
       Get(url).
-      Timeout(time.Duration(config.Configuration.Timeout)*time.Second).
       Set("Accept", "application/json").
+      Timeout(time.Duration(config.Configuration.Timeout)*time.Second).
       End()
    duration := time.Since(start)
 
@@ -149,8 +191,8 @@ func SearchOrcid(search string, start_ix string, max_results string) ([]*api.Orc
    resp, body, errs := gorequest.New().
       SetDebug(config.Configuration.Debug).
       Get(url).
-      Timeout(time.Duration(config.Configuration.Timeout)*time.Second).
       Set("Accept", "application/json").
+      Timeout(time.Duration(config.Configuration.Timeout)*time.Second).
       End()
    duration := time.Since(start)
 

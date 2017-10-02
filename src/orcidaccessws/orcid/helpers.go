@@ -43,6 +43,7 @@ func makeUpdateActivityBody( activity api.ActivityUpdate ) (string, error) {
 
    // create our template data structure
    data := struct {
+      PutCode           string
       Title             string
       Abstract          string
       ResourceType      string
@@ -53,13 +54,14 @@ func makeUpdateActivityBody( activity api.ActivityUpdate ) (string, error) {
       Url               string
       Authors           []api.Person
    }{
+      activity.UpdateCode,
       htmlEncodeString( activity.Work.Title ),
       htmlEncodeString( activity.Work.Abstract ),
       activity.Work.ResourceType,
       YYYY,
       MM,
       DD,
-      "xxx",
+      idFromDoiUrl( activity.Work.Url ),
       activity.Work.Url,
       htmlEncodePersonArray( api.SortPeople(activity.Work.Authors ) ),
    }
@@ -72,7 +74,6 @@ func makeUpdateActivityBody( activity api.ActivityUpdate ) (string, error) {
    }
 
    s := buffer.String()
-   //s = filterUnacceptableCharacters(s)
 
    if config.Configuration.Debug {
       fmt.Printf("XML:\n%s\n", s)
@@ -193,3 +194,10 @@ func splitDate(date string) (string, string, string) {
    return YYYY, MM, DD
 }
 
+func idFromDoiUrl( url string ) string {
+   return strings.Replace( url, "https://doi.org/", "", -1)
+}
+
+//
+// end of file
+//

@@ -123,6 +123,17 @@ func TestUpdateActivityBadToken(t *testing.T) {
    }
 }
 
+func TestUpdateActivityBadWorkResourceType(t *testing.T) {
+   expected := http.StatusBadRequest
+   id := goodCid
+   newActivity := workActivity( )
+   newActivity.Work.ResourceType = "a-bad-resource-type"
+   status, _ := client.UpdateActivity(cfg.Endpoint, id, goodToken, newActivity )
+   if status != expected {
+      t.Fatalf("Expected %v, got %v\n", expected, status)
+   }
+}
+
 //
 // end of file
 //

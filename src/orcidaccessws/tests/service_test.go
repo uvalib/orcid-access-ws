@@ -92,12 +92,12 @@ func workActivity( ) api.ActivityUpdate {
    possible := []rune( lc_alpha_chars )
    title := fmt.Sprintf( "Title-%s", randomString(possible, 32 ) )
    abstract := fmt.Sprintf( "Abstract-%s", randomString(possible, 32 ) )
-   pub_date := "2017-03-05"
-   url := "http://google.com"
+   pubDate := "2017-03-05"
+   url := fmt.Sprintf( "www.foobar.com/%s", randomString(possible, 16 ) )
    persons := makePeople( 2 )
    rt := "journal-article"
 
-   work := api.WorkSchema { Title: title, Abstract: abstract, PublicationDate: pub_date, Url: url, Authors: persons, ResourceType: rt }
+   work := api.WorkSchema { Title: title, Abstract: abstract, PublicationDate: pubDate, Url: url, Authors: persons, ResourceType: rt }
    return api.ActivityUpdate{ Work: work }
 }
 
