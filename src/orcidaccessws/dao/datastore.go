@@ -108,12 +108,18 @@ func (db *DB) SetOrcidAttributesByCid(id string, attributes api.OrcidAttributes 
 
    } else {
 
+      // a special case where we preserve the existing ORCID if none provided
+      newOrcid := existing[0].Orcid
+      if len( attributes.Orcid ) != 0 {
+         newOrcid = attributes.Orcid
+      }
+
       stmt, err := db.Prepare("UPDATE orcid_attributes SET orcid = ?, oauth_access = ?, oauth_refresh = ?, oauth_scope = ?, updated_at = NOW( ) WHERE cid = ? LIMIT 1")
       if err != nil {
          return err
       }
       _, err = stmt.Exec(
-         attributes.Orcid,
+         newOrcid,
          attributes.OauthAccessToken,
          attributes.OauthRefreshToken,
          attributes.OauthScope,

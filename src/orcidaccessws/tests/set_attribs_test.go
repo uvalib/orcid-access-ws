@@ -2,7 +2,7 @@ package test
 
 import (
    "net/http"
-   "orcidaccessws/api"
+   //"orcidaccessws/api"
    "orcidaccessws/client"
    "testing"
 )
@@ -81,14 +81,14 @@ func TestSetOrcidAttributesEmptyId(t *testing.T) {
    }
 }
 
-func TestSetOrcidAttributesEmptyOrcid(t *testing.T) {
-   expected := http.StatusBadRequest
-   attributes := api.OrcidAttributes{ Orcid: empty }
-   status := client.SetOrcidAttributes(cfg.Endpoint, goodCid, goodToken, attributes )
-   if status != expected {
-      t.Fatalf("Expected %v, got %v\n", expected, status)
-   }
-}
+//func TestSetOrcidAttributesEmptyOrcid(t *testing.T) {
+//   expected := http.StatusBadRequest
+//   attributes := api.OrcidAttributes{ Orcid: empty }
+//   status := client.SetOrcidAttributes(cfg.Endpoint, goodCid, goodToken, attributes )
+//   if status != expected {
+//      t.Fatalf("Expected %v, got %v\n", expected, status)
+//   }
+//}
 
 func TestSetOrcidAttributesEmptyToken(t *testing.T) {
    expected := http.StatusBadRequest

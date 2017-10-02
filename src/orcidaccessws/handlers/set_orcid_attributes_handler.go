@@ -52,11 +52,11 @@ func SetOrcidAttributes(w http.ResponseWriter, r *http.Request) {
    defer r.Body.Close()
 
    // at minimum, the ORCID must be defined
-   if isEmpty(attributes.Orcid) {
-      status := http.StatusBadRequest
-      encodeStandardResponse(w, status, http.StatusText(status))
-      return
-   }
+   //if isEmpty(attributes.Orcid) {
+   //   status := http.StatusBadRequest
+   //   encodeStandardResponse(w, status, http.StatusText(status))
+   //   return
+   //}
 
    // set the ORCID attributes
    err := dao.Database.SetOrcidAttributesByCid(id, attributes)
