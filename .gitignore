@@ -5,3 +5,4 @@
 /src/orcidaccessws/tests/service_test.yml
 /env.*
 /buildtag.build-0
+/tmp
