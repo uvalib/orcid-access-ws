@@ -1,13 +1,10 @@
 package orcid
 
-//import (
-//)
-
 //
 // v1.2 response structure
 //
 
-const PROTOCOL_VERSION = "1.2"
+const PUBLIC_PROTOCOL_VERSION = "1.2"
 
 // all responses have these attributes
 type orcidCommonResponse struct {

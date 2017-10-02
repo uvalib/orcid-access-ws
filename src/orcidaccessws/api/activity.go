@@ -4,6 +4,9 @@ import (
    "sort"
 )
 
+//
+// the activity update request
+//
 type ActivityUpdate struct {
    UpdateCode   string      `json:"update_code,omitempty"`
    Work         WorkSchema  `json:"work,omitempty"`

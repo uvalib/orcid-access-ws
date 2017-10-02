@@ -11,7 +11,10 @@ import (
    "orcidaccessws/config"
    "orcidaccessws/logger"
    "time"
+   "github.com/pkg/errors"
 )
+
+var emptyUpdateCode = ""
 
 //
 // update the
@@ -25,7 +28,7 @@ func UpdateOrcidActivity( orcid string, oauth_token string, activity api.Activit
    if len( activity.UpdateCode ) != 0 {
       url = fmt.Sprintf( "%s/%s", url, activity.UpdateCode )
    }
-   //fmt.Printf( "%s\n", url )
+   fmt.Printf( "%s\n", url )
 
    // build the request body
    requestBody, err := makeUpdateActivityBody( activity )
@@ -33,7 +36,7 @@ func UpdateOrcidActivity( orcid string, oauth_token string, activity api.Activit
    // check for errors
    if err != nil {
       logger.Log(fmt.Sprintf("ERROR: creating service payload %s", err))
-      return "", http.StatusBadRequest, err
+      return emptyUpdateCode, http.StatusBadRequest, err
    }
 
    // construct the auth field
@@ -41,11 +44,12 @@ func UpdateOrcidActivity( orcid string, oauth_token string, activity api.Activit
 
    // issue the request
    start := time.Now()
-   resp, _, errs := gorequest.New().
+   resp, body, errs := gorequest.New().
       SetDebug(config.Configuration.Debug).
       Post( url ).
       Send( requestBody ).
       Timeout( time.Duration(config.Configuration.Timeout)*time.Second ).
+      Set("Accept", "application/json").
       Set("Content-Type", "application/vnd.orcid+xml" ).
       Set("Authorization", auth ).
       End()
@@ -54,7 +58,7 @@ func UpdateOrcidActivity( orcid string, oauth_token string, activity api.Activit
    // check for errors
    if errs != nil {
       logger.Log(fmt.Sprintf("ERROR: service (%s) returns %s in %s", url, errs, duration))
-      return "", http.StatusInternalServerError, err
+      return emptyUpdateCode, http.StatusInternalServerError, err
    }
 
    defer io.Copy(ioutil.Discard, resp.Body)
@@ -62,6 +66,21 @@ func UpdateOrcidActivity( orcid string, oauth_token string, activity api.Activit
 
    logger.Log(fmt.Sprintf("Service (%s) returns http %d in %s", url, resp.StatusCode, duration))
 
+   // decode the response
+   aur := activityUpdateResponse{}
+   err = json.Unmarshal([]byte(body), &aur)
+   if err != nil {
+      logger.Log(fmt.Sprintf("ERROR: json unmarshal: %s", err))
+      return emptyUpdateCode, http.StatusInternalServerError, err
+   }
+
+   // if ORCID reported an error
+   if len( aur.Error ) != 0 {
+      logger.Log(fmt.Sprintf("ERROR: Service (%s) reports: %s (%s)", aur.Error, aur.ErrorDescription ))
+      return emptyUpdateCode, resp.StatusCode, errors.New( aur.ErrorDescription )
+   }
+
+//   logger.Log(fmt.Sprintf("RESPONSE BODY: %s", body))
    return "12345", http.StatusOK, nil
 }
 
@@ -169,3 +188,7 @@ func SearchOrcid(search string, start_ix string, max_results string) ([]*api.Orc
 
    return transformSearchResponse(sr.SearchResults), sr.SearchResults.TotalFound, http.StatusOK, nil
 }
+
+//
+// end of file
+//

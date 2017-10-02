@@ -16,6 +16,8 @@ import (
    "orcidaccessws/orcid"
 )
 
+var emptyUpdateCode = ""
+
 func UpdateActivity(w http.ResponseWriter, r *http.Request) {
 
    vars := mux.Vars(r)
@@ -29,14 +31,14 @@ func UpdateActivity(w http.ResponseWriter, r *http.Request) {
    // parameters OK?
    if isEmpty(id) || isEmpty(token) {
       status := http.StatusBadRequest
-      encodeUpdateActivityResponse(w, status, http.StatusText(status), "" )
+      encodeUpdateActivityResponse(w, status, http.StatusText(status), emptyUpdateCode )
       return
    }
 
    // validate the token
    if authtoken.Validate(config.Configuration.AuthTokenEndpoint, "getorcid", token, config.Configuration.Timeout) == false {
       status := http.StatusForbidden
-      encodeUpdateActivityResponse(w, status, http.StatusText(status), "")
+      encodeUpdateActivityResponse(w, status, http.StatusText(status), emptyUpdateCode )
       return
    }
 
@@ -46,7 +48,7 @@ func UpdateActivity(w http.ResponseWriter, r *http.Request) {
    if err := decoder.Decode(&activity); err != nil {
       logger.Log(fmt.Sprintf("ERROR: decoding request payload: %s", err))
       status := http.StatusBadRequest
-      encodeUpdateActivityResponse(w, status, http.StatusText(status), "")
+      encodeUpdateActivityResponse(w, status, http.StatusText(status), emptyUpdateCode )
       return
    }
 
@@ -56,7 +58,7 @@ func UpdateActivity(w http.ResponseWriter, r *http.Request) {
    if err := validateRequestPayload( activity ); err != nil {
       logger.Log(fmt.Sprintf("ERROR: invalid request payload: %s", err))
       status := http.StatusBadRequest
-      encodeUpdateActivityResponse(w, status, http.StatusText(status), "")
+      encodeUpdateActivityResponse(w, status, http.StatusText(status), emptyUpdateCode )
       return
    }
 
@@ -74,7 +76,7 @@ func UpdateActivity(w http.ResponseWriter, r *http.Request) {
    // we did not find the item, return 404
    if attributes == nil || len(attributes) == 0 {
       status := http.StatusNotFound
-      encodeUpdateActivityResponse(w, status, http.StatusText(status), "")
+      encodeUpdateActivityResponse(w, status, http.StatusText(status), emptyUpdateCode )
       return
    }
 
@@ -90,7 +92,7 @@ func UpdateActivity(w http.ResponseWriter, r *http.Request) {
    // we did got an error, return it
    if status != http.StatusOK {
       encodeUpdateActivityResponse(w, status,
-         fmt.Sprintf("%s (%s)", http.StatusText(status), err), "")
+         fmt.Sprintf("%s (%s)", http.StatusText(status), err), emptyUpdateCode )
       return
    }
 

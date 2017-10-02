@@ -95,7 +95,7 @@ func workActivity( ) api.ActivityUpdate {
    pub_date := "2017-03-05"
    url := "http://google.com"
    persons := makePeople( 2 )
-   rt := "xxx"
+   rt := "journal-article"
 
    work := api.WorkSchema { Title: title, Abstract: abstract, PublicationDate: pub_date, Url: url, Authors: persons, ResourceType: rt }
    return api.ActivityUpdate{ Work: work }

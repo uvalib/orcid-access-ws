@@ -90,8 +90,8 @@ func checkCommonResponse(body string) (int, error) {
 	}
 
 	// check protocol version to ensure we know what to do with this
-	if cr.Version != PROTOCOL_VERSION {
-		logger.Log(fmt.Sprintf("ORCID protocol version not supported. Require: %s, received: %s", PROTOCOL_VERSION, cr.Version))
+	if cr.Version != PUBLIC_PROTOCOL_VERSION {
+		logger.Log(fmt.Sprintf("ORCID protocol version not supported. Require: %s, received: %s", PUBLIC_PROTOCOL_VERSION, cr.Version))
 		return http.StatusHTTPVersionNotSupported, nil
 	}
 
