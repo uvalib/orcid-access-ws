@@ -19,6 +19,7 @@ type Config struct {
 	// ORCID attributes
 	OrcidPublicUrl    string
 	OrcidSecureUrl    string
+	OrcidOauthUrl     string
 	OrcidClientId     string
 	OrcidClientSecret string
 
@@ -44,6 +45,7 @@ func LoadConfig() Config {
 	flag.StringVar(&c.DbPassphrase, "dbpassword", "", "The database passphrase")
 	flag.StringVar(&c.OrcidPublicUrl, "orcidpublicurl", "https://pub.orcid.org/v1.2", "The ORCID service public URL")
 	flag.StringVar(&c.OrcidSecureUrl, "orcidsecureurl", "https://api.sandbox.orcid.org/v2.0", "The ORCID service secure URL")
+	flag.StringVar(&c.OrcidOauthUrl, "orcidoauthurl", "https://sandbox.orcid.org", "The ORCID service OAuth URL")
 	flag.StringVar(&c.OrcidClientId, "orcidclientid", "client-id", "The ORCID client identifier")
 	flag.StringVar(&c.OrcidClientSecret, "orcidclientsecret", "client-secret", "The ORCID client secret")
 	flag.IntVar(&c.Timeout, "timeout", 15, "The external service timeout in seconds")
@@ -59,6 +61,7 @@ func LoadConfig() Config {
 	logger.Log(fmt.Sprintf("DbPassphrase:        %s", strings.Repeat("*", len(c.DbPassphrase))))
 	logger.Log(fmt.Sprintf("OrcidPublicUrl:      %s", c.OrcidPublicUrl))
 	logger.Log(fmt.Sprintf("OrcidSecureUrl:      %s", c.OrcidSecureUrl))
+	logger.Log(fmt.Sprintf("OrcidOauthUrl:       %s", c.OrcidOauthUrl))
 	logger.Log(fmt.Sprintf("OrcidClientId:       %s", c.OrcidClientId))
 	logger.Log(fmt.Sprintf("OrcidClientSecret:   %s", strings.Repeat("*", len(c.OrcidClientSecret))))
 	logger.Log(fmt.Sprintf("AuthTokenEndpoint    %s", c.AuthTokenEndpoint))
