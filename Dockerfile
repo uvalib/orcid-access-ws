@@ -28,6 +28,7 @@ CMD scripts/entry.sh
 # Move in necessary assets
 COPY scripts/entry.sh $APP_HOME/scripts/entry.sh
 COPY data/container_bash_profile /home/webservice/.profile
+COPY data/work-activity-template.xml $APP_HOME/data/work-activity-template.xml
 COPY bin/orcid-access-ws.linux $APP_HOME/bin/orcid-access-ws
 
 # Add the build tag
