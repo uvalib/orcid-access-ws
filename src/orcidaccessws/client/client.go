@@ -12,7 +12,7 @@ import (
 )
 
 var debugHttp = false
-var serviceTimeout = 5
+var serviceTimeout = 30
 
 func HealthCheck(endpoint string) int {
 

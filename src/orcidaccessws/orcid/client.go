@@ -77,7 +77,8 @@ func UpdateOrcidActivity(orcid string, oauth_token string, activity api.Activity
 	// check for errors
 	if errs != nil {
 		logger.Log(fmt.Sprintf("ERROR: service (%s) returns %s in %s", url, errs, duration))
-		return emptyUpdateCode, http.StatusInternalServerError, errs[0]
+		httpStatus := mapErrorResponseToStatus( errs[0] )
+		return emptyUpdateCode, httpStatus, errs[0]
 	}
 
 	defer io.Copy(ioutil.Discard, resp.Body)
@@ -115,7 +116,8 @@ func UpdateOrcidActivity(orcid string, oauth_token string, activity api.Activity
 	err = json.Unmarshal([]byte(body), &aur)
 	if err != nil {
 		logger.Log(fmt.Sprintf("ERROR: json unmarshal: %s", err))
-		return emptyUpdateCode, http.StatusInternalServerError, err
+		httpStatus := mapErrorResponseToStatus( err )
+		return emptyUpdateCode, httpStatus, err
 	}
 
 	//
@@ -161,7 +163,8 @@ func RenewAccessToken(staleToken string) (string, string, int, error) {
 	// check for errors
 	if errs != nil {
 		logger.Log(fmt.Sprintf("ERROR: service (%s) returns %s in %s", url, errs, duration))
-		return emptyUpdateCode, emptyUpdateCode, http.StatusInternalServerError, errs[0]
+		httpStatus := mapErrorResponseToStatus( errs[0] )
+		return emptyUpdateCode, emptyUpdateCode, httpStatus, errs[0]
 	}
 
 	defer io.Copy(ioutil.Discard, resp.Body)
@@ -196,7 +199,8 @@ func GetOrcidDetails(orcid string) (*api.OrcidDetails, int, error) {
 	// check for errors
 	if errs != nil {
 		logger.Log(fmt.Sprintf("ERROR: service (%s) returns %s in %s", url, errs, duration))
-		return nil, http.StatusInternalServerError, errs[0]
+		httpStatus := mapErrorResponseToStatus( errs[0] )
+		return nil, httpStatus, errs[0]
 	}
 
 	defer io.Copy(ioutil.Discard, resp.Body)
@@ -207,7 +211,8 @@ func GetOrcidDetails(orcid string) (*api.OrcidDetails, int, error) {
 	// check the common response elements
 	status, err := checkCommonResponse(body)
 	if err != nil {
-		return nil, http.StatusInternalServerError, err
+		httpStatus := mapErrorResponseToStatus( err )
+		return nil, httpStatus, err
 	}
 
 	if status != http.StatusOK {
@@ -247,7 +252,8 @@ func SearchOrcid(search string, start_ix string, max_results string) ([]*api.Orc
 	// check for errors
 	if errs != nil {
 		logger.Log(fmt.Sprintf("ERROR: service (%s) returns %s in %s", url, errs, duration))
-		return nil, 0, http.StatusInternalServerError, errs[0]
+		httpStatus := mapErrorResponseToStatus( errs[0] )
+		return nil, 0, httpStatus, errs[0]
 	}
 
 	defer io.Copy(ioutil.Discard, resp.Body)
@@ -258,7 +264,8 @@ func SearchOrcid(search string, start_ix string, max_results string) ([]*api.Orc
 	// check the common response elements
 	status, err := checkCommonResponse(body)
 	if err != nil {
-		return nil, 0, http.StatusInternalServerError, err
+		httpStatus := mapErrorResponseToStatus( err )
+		return nil, 0, httpStatus, err
 	}
 
 	if status != http.StatusOK {
@@ -269,7 +276,8 @@ func SearchOrcid(search string, start_ix string, max_results string) ([]*api.Orc
 	err = json.Unmarshal([]byte(body), &sr)
 	if err != nil {
 		logger.Log(fmt.Sprintf("ERROR: json unmarshal: %s", err))
-		return nil, 0, http.StatusInternalServerError, err
+		httpStatus := mapErrorResponseToStatus( err )
+		return nil, 0, httpStatus, err
 	}
 
 	//if sr.SearchResults.Results == nil || len( sr.SearchResults.Results ) == 0 {

@@ -59,8 +59,8 @@ func SearchOrcid(w http.ResponseWriter, r *http.Request) {
 
 	// we got an error, return it
 	if err != nil {
-		encodeOrcidSearchResponse(w, http.StatusInternalServerError,
-			fmt.Sprintf("%s (%s)", http.StatusText(http.StatusInternalServerError), err), nil, 0, 0, 0)
+		encodeOrcidSearchResponse(w, status,
+			fmt.Sprintf("%s (%s)", http.StatusText(status), err), nil, 0, 0, 0)
 		return
 	}
 

@@ -81,6 +81,18 @@ func makeUpdateActivityBody(activity api.ActivityUpdate) (string, error) {
 	return s, nil
 }
 
+//
+// check the error response to identify an appropriate http status response
+//
+func mapErrorResponseToStatus( err error  ) int {
+   //logger.Log(fmt.Sprintf("ERROR: [%s]", err.Error()))
+   if strings.Contains( err.Error(), " timeout" ) {
+      return http.StatusServiceUnavailable
+   }
+
+   return http.StatusInternalServerError
+}
+
 func checkCommonResponse(body string) (int, error) {
 
 	cr := orcidCommonResponse{}
