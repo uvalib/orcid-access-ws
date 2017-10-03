@@ -18,7 +18,7 @@ import (
 var emptyUpdateCode = ""
 
 //
-// update the
+// update the user activity
 //
 func UpdateOrcidActivity( orcid string, oauth_token string, activity api.ActivityUpdate ) ( string, int, error ) {
 
@@ -32,7 +32,7 @@ func UpdateOrcidActivity( orcid string, oauth_token string, activity api.Activit
    if existingActivity == true {
       url = fmt.Sprintf( "%s/%s", url, activity.UpdateCode )
    }
-   fmt.Printf( "%s\n", url )
+   //fmt.Printf( "%s\n", url )
 
    // build the request body
    requestBody, err := makeUpdateActivityBody( activity )
@@ -101,7 +101,16 @@ func UpdateOrcidActivity( orcid string, oauth_token string, activity api.Activit
       return emptyUpdateCode, http.StatusInternalServerError, errors.New( "Unexpected/missing location header in response" )
    }
 
-   // something unexpected happened, decode the response
+   //
+   // something unexpected happened and we did not get an error report (handled above)
+   //
+
+   // check for a 500 error and return if we find it
+   if resp.StatusCode == http.StatusInternalServerError {
+      return emptyUpdateCode, http.StatusInternalServerError, errors.New( "Server reports Internal Server Error" )
+   }
+
+   // otherwise, attempt to decode the response
    aur := activityUpdateResponse{}
    err = json.Unmarshal([]byte(body), &aur)
    if err != nil {
@@ -124,6 +133,45 @@ func UpdateOrcidActivity( orcid string, oauth_token string, activity api.Activit
 
    // unclear why we are here but an error occurred
    return emptyUpdateCode, http.StatusInternalServerError, errors.New( "Unhandled error case" )
+}
+
+//
+// renew the access token
+//
+func RenewAccessToken( staleToken string ) ( string, string, int, error ) {
+
+   // construct target URL
+   url := fmt.Sprintf("%s/oauth/token", config.Configuration.OrcidOauthUrl )
+   fmt.Printf( "%s\n", url )
+
+   // issue the request
+   start := time.Now()
+   resp, _, errs := gorequest.New().
+      SetDebug(config.Configuration.Debug).
+      Get(url).
+      Set("Accept", "application/json").
+      Set("refresh_token", staleToken ).
+      Set("grant_type", "refresh" ).
+      Set("client_id", config.Configuration.OrcidClientId ).
+      Set("client_secret", config.Configuration.OrcidClientSecret ).
+      Timeout(time.Duration(config.Configuration.Timeout)*time.Second).
+      End()
+   duration := time.Since(start)
+
+   // check for errors
+   if errs != nil {
+      logger.Log(fmt.Sprintf("ERROR: service (%s) returns %s in %s", url, errs, duration))
+      return emptyUpdateCode, emptyUpdateCode, http.StatusInternalServerError, errs[0]
+   }
+
+   defer io.Copy(ioutil.Discard, resp.Body)
+   defer resp.Body.Close()
+
+   logger.Log(fmt.Sprintf("Service (%s) returns http %d in %s", url, resp.StatusCode, duration))
+
+   //logger.Log(fmt.Sprintf("BODY [%s]", body ) )
+
+   return emptyUpdateCode, emptyUpdateCode, http.StatusInternalServerError, errors.New( "Not implemented" )
 }
 
 //

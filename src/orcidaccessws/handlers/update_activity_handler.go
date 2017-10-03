@@ -80,14 +80,40 @@ func UpdateActivity(w http.ResponseWriter, r *http.Request) {
       return
    }
 
+   // verify the attributes are sufficient for our needs
+   if err := validateOrcidAttributes( *attributes[0] ); err != nil {
+      logger.Log(fmt.Sprintf("ERROR: invalid ORCID attributes for cid %s: %s", id, err))
+      status := http.StatusBadRequest
+      encodeUpdateActivityResponse(w, status, http.StatusText(status), emptyUpdateCode )
+      return
+   }
+
    // update the activity
    updateCode, status, err := orcid.UpdateOrcidActivity( attributes[0].Orcid, attributes[0].OauthAccessToken, activity )
 
-   // TODO handle the access token update and retry
-   //if stuff {
-   //   renew the access token...
-   //   retry the update activity if we can
-   //}
+   // the token might be expired, lets try to renew it
+   // TODO: DPG hard to test so lets not bother for now
+   if false { //status == http.StatusUnauthorized {
+      var newAccessToken = ""
+      var newRefreshToken = ""
+      // renew the access token...
+      newAccessToken, newRefreshToken, status, err = orcid.RenewAccessToken( attributes[0].OauthAccessToken )
+      if status == http.StatusOK {
+         attributes[0].OauthAccessToken = newAccessToken
+         attributes[0].OauthRefreshToken = newRefreshToken
+         // save the new tokens
+         err = dao.Database.SetOrcidAttributesByCid( id, *attributes[ 0 ] )
+
+         // if successful, retry the activity update
+         if err == nil {
+            updateCode, status, err = orcid.UpdateOrcidActivity( attributes[0].Orcid, attributes[0].OauthAccessToken, activity )
+         } else {
+            logger.Log(fmt.Sprintf("ERROR: %s", err.Error()))
+            status = http.StatusInternalServerError
+         }
+
+      }
+   }
 
    // we did got an error, return it
    if status != http.StatusOK {
@@ -99,11 +125,10 @@ func UpdateActivity(w http.ResponseWriter, r *http.Request) {
    encodeUpdateActivityResponse(w, status, http.StatusText(status), updateCode )
 }
 
+//
+// basic validation that the required fields for the activity update request exist
+//
 func validateRequestPayload( activity api.ActivityUpdate ) error {
-
-   //
-   // basic validation that the required fields exist
-   //
 
    if len( activity.Work.Title ) == 0 {
       return errors.New( "Empty work title" )
@@ -115,6 +140,26 @@ func validateRequestPayload( activity api.ActivityUpdate ) error {
 
    if len( activity.Work.Url ) == 0 {
       return errors.New( "Empty work url" )
+   }
+
+   return nil
+}
+
+//
+// validation that the necessary ORCID attributes exist before we use them
+//
+func validateOrcidAttributes( attributes api.OrcidAttributes ) error {
+
+   if len( attributes.Orcid ) == 0 {
+      return errors.New( "Blank ORCID attribute" )
+   }
+
+   if len( attributes.OauthAccessToken ) == 0 {
+      return errors.New( "Blank OAuth access token" )
+   }
+
+   if len( attributes.OauthRefreshToken ) == 0 {
+      return errors.New( "Blank OAuth refresh token" )
    }
 
    return nil
