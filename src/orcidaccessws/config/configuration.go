@@ -9,15 +9,24 @@ import (
 
 type Config struct {
 	ServicePort       string
+
+	// database attributes
 	DbHost            string
 	DbName            string
 	DbUser            string
 	DbPassphrase      string
+
+	// ORCID attributes
 	OrcidPublicUrl    string
 	OrcidSecureUrl    string
+	OrcidClientId     string
+	OrcidClientSecret string
 
+	// token authentication
 	AuthTokenEndpoint string
 	Timeout           int
+
+	// diagnostic only
 	Debug             bool
 }
 
@@ -35,6 +44,8 @@ func LoadConfig() Config {
 	flag.StringVar(&c.DbPassphrase, "dbpassword", "", "The database passphrase")
 	flag.StringVar(&c.OrcidPublicUrl, "orcidpublicurl", "https://pub.orcid.org/v1.2", "The ORCID service public URL")
 	flag.StringVar(&c.OrcidSecureUrl, "orcidsecureurl", "https://api.sandbox.orcid.org/v2.0", "The ORCID service secure URL")
+	flag.StringVar(&c.OrcidClientId, "orcidclientid", "client-id", "The ORCID client identifier")
+	flag.StringVar(&c.OrcidClientSecret, "orcidclientsecret", "client-secret", "The ORCID client secret")
 	flag.IntVar(&c.Timeout, "timeout", 15, "The external service timeout in seconds")
 	flag.StringVar(&c.AuthTokenEndpoint, "tokenauth", "http://docker1.lib.virginia.edu:8200", "The token authentication endpoint")
 	flag.BoolVar(&c.Debug, "debug", false, "Enable debugging")
@@ -48,6 +59,8 @@ func LoadConfig() Config {
 	logger.Log(fmt.Sprintf("DbPassphrase:        %s", strings.Repeat("*", len(c.DbPassphrase))))
 	logger.Log(fmt.Sprintf("OrcidPublicUrl:      %s", c.OrcidPublicUrl))
 	logger.Log(fmt.Sprintf("OrcidSecureUrl:      %s", c.OrcidSecureUrl))
+	logger.Log(fmt.Sprintf("OrcidClientId:       %s", c.OrcidClientId))
+	logger.Log(fmt.Sprintf("OrcidClientSecret:   %s", strings.Repeat("*", len(c.OrcidClientSecret))))
 	logger.Log(fmt.Sprintf("AuthTokenEndpoint    %s", c.AuthTokenEndpoint))
 	logger.Log(fmt.Sprintf("Timeout:             %d", c.Timeout))
 	logger.Log(fmt.Sprintf("Debug                %t", c.Debug))
