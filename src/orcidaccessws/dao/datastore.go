@@ -6,6 +6,7 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 	"orcidaccessws/api"
 	"orcidaccessws/logger"
+    "orcidaccessws/config"
 )
 
 type DB struct {
@@ -167,7 +168,7 @@ func orcidResults(rows *sql.Rows) ([]*api.OrcidAttributes, error) {
 		}
 
 		// hack for now...
-		reg.Uri = fmt.Sprintf("http://orcid.org/%s", reg.Orcid)
+		reg.Uri = fmt.Sprintf("%s/%s", config.Configuration.OrcidOauthUrl, reg.Orcid)
 
 		results = append(results, reg)
 	}
