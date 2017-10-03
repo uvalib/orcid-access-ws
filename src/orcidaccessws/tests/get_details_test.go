@@ -1,9 +1,9 @@
 package test
 
 import (
-   "net/http"
-   "orcidaccessws/client"
-   "testing"
+	"net/http"
+	"orcidaccessws/client"
+	"testing"
 )
 
 //
@@ -12,50 +12,50 @@ import (
 
 func TestGetOrcidDetailsHappyDay(t *testing.T) {
 
-   expected := http.StatusOK
-   id := goodOrcid
-   status, orcid := client.GetOrcidDetails(cfg.Endpoint, id, goodToken)
-   if status != expected {
-      t.Fatalf("Expected %v, got %v\n", expected, status)
-   }
+	expected := http.StatusOK
+	id := goodOrcid
+	status, orcid := client.GetOrcidDetails(cfg.Endpoint, id, goodToken)
+	if status != expected {
+		t.Fatalf("Expected %v, got %v\n", expected, status)
+	}
 
-   if orcid == nil {
-      t.Fatalf("Expected to find orcid for %s and did not\n", id)
-   }
+	if orcid == nil {
+		t.Fatalf("Expected to find orcid for %s and did not\n", id)
+	}
 
-   ensureValidOrcidDetails(t, orcid)
+	ensureValidOrcidDetails(t, orcid)
 }
 
 func TestGetOrcidDetailsEmptyId(t *testing.T) {
-   expected := http.StatusBadRequest
-   status, _ := client.GetOrcidDetails(cfg.Endpoint, empty, goodToken)
-   if status != expected {
-      t.Fatalf("Expected %v, got %v\n", expected, status)
-   }
+	expected := http.StatusBadRequest
+	status, _ := client.GetOrcidDetails(cfg.Endpoint, empty, goodToken)
+	if status != expected {
+		t.Fatalf("Expected %v, got %v\n", expected, status)
+	}
 }
 
 func TestGetOrcidDetailsNotFoundId(t *testing.T) {
-   expected := http.StatusNotFound
-   status, _ := client.GetOrcidDetails(cfg.Endpoint, badOrcid, goodToken)
-   if status != expected {
-      t.Fatalf("Expected %v, got %v\n", expected, status)
-   }
+	expected := http.StatusNotFound
+	status, _ := client.GetOrcidDetails(cfg.Endpoint, badOrcid, goodToken)
+	if status != expected {
+		t.Fatalf("Expected %v, got %v\n", expected, status)
+	}
 }
 
 func TestGetOrcidDetailsEmptyToken(t *testing.T) {
-   expected := http.StatusBadRequest
-   status, _ := client.GetOrcidDetails(cfg.Endpoint, goodOrcid, empty)
-   if status != expected {
-      t.Fatalf("Expected %v, got %v\n", expected, status)
-   }
+	expected := http.StatusBadRequest
+	status, _ := client.GetOrcidDetails(cfg.Endpoint, goodOrcid, empty)
+	if status != expected {
+		t.Fatalf("Expected %v, got %v\n", expected, status)
+	}
 }
 
 func TestGetOrcidDetailsBadToken(t *testing.T) {
-   expected := http.StatusForbidden
-   status, _ := client.GetOrcidDetails(cfg.Endpoint, goodOrcid, badToken)
-   if status != expected {
-      t.Fatalf("Expected %v, got %v\n", expected, status)
-   }
+	expected := http.StatusForbidden
+	status, _ := client.GetOrcidDetails(cfg.Endpoint, goodOrcid, badToken)
+	if status != expected {
+		t.Fatalf("Expected %v, got %v\n", expected, status)
+	}
 }
 
 //

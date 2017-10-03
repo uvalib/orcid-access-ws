@@ -1,9 +1,9 @@
 package test
 
 import (
-   "net/http"
-   "orcidaccessws/client"
-   "testing"
+	"net/http"
+	"orcidaccessws/client"
+	"testing"
 )
 
 //
@@ -11,15 +11,15 @@ import (
 //
 
 func TestVersionCheck(t *testing.T) {
-   expected := http.StatusOK
-   status, version := client.VersionCheck(cfg.Endpoint)
-   if status != expected {
-      t.Fatalf("Expected %v, got %v\n", expected, status)
-   }
+	expected := http.StatusOK
+	status, version := client.VersionCheck(cfg.Endpoint)
+	if status != expected {
+		t.Fatalf("Expected %v, got %v\n", expected, status)
+	}
 
-   if len(version) == 0 {
-      t.Fatalf("Expected non-zero length version string\n")
-   }
+	if len(version) == 0 {
+		t.Fatalf("Expected non-zero length version string\n")
+	}
 }
 
 //

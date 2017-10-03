@@ -8,13 +8,13 @@ import (
 )
 
 type Config struct {
-	ServicePort       string
+	ServicePort string
 
 	// database attributes
-	DbHost            string
-	DbName            string
-	DbUser            string
-	DbPassphrase      string
+	DbHost       string
+	DbName       string
+	DbUser       string
+	DbPassphrase string
 
 	// ORCID attributes
 	OrcidPublicUrl    string
@@ -28,7 +28,7 @@ type Config struct {
 	Timeout           int
 
 	// diagnostic only
-	Debug             bool
+	Debug bool
 }
 
 var Configuration = LoadConfig()

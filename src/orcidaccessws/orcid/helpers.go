@@ -1,84 +1,84 @@
 package orcid
 
 import (
+	"bytes"
 	"encoding/json"
 	"errors"
 	"fmt"
 	"html"
 	"net/http"
 	"orcidaccessws/api"
+	"orcidaccessws/config"
 	"orcidaccessws/logger"
-    "orcidaccessws/config"
 	"strings"
-    "text/template"
-    "bytes"
+	"text/template"
 )
 
 //
 // log the contents of an activity update request
 //
-func logActivityUpdateRequest( activity api.ActivityUpdate ) {
+func logActivityUpdateRequest(activity api.ActivityUpdate) {
 
 	if config.Configuration.Debug {
-       fmt.Println("UpdateCode:", activity.UpdateCode )
-       fmt.Println("Work Title:", activity.Work.Title )
-       fmt.Println("Work Abstract:", activity.Work.Abstract )
-       fmt.Println("PublicationDate:", activity.Work.PublicationDate )
-       fmt.Println("Url:", activity.Work.Url )
-       fmt.Println("Authors:", activity.Work.Authors )
-       fmt.Println("ResourceType:", activity.Work.ResourceType )
+		fmt.Println("UpdateCode:", activity.UpdateCode)
+		fmt.Println("Work Title:", activity.Work.Title)
+		fmt.Println("Work Abstract:", activity.Work.Abstract)
+		fmt.Println("PublicationDate:", activity.Work.PublicationDate)
+		fmt.Println("Url:", activity.Work.Url)
+		fmt.Println("Authors:", activity.Work.Authors)
+		fmt.Println("ResourceType:", activity.Work.ResourceType)
 	}
 }
 
-func makeUpdateActivityBody( activity api.ActivityUpdate ) (string, error) {
+func makeUpdateActivityBody(activity api.ActivityUpdate) (string, error) {
 
-   t, err := template.ParseFiles("data/work-activity-template.xml")
-   if err != nil {
-      logger.Log(fmt.Sprintf("ERROR: template parse error: %s", err))
-      return "", err
-   }
+	t, err := template.ParseFiles("data/work-activity-template.xml")
+	if err != nil {
+		logger.Log(fmt.Sprintf("ERROR: template parse error: %s", err))
+		return "", err
+	}
 
-   // parse the publication date
-   YYYY, MM, DD := splitDate( activity.Work.PublicationDate )
+	// parse the publication date
+	YYYY, MM, DD := splitDate(activity.Work.PublicationDate)
 
-   // create our template data structure
-   data := struct {
-      PutCode           string
-      Title             string
-      Abstract          string
-      ResourceType      string
-      PublicationYear   string
-      PublicationMonth  string
-      PublicationDay    string
-      Identifier        string
-      Url               string
-      Authors           []api.Person
-   }{
-      activity.UpdateCode,
-      htmlEncodeString( activity.Work.Title ),
-      htmlEncodeString( activity.Work.Abstract ),
-      activity.Work.ResourceType,
-      YYYY,
-      MM,
-      DD,
-      idFromDoiUrl( activity.Work.Url ),
-      activity.Work.Url,
-      htmlEncodePersonArray( api.SortPeople(activity.Work.Authors ) ),
-   }
+	// create our template data structure
+	data := struct {
+		PutCode          string
+		Title            string
+		Abstract         string
+		ResourceType     string
+		PublicationYear  string
+		PublicationMonth string
+		PublicationDay   string
+		Identifier       string
+		Url              string
+		Authors          []api.Person
+	}{
+		activity.UpdateCode,
+		htmlEncodeString(activity.Work.Title),
+		htmlEncodeString(activity.Work.Abstract),
+		activity.Work.ResourceType,
+		YYYY,
+		MM,
+		DD,
+		idFromDoiUrl(activity.Work.Url),
+		activity.Work.Url,
+		htmlEncodePersonArray(api.SortPeople(activity.Work.Authors)),
+	}
 
-   var buffer bytes.Buffer
-   err = t.Execute(&buffer, data)
-   if err != nil {
-      logger.Log(fmt.Sprintf("ERROR: template execute error: %s", err))
-      return "", err
-   }
+	var buffer bytes.Buffer
+	err = t.Execute(&buffer, data)
+	if err != nil {
+		logger.Log(fmt.Sprintf("ERROR: template execute error: %s", err))
+		return "", err
+	}
 
-   s := buffer.String()
+	s := buffer.String()
 
-   if config.Configuration.Debug {
-      fmt.Printf("XML:\n%s\n", s)
-   }
-   return s, nil
+	if config.Configuration.Debug {
+		fmt.Printf("XML:\n%s\n", s)
+	}
+	return s, nil
 }
 
 func checkCommonResponse(body string) (int, error) {
@@ -152,50 +152,50 @@ func constructDetails(profile *orcidProfile) *api.OrcidDetails {
 //
 func htmlEncodePersonArray(array []api.Person) []api.Person {
 
-   encoded := make([]api.Person, len(array), len(array))
-   for ix, value := range array {
+	encoded := make([]api.Person, len(array), len(array))
+	for ix, value := range array {
 
-      p := api.Person{
-         Index:       value.Index,
-         FirstName:   htmlEncodeString(value.FirstName),
-         LastName:    htmlEncodeString(value.LastName),
-      }
-      encoded[ix] = p
-   }
-   return encoded
+		p := api.Person{
+			Index:     value.Index,
+			FirstName: htmlEncodeString(value.FirstName),
+			LastName:  htmlEncodeString(value.LastName),
+		}
+		encoded[ix] = p
+	}
+	return encoded
 }
 
 func htmlEncodeString(value string) string {
-   // HTML encoding
-   encoded := html.EscapeString(value)
+	// HTML encoding
+	encoded := html.EscapeString(value)
 
-   // encode percent characters
-   encoded = strings.Replace(encoded, "%", "%25", -1)
-   return encoded
+	// encode percent characters
+	encoded = strings.Replace(encoded, "%", "%25", -1)
+	return encoded
 }
 
 //
 // Split a date in the form YYYY-MM-DD into its components
 //
 func splitDate(date string) (string, string, string) {
-   tokens := strings.Split(date, "-")
-   var YYYY, MM, DD string
-   if len(tokens) > 0 {
-      YYYY = tokens[0]
-   }
+	tokens := strings.Split(date, "-")
+	var YYYY, MM, DD string
+	if len(tokens) > 0 {
+		YYYY = tokens[0]
+	}
 
-   if len(tokens) > 1 {
-      MM = tokens[1]
-   }
+	if len(tokens) > 1 {
+		MM = tokens[1]
+	}
 
-   if len(tokens) > 2 {
-      DD = tokens[2]
-   }
-   return YYYY, MM, DD
+	if len(tokens) > 2 {
+		DD = tokens[2]
+	}
+	return YYYY, MM, DD
 }
 
-func idFromDoiUrl( url string ) string {
-   return strings.Replace( url, "https://doi.org/", "", -1)
+func idFromDoiUrl(url string) string {
+	return strings.Replace(url, "https://doi.org/", "", -1)
 }
 
 //

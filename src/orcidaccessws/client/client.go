@@ -170,83 +170,83 @@ func GetAllOrcidAttributes(endpoint string, token string) (int, []*api.OrcidAttr
 	return resp.StatusCode, r.Attributes
 }
 
-func SetOrcidAttributes(endpoint string, cid string, token string, attributes api.OrcidAttributes ) int {
+func SetOrcidAttributes(endpoint string, cid string, token string, attributes api.OrcidAttributes) int {
 
-   url := fmt.Sprintf("%s/cid/%s?auth=%s", endpoint, cid, token)
-   //fmt.Printf( "%s\n", url )
+	url := fmt.Sprintf("%s/cid/%s?auth=%s", endpoint, cid, token)
+	//fmt.Printf( "%s\n", url )
 
-   resp, _, errs := gorequest.New().
-      SetDebug(debugHttp).
-      Put(url).
-      Send(attributes).
-      Timeout(time.Duration(serviceTimeout) * time.Second).
-      Set("Content-Type", "application/json").
-      End()
+	resp, _, errs := gorequest.New().
+		SetDebug(debugHttp).
+		Put(url).
+		Send(attributes).
+		Timeout(time.Duration(serviceTimeout)*time.Second).
+		Set("Content-Type", "application/json").
+		End()
 
-   if errs != nil {
-      return http.StatusInternalServerError
-   }
+	if errs != nil {
+		return http.StatusInternalServerError
+	}
 
-   defer io.Copy(ioutil.Discard, resp.Body)
-   defer resp.Body.Close()
+	defer io.Copy(ioutil.Discard, resp.Body)
+	defer resp.Body.Close()
 
-   return resp.StatusCode
+	return resp.StatusCode
 }
 
 func DelOrcidAttributes(endpoint string, cid string, token string) int {
 
-   url := fmt.Sprintf("%s/cid/%s?auth=%s", endpoint, cid, token)
-   //fmt.Printf( "%s\n", url )
+	url := fmt.Sprintf("%s/cid/%s?auth=%s", endpoint, cid, token)
+	//fmt.Printf( "%s\n", url )
 
-   resp, body, errs := gorequest.New().
-      SetDebug(debugHttp).
-      Delete(url).
-      Timeout(time.Duration(serviceTimeout) * time.Second).
-      End()
+	resp, body, errs := gorequest.New().
+		SetDebug(debugHttp).
+		Delete(url).
+		Timeout(time.Duration(serviceTimeout) * time.Second).
+		End()
 
-   if errs != nil {
-      return http.StatusInternalServerError
-   }
+	if errs != nil {
+		return http.StatusInternalServerError
+	}
 
-   defer io.Copy(ioutil.Discard, resp.Body)
-   defer resp.Body.Close()
+	defer io.Copy(ioutil.Discard, resp.Body)
+	defer resp.Body.Close()
 
-   r := api.StandardResponse{}
-   err := json.Unmarshal([]byte(body), &r)
-   if err != nil {
-      return http.StatusInternalServerError
-   }
+	r := api.StandardResponse{}
+	err := json.Unmarshal([]byte(body), &r)
+	if err != nil {
+		return http.StatusInternalServerError
+	}
 
-   return resp.StatusCode
+	return resp.StatusCode
 }
 
-func UpdateActivity(endpoint string, cid string, token string, activity api.ActivityUpdate ) ( int, string ) {
+func UpdateActivity(endpoint string, cid string, token string, activity api.ActivityUpdate) (int, string) {
 
-   url := fmt.Sprintf("%s/cid/%s/activity?auth=%s", endpoint, cid, token)
-   //fmt.Printf( "%s\n", url )
+	url := fmt.Sprintf("%s/cid/%s/activity?auth=%s", endpoint, cid, token)
+	//fmt.Printf( "%s\n", url )
 
-   resp, body, errs := gorequest.New().
-      SetDebug(debugHttp).
-      Put(url).
-      Send(activity).
-      Timeout(time.Duration(serviceTimeout) * time.Second).
-      Set("Content-Type", "application/json").
-      End()
+	resp, body, errs := gorequest.New().
+		SetDebug(debugHttp).
+		Put(url).
+		Send(activity).
+		Timeout(time.Duration(serviceTimeout)*time.Second).
+		Set("Content-Type", "application/json").
+		End()
 
-   if errs != nil {
-      return http.StatusInternalServerError, ""
-   }
+	if errs != nil {
+		return http.StatusInternalServerError, ""
+	}
 
-   defer io.Copy(ioutil.Discard, resp.Body)
-   defer resp.Body.Close()
+	defer io.Copy(ioutil.Discard, resp.Body)
+	defer resp.Body.Close()
 
-   r := api.UpdateActivityResponse{}
-   err := json.Unmarshal([]byte(body), &r)
-   if err != nil {
-      return http.StatusInternalServerError, ""
-   }
+	r := api.UpdateActivityResponse{}
+	err := json.Unmarshal([]byte(body), &r)
+	if err != nil {
+		return http.StatusInternalServerError, ""
+	}
 
-   return resp.StatusCode, r.UpdateCode
+	return resp.StatusCode, r.UpdateCode
 }
 
 func GetOrcidDetails(endpoint string, orcid string, token string) (int, *api.OrcidDetails) {
