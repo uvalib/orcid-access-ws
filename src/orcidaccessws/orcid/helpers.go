@@ -87,7 +87,7 @@ func makeUpdateActivityBody(activity api.ActivityUpdate) (string, error) {
 func mapErrorResponseToStatus( err error  ) int {
    //logger.Log(fmt.Sprintf("ERROR: [%s]", err.Error()))
    if strings.Contains( err.Error(), " timeout" ) {
-      return http.StatusServiceUnavailable
+      return http.StatusRequestTimeout
    }
 
    return http.StatusInternalServerError
