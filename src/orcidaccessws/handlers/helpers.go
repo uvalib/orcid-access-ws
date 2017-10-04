@@ -66,20 +66,25 @@ func encodeOrcidSearchResponse(w http.ResponseWriter, status int, message string
 	}
 }
 
-func encodeHealthCheckResponse(w http.ResponseWriter, status int, dbmsg string, orcidmsg string) {
+func encodeHealthCheckResponse(w http.ResponseWriter, status int, dbMsg string, orcidPublicMsg string, orcidSecureMsg string ) {
 
-	db_healthy, orcid_healthy := true, true
-	if len(dbmsg) != 0 {
+	db_healthy, orcid_public_healthy, orcid_secure_healthy := true, true, true
+	if len(dbMsg) != 0 {
 		db_healthy = false
 	}
-	if len(orcidmsg) != 0 {
-		orcid_healthy = false
+	if len(orcidPublicMsg) != 0 {
+		orcid_public_healthy = false
 	}
+	if len(orcidSecureMsg) != 0 {
+		orcid_secure_healthy = false
+	}
+
 	jsonAttributes(w)
 	w.WriteHeader(status)
 	if err := json.NewEncoder(w).Encode(api.HealthCheckResponse{
-		DbCheck:    api.HealthCheckResult{Healthy: db_healthy, Message: dbmsg},
-		OrcidCheck: api.HealthCheckResult{Healthy: orcid_healthy, Message: orcidmsg}}); err != nil {
+		DbCheck:          api.HealthCheckResult{Healthy: db_healthy, Message: dbMsg},
+		OrcidPublicCheck: api.HealthCheckResult{Healthy: orcid_public_healthy, Message: orcidPublicMsg},
+		OrcidSecureCheck: api.HealthCheckResult{Healthy: orcid_secure_healthy, Message: orcidSecureMsg}}); err != nil {
 		log.Fatal(err)
 	}
 }

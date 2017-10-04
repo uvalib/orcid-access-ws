@@ -288,5 +288,21 @@ func SearchOrcid(search string, start_ix string, max_results string) ([]*api.Orc
 }
 
 //
+// get the public endpoint status
+//
+
+func GetPublicEndpointStatus( ) error {
+	return nil
+}
+
+//
+// get the secure endpoint status
+//
+
+func GetSecureEndpointStatus( ) error {
+	return nil
+}
+
+//
 // end of file
 //

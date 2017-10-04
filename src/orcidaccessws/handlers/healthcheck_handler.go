@@ -4,7 +4,7 @@ import (
 	"net/http"
 	//"orcidaccessws/api"
 	"orcidaccessws/dao"
-	//"orcidaccessws/orcid"
+	"orcidaccessws/orcid"
 )
 
 func HealthCheck(w http.ResponseWriter, r *http.Request) {
@@ -14,23 +14,28 @@ func HealthCheck(w http.ResponseWriter, r *http.Request) {
 	Statistics.HeartbeatCount++
 
 	status := http.StatusOK
-	db_err := dao.Database.Check()
-	orcid_err := (error)(nil) //orcid.GetStatus( )
+	dbErr := dao.Database.Check()
+	orcidPublicErr := orcid.GetPublicEndpointStatus( )
+	orcidSecureErr := orcid.GetSecureEndpointStatus( )
 
-	var db_msg, orcid_msg string
+	var db_msg, orcid_public_msg, orcid_secure_msg string
 
-	if db_err != nil || orcid_err != nil {
+	if dbErr != nil || orcidPublicErr != nil || orcidSecureErr != nil {
 
 		status = http.StatusInternalServerError
 
-		if db_err != nil {
-			db_msg = db_err.Error()
+		if dbErr != nil {
+			db_msg = dbErr.Error()
 		}
 
-		if orcid_err != nil {
-			orcid_msg = orcid_err.Error()
+		if orcidPublicErr != nil {
+			orcid_public_msg = orcidPublicErr.Error()
+		}
+
+		if orcidSecureErr != nil {
+			orcid_secure_msg = orcidSecureErr.Error()
 		}
 	}
 
-	encodeHealthCheckResponse(w, status, db_msg, orcid_msg)
+	encodeHealthCheckResponse(w, status, db_msg, orcid_public_msg, orcid_secure_msg )
 }
