@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"net/http"
-	//"orcidaccessws/api"
 	"orcidaccessws/dao"
 	"orcidaccessws/orcid"
 )

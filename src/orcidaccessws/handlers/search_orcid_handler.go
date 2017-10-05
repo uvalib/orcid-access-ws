@@ -1,13 +1,13 @@
 package handlers
 
 import (
-	"net/http"
-	//  "github.com/gorilla/mux"
-	"fmt"
-	"orcidaccessws/authtoken"
-	"orcidaccessws/config"
-	"orcidaccessws/logger"
-	"orcidaccessws/orcid"
+   "net/http"
+   //  "github.com/gorilla/mux"
+   //"fmt"
+   "orcidaccessws/authtoken"
+   "orcidaccessws/config"
+   //"orcidaccessws/logger"
+   //"orcidaccessws/orcid"
 )
 
 const DEFAULT_SEARCH_START_IX = "0"
@@ -15,63 +15,69 @@ const DEFAULT_SEARCH_MAX_RESULTS = "50"
 
 func SearchOrcid(w http.ResponseWriter, r *http.Request) {
 
-	//vars := mux.Vars( r )
-	query := r.URL.Query().Get("q")
-	token := r.URL.Query().Get("auth")
-	start := r.URL.Query().Get("start")
-	count := r.URL.Query().Get("max")
+   //vars := mux.Vars( r )
+   query := r.URL.Query().Get("q")
+   token := r.URL.Query().Get("auth")
+   start := r.URL.Query().Get("start")
+   count := r.URL.Query().Get("max")
 
-	// update the statistics
-	Statistics.RequestCount++
-	Statistics.SearchOrcidDetailsCount++
+   // update the statistics
+   Statistics.RequestCount++
+   Statistics.SearchOrcidDetailsCount++
 
-	// parameters OK?
-	if isEmpty(query) || isEmpty(token) {
-		status := http.StatusBadRequest
-		encodeOrcidSearchResponse(w, status, http.StatusText(status), nil, 0, 0, 0)
-		return
-	}
+   // parameters OK?
+   if isEmpty(query) || isEmpty(token) {
+      status := http.StatusBadRequest
+      encodeOrcidSearchResponse(w, status, http.StatusText(status), nil, 0, 0, 0)
+      return
+   }
 
-	// check the supplied parameters and set defaults as necessary
-	if isEmpty(start) {
-		start = DEFAULT_SEARCH_START_IX
-	}
-	if isEmpty(count) {
-		count = DEFAULT_SEARCH_MAX_RESULTS
-	}
+   // check the supplied parameters and set defaults as necessary
+   if isEmpty(start) {
+      start = DEFAULT_SEARCH_START_IX
+   }
+   if isEmpty(count) {
+      count = DEFAULT_SEARCH_MAX_RESULTS
+   }
 
-	// validate parameters as necessary
-	if isNumeric(start) == false || isNumeric(count) == false {
-		status := http.StatusBadRequest
-		encodeOrcidSearchResponse(w, status, http.StatusText(status), nil, 0, 0, 0)
-		return
-	}
+   // validate parameters as necessary
+   if isNumeric(start) == false || isNumeric(count) == false {
+      status := http.StatusBadRequest
+      encodeOrcidSearchResponse(w, status, http.StatusText(status), nil, 0, 0, 0)
+      return
+   }
 
-	// validate the token
-	if authtoken.Validate(config.Configuration.AuthTokenEndpoint, "getorcid", token, config.Configuration.Timeout) == false {
-		status := http.StatusForbidden
-		encodeOrcidSearchResponse(w, status, http.StatusText(status), nil, 0, 0, 0)
-		return
-	}
+   // validate the token
+   if authtoken.Validate(config.Configuration.AuthTokenEndpoint, "getorcid", token, config.Configuration.Timeout) == false {
+      status := http.StatusForbidden
+      encodeOrcidSearchResponse(w, status, http.StatusText(status), nil, 0, 0, 0)
+      return
+   }
 
-	// get the ORCID details
-	orcids, total, status, err := orcid.SearchOrcid(query, start, count)
+   //
+   // not implemented as we have moved to the 2.0 API which supports different behavior
+   //
+   status := http.StatusNotImplemented
+   encodeOrcidSearchResponse(w, status, http.StatusText(status), nil, 0, 0, 0)
 
-	// we got an error, return it
-	if err != nil {
-		encodeOrcidSearchResponse(w, status,
-			fmt.Sprintf("%s (%s)", http.StatusText(status), err), nil, 0, 0, 0)
-		return
-	}
+   // get the ORCID details
+   //orcids, total, status, err := orcid.SearchOrcid(query, start, count)
 
-	logger.Log(fmt.Sprintf("ORCID search: %d result(s) located", len(orcids)))
+   // we got an error, return it
+   //if err != nil {
+   //   encodeOrcidSearchResponse(w, status,
+   //      fmt.Sprintf("%s (%s)", http.StatusText(status), err), nil, 0, 0, 0)
+   //   return
+   //}
 
-	// everything OK but found no items
-	if len(orcids) == 0 {
-		status = http.StatusNotFound
-	} else {
-		status = http.StatusOK
-	}
+   //logger.Log(fmt.Sprintf("ORCID search: %d result(s) located", len(orcids)))
 
-	encodeOrcidSearchResponse(w, status, http.StatusText(status), orcids, asNumeric(start), len(orcids), total)
+   // everything OK but found no items
+   //if len(orcids) == 0 {
+   //   status = http.StatusNotFound
+   //} else {
+   //   status = http.StatusOK
+   //}
+
+   //encodeOrcidSearchResponse(w, status, http.StatusText(status), orcids, asNumeric(start), len(orcids), total)
 }

@@ -1,12 +1,12 @@
 package handlers
 
 import (
-	"fmt"
+	//"fmt"
 	"github.com/gorilla/mux"
 	"net/http"
 	"orcidaccessws/authtoken"
 	"orcidaccessws/config"
-	"orcidaccessws/orcid"
+	//"orcidaccessws/orcid"
 )
 
 func GetOrcidDetails(w http.ResponseWriter, r *http.Request) {
@@ -33,16 +33,22 @@ func GetOrcidDetails(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+   //
+   // not implemented as we have moved to the 2.0 API which supports different behavior
+   //
+   status := http.StatusNotImplemented
+   encodeOrcidDetailsResponse(w, status, http.StatusText(status), nil)
+
 	// get the ORCID details
-	orcid, status, err := orcid.GetOrcidDetails(id)
+	//orcid, status, err := orcid.GetOrcidDetails(id)
 
 	// we did got an error, return it
-	if status != http.StatusOK {
-		encodeOrcidDetailsResponse(w, status,
-			fmt.Sprintf("%s (%s)", http.StatusText(status), err), nil)
-		return
-	}
+	//if status != http.StatusOK {
+	//	encodeOrcidDetailsResponse(w, status,
+	//		fmt.Sprintf("%s (%s)", http.StatusText(status), err), nil)
+	//	return
+	//}
 
-	status = http.StatusOK
-	encodeOrcidDetailsResponse(w, status, http.StatusText(status), orcid)
+	//status = http.StatusOK
+	//encodeOrcidDetailsResponse(w, status, http.StatusText(status), orcid)
 }
