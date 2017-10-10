@@ -42,7 +42,7 @@ func SetOrcidAttributes(w http.ResponseWriter, r *http.Request) {
 	attributes := api.OrcidAttributes{}
 
 	if err := decoder.Decode(&attributes); err != nil {
-		logger.Log(fmt.Sprintf("ERROR: decoding request payload %s", err))
+		logger.Log(fmt.Sprintf("ERROR: decoding set attributes request payload %s", err))
 		status := http.StatusBadRequest
 		encodeStandardResponse(w, status, http.StatusText(status))
 		return

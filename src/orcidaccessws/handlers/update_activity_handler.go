@@ -36,7 +36,7 @@ func UpdateActivity(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// validate the token
-	if authtoken.Validate(config.Configuration.AuthTokenEndpoint, "getorcid", token, config.Configuration.Timeout) == false {
+	if authtoken.Validate(config.Configuration.AuthTokenEndpoint, "setorcid", token, config.Configuration.Timeout) == false {
 		status := http.StatusForbidden
 		encodeUpdateActivityResponse(w, status, http.StatusText(status), emptyUpdateCode)
 		return
@@ -46,7 +46,7 @@ func UpdateActivity(w http.ResponseWriter, r *http.Request) {
 	activity := api.ActivityUpdate{}
 
 	if err := decoder.Decode(&activity); err != nil {
-		logger.Log(fmt.Sprintf("ERROR: decoding request payload: %s", err))
+		logger.Log(fmt.Sprintf("ERROR: decoding update activity request payload: %s", err))
 		status := http.StatusBadRequest
 		encodeUpdateActivityResponse(w, status, http.StatusText(status), emptyUpdateCode)
 		return
