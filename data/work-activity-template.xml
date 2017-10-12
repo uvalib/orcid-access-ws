@@ -36,12 +36,12 @@
    </common:publication-date>
    {{ end }}
 
-   {{if .Identifier | and .Url }}
+   {{if .Identifier | and .URL }}
    <common:external-ids>
       <common:external-id>
          <common:external-id-type>doi</common:external-id-type>
          <common:external-id-value>{{ .Identifier }}</common:external-id-value>
-         <common:external-id-url>{{ .Url }}</common:external-id-url>
+         <common:external-id-url>{{ .URL }}</common:external-id-url>
          <common:external-id-relationship>self</common:external-id-relationship>
       </common:external-id>
    </common:external-ids>

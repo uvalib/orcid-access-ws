@@ -4,7 +4,7 @@ package orcid
 // v1.2 response structure
 //
 
-const PUBLIC_PROTOCOL_VERSION = "1.2"
+const publicProtocolVersion = "1.2"
 
 // all responses have these attributes
 type orcidCommonResponse struct {
@@ -27,13 +27,13 @@ type orcidSearchResponse struct {
 //
 
 type orcidProfile struct {
-	Id  orcidId  `json:"orcid-identifier,omitempty"`
+	ID  orcidID  `json:"orcid-identifier,omitempty"`
 	Bio orcidBio `json:"orcid-bio,omitempty"`
 }
 
-type orcidId struct {
-	Uri string `json:"uri,omitempty"`
-	Id  string `json:"path,omitempty"`
+type orcidID struct {
+	URI string `json:"uri,omitempty"`
+	ID  string `json:"path,omitempty"`
 }
 
 type orcidResults struct {
@@ -64,12 +64,12 @@ type orcidKeywords struct {
 }
 
 type orcidUrls struct {
-	Urls []orcidUrl `json:"researcher-url,omitempty"`
+	Urls []orcidURL `json:"researcher-url,omitempty"`
 }
 
-type orcidUrl struct {
+type orcidURL struct {
 	Name stringValueField `json:"url-name,omitempty"`
-	Url  stringValueField `json:"url,omitempty"`
+	URL  stringValueField `json:"url,omitempty"`
 }
 
 type stringValueField struct {

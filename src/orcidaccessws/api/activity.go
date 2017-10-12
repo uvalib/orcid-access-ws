@@ -5,7 +5,7 @@ import (
 )
 
 //
-// the activity update request
+// ActivityUpdate -- the activity update request
 //
 type ActivityUpdate struct {
 	UpdateCode string     `json:"update_code,omitempty"`
@@ -13,19 +13,19 @@ type ActivityUpdate struct {
 }
 
 //
-// the work schema
+// WorkSchema -- the work schema
 //
 type WorkSchema struct {
 	Title           string   `json:"title,omitempty"`
 	Abstract        string   `json:"abstract,omitempty"`
 	PublicationDate string   `json:"publication_date,omitempty"`
-	Url             string   `json:"url,omitempty"`
+	URL             string   `json:"url,omitempty"`
 	Authors         []Person `json:"authors,omitempty"`
 	ResourceType    string   `json:"resource_type,omitempty"`
 }
 
 //
-// the basic person details used for authors
+// Person -- the basic person details used for authors
 //
 type Person struct {
 	Index     int    `json:"index"`
@@ -34,14 +34,13 @@ type Person struct {
 }
 
 //
-// helpers to sort the people lists
+// SortPeople -- helpers to sort the people lists
 //
-
 func SortPeople(people []Person) []Person {
-	sorted_people := make([]Person, len(people))
-	copy(sorted_people, people)
-	sort.Sort(PeopleSorter(sorted_people))
-	return sorted_people
+	sortedPeople := make([]Person, len(people))
+	copy(sortedPeople, people)
+	sort.Sort(PeopleSorter(sortedPeople))
+	return sortedPeople
 }
 
 // PeopleSorter sorts people by index

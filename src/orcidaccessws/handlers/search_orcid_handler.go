@@ -10,9 +10,12 @@ import (
    //"orcidaccessws/orcid"
 )
 
-const DEFAULT_SEARCH_START_IX = "0"
-const DEFAULT_SEARCH_MAX_RESULTS = "50"
+const defaulsSearchStartIx = "0"
+const defaultSearchMaxResults = "50"
 
+//
+// SearchOrcid -- the search orcid handler
+//
 func SearchOrcid(w http.ResponseWriter, r *http.Request) {
 
    //vars := mux.Vars( r )
@@ -34,10 +37,10 @@ func SearchOrcid(w http.ResponseWriter, r *http.Request) {
 
    // check the supplied parameters and set defaults as necessary
    if isEmpty(start) {
-      start = DEFAULT_SEARCH_START_IX
+      start = defaulsSearchStartIx
    }
    if isEmpty(count) {
-      count = DEFAULT_SEARCH_MAX_RESULTS
+      count = defaultSearchMaxResults
    }
 
    // validate parameters as necessary
@@ -81,3 +84,7 @@ func SearchOrcid(w http.ResponseWriter, r *http.Request) {
 
    //encodeOrcidSearchResponse(w, status, http.StatusText(status), orcids, asNumeric(start), len(orcids), total)
 }
+
+//
+// end of file
+//

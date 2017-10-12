@@ -5,10 +5,10 @@ package orcid
 //
 
 type oauthRequest struct {
-   ClientId         string  `json:"client_id,omitempty"`
-   ClientSecret     string  `json:"client_secret,omitempty"`
-   Scope            string  `json:"scope,omitempty"`
-   GrantType        string  `json:"grant_type,omitempty"`
+   ClientID     string `json:"client_id,omitempty"`
+   ClientSecret string `json:"client_secret,omitempty"`
+   Scope        string `json:"scope,omitempty"`
+   GrantType    string `json:"grant_type,omitempty"`
 }
 
 type oauthResponse struct {

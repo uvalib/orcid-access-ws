@@ -23,7 +23,7 @@ func TestRuntimeCheck(t *testing.T) {
 
 	if len(runtime.Version) == 0 ||
 		runtime.AllocatedMemory == 0 ||
-		runtime.CpuCount == 0 ||
+		runtime.CPUCount == 0 ||
 		runtime.GoRoutineCount == 0 ||
 		runtime.ObjectCount == 0 {
 		t.Fatalf("Expected non-zero value in runtime info but one is zero\n")

@@ -20,9 +20,9 @@ var emptyAccessToken = ""
 var currentAccessToken = ""
 
 //
-// update the user activity
+// UpdateOrcidActivity -- update the user activity
 //
-func UpdateOrcidActivity(orcid string, oauth_token string, activity api.ActivityUpdate) (string, int, error) {
+func UpdateOrcidActivity(orcid string, oauthToken string, activity api.ActivityUpdate) (string, int, error) {
 
    logActivityUpdateRequest(activity)
 
@@ -30,7 +30,7 @@ func UpdateOrcidActivity(orcid string, oauth_token string, activity api.Activity
    existingActivity := len(activity.UpdateCode) != 0
 
    // construct target URL
-   url := fmt.Sprintf("%s/%s/work", config.Configuration.OrcidSecureUrl, orcid)
+   url := fmt.Sprintf("%s/%s/work", config.Configuration.OrcidSecureURL, orcid)
    if existingActivity == true {
       url = fmt.Sprintf("%s/%s", url, activity.UpdateCode)
    }
@@ -46,7 +46,7 @@ func UpdateOrcidActivity(orcid string, oauth_token string, activity api.Activity
    }
 
    // construct the auth field
-   auth := fmt.Sprintf("Bearer %s", oauth_token)
+   auth := fmt.Sprintf("Bearer %s", oauthToken)
 
    // issue the request
    start := time.Now()
@@ -139,18 +139,15 @@ func UpdateOrcidActivity(orcid string, oauth_token string, activity api.Activity
    return emptyUpdateCode, http.StatusInternalServerError, errors.New("Unhandled error case")
 }
 
-//
-// get an access token
-//
-func GetAccessToken( ) (string, int, error) {
+func getOauthToken( ) (string, int, error) {
 
    // construct target URL
-   url := fmt.Sprintf("%s/oauth/token", config.Configuration.OrcidOauthUrl)
+   url := fmt.Sprintf("%s/oauth/token", config.Configuration.OrcidOauthURL)
    fmt.Printf("%s\n", url)
 
    // create the request payload
    pl := oauthRequest {
-      ClientId:     config.Configuration.OrcidClientId,
+      ClientID:     config.Configuration.OrcidClientID,
       ClientSecret: config.Configuration.OrcidClientSecret,
       Scope:        "/read-public",
       GrantType:    "client_credentials", }
@@ -181,7 +178,7 @@ func GetAccessToken( ) (string, int, error) {
 
    // check for a non-success status and return if we find it
    if resp.StatusCode != http.StatusOK {
-      return emptyAccessToken, resp.StatusCode, errors.New(fmt.Sprintf("Service (%s) returns http %d", url, resp.StatusCode ) )
+      return emptyAccessToken, resp.StatusCode, fmt.Errorf("Service (%s) returns http %d", url, resp.StatusCode )
    }
 
    // otherwise, attempt to decode the response
@@ -197,12 +194,12 @@ func GetAccessToken( ) (string, int, error) {
 }
 
 //
-// renew the access token
+// RenewAccessToken -- renew the access token
 //
 func RenewAccessToken(staleToken string) (string, string, int, error) {
 
    // construct target URL
-   url := fmt.Sprintf("%s/oauth/token", config.Configuration.OrcidOauthUrl)
+   url := fmt.Sprintf("%s/oauth/token", config.Configuration.OrcidOauthURL)
    fmt.Printf("%s\n", url)
 
    // issue the request
@@ -213,7 +210,7 @@ func RenewAccessToken(staleToken string) (string, string, int, error) {
       Set("Accept", "application/json").
       Set("refresh_token", staleToken).
       Set("grant_type", "refresh").
-      Set("client_id", config.Configuration.OrcidClientId).
+      Set("client_id", config.Configuration.OrcidClientID).
       Set("client_secret", config.Configuration.OrcidClientSecret).
       Timeout(time.Duration(config.Configuration.Timeout) * time.Second).
       End()
@@ -237,12 +234,12 @@ func RenewAccessToken(staleToken string) (string, string, int, error) {
 }
 
 //
-// get details for the specified ORCID
+// GetOrcidDetails -- get details for the specified ORCID
 //
 func GetOrcidDetails(orcid string) (*api.OrcidDetails, int, error) {
 
    // construct target URL
-   url := fmt.Sprintf("%s/%s/orcid-bio", config.Configuration.OrcidPublicUrl, orcid)
+   url := fmt.Sprintf("%s/%s/orcid-bio", config.Configuration.OrcidPublicURL, orcid)
    //fmt.Printf( "%s\n", url )
 
    // issue the request
@@ -289,13 +286,13 @@ func GetOrcidDetails(orcid string) (*api.OrcidDetails, int, error) {
 }
 
 //
-// search ORCID given the supplied parameters and return the set of ORCID details that match
+// SearchOrcid -- search ORCID given the supplied parameters and return the set of ORCID details that match
 //
-func SearchOrcid(search string, start_ix string, max_results string) ([]*api.OrcidDetails, int, int, error) {
+func SearchOrcid(search string, startIx string, maxResults string) ([]*api.OrcidDetails, int, int, error) {
 
    // construct target URL
-   url := fmt.Sprintf("%s/search?q=%s&start=%s&rows=%s", config.Configuration.OrcidPublicUrl,
-      htmlEncodeString(search), start_ix, max_results)
+   url := fmt.Sprintf("%s/search?q=%s&start=%s&rows=%s", config.Configuration.OrcidPublicURL,
+      htmlEncodeString(search), startIx, maxResults)
    fmt.Printf("%s\n", url)
 
    // issue the request
@@ -347,13 +344,12 @@ func SearchOrcid(search string, start_ix string, max_results string) ([]*api.Orc
 }
 
 //
-// get the public endpoint status
+// GetPublicEndpointStatus -- get the public endpoint status
 //
-
 func GetPublicEndpointStatus( ) error {
 
    // construct target URL
-   url := fmt.Sprintf("%s/status", config.Configuration.OrcidPublicUrl )
+   url := fmt.Sprintf("%s/status", config.Configuration.OrcidPublicURL)
    //fmt.Printf( "%s\n", url )
 
    // get the access token
@@ -366,13 +362,12 @@ func GetPublicEndpointStatus( ) error {
 }
 
 //
-// get the secure endpoint status
+// GetSecureEndpointStatus -- get the secure endpoint status
 //
-
 func GetSecureEndpointStatus( ) error {
 
    // construct target URL
-   url := fmt.Sprintf("%s/status", config.Configuration.OrcidSecureUrl )
+   url := fmt.Sprintf("%s/status", config.Configuration.OrcidSecureURL)
    //fmt.Printf( "%s\n", url )
 
    // get the access token
@@ -416,7 +411,7 @@ func issueAuthorizedGet( url string, accept string, authToken string ) error {
 
    // check for a non-success status and return if we find it
    if resp.StatusCode != http.StatusOK {
-      return errors.New(fmt.Sprintf("Service (%s) returns http %d", url, resp.StatusCode ) )
+      return fmt.Errorf("Service (%s) returns http %d", url, resp.StatusCode )
    }
 
    return nil
@@ -429,7 +424,7 @@ func getAccessToken( ) ( string, error ) {
 
    // do we need an access token
    if len( currentAccessToken ) == 0 {
-      token, status, err := GetAccessToken( )
+      token, status, err := getOauthToken( )
       if status != http.StatusOK {
          return emptyAccessToken, err
       }

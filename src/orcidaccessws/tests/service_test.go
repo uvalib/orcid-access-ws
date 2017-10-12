@@ -35,9 +35,9 @@ var badSearchStart = "x"
 var goodSearchMax = "25"
 var badSearchMax = "x"
 
-var lc_alpha_chars = "abcdefghijklmnopqrstuvwxyz"
-var numeric_chars = "0123456789"
-var numeric_and_lc_alpha_chars = numeric_chars + lc_alpha_chars
+var lcAlphaChars = "abcdefghijklmnopqrstuvwxyz"
+var numericChars = "0123456789"
+var numericAndLcAlphaChars = numericChars + lcAlphaChars
 
 //
 // test helpers
@@ -49,17 +49,17 @@ func randomOrcidAttributes() api.OrcidAttributes {
 	rand.Seed(time.Now().UnixNano())
 
 	// list of possible characters for the ORCID
-	possible := []rune(numeric_chars)
+	possible := []rune(numericChars)
 	orcid := fmt.Sprintf("%s-%s-%s-%s", randomString(possible, 4), randomString(possible, 4),
 		randomString(possible, 4), randomString(possible, 4))
 
 	// list of possible characters for the access tokens
-	possible = []rune(numeric_and_lc_alpha_chars)
-	oauth_access := randomString(possible, 32)
-	oauth_renew := randomString(possible, 32)
-	oauth_scope := "/my/scope"
+	possible = []rune(numericAndLcAlphaChars)
+	oauthAccess := randomString(possible, 32)
+	oauthRenew := randomString(possible, 32)
+	oauthScope := "/my/scope"
 	return api.OrcidAttributes{Orcid: orcid,
-		OauthAccessToken: oauth_access, OauthRefreshToken: oauth_renew, OauthScope: oauth_scope}
+		OauthAccessToken: oauthAccess, OauthRefreshToken: oauthRenew, OauthScope: oauthScope}
 }
 
 func randomCid() string {
@@ -68,7 +68,7 @@ func randomCid() string {
 	rand.Seed(time.Now().UnixNano())
 
 	// list of possible characters
-	possible := []rune(numeric_and_lc_alpha_chars)
+	possible := []rune(numericAndLcAlphaChars)
 
 	return randomString(possible, 5)
 }
@@ -79,7 +79,7 @@ func randomUpdateCode() string {
 	rand.Seed(time.Now().UnixNano())
 
 	// list of possible characters
-	possible := []rune(numeric_chars)
+	possible := []rune(numericChars)
 
 	return randomString(possible, 6)
 }
@@ -89,7 +89,7 @@ func workActivity() api.ActivityUpdate {
 	// see the RNG
 	rand.Seed(time.Now().UnixNano())
 
-	possible := []rune(lc_alpha_chars)
+	possible := []rune(lcAlphaChars)
 	title := fmt.Sprintf("Title-%s", randomString(possible, 32))
 	abstract := fmt.Sprintf("Abstract-%s", randomString(possible, 32))
 	pubDate := "2017-03-05"
@@ -97,7 +97,7 @@ func workActivity() api.ActivityUpdate {
 	persons := makePeople(2)
 	rt := "journal-article"
 
-	work := api.WorkSchema{Title: title, Abstract: abstract, PublicationDate: pubDate, Url: url, Authors: persons, ResourceType: rt}
+	work := api.WorkSchema{Title: title, Abstract: abstract, PublicationDate: pubDate, URL: url, Authors: persons, ResourceType: rt}
 	return api.ActivityUpdate{Work: work}
 }
 
@@ -140,10 +140,10 @@ func ensureIdenticalOrcidsAttributes(t *testing.T, attributes1 *api.OrcidAttribu
 
 func ensureValidOrcidsAttributes(t *testing.T, orcids []*api.OrcidAttributes) {
 	for _, e := range orcids {
-		if emptyField(e.Id) ||
+		if emptyField(e.ID) ||
 			emptyField(e.Cid) ||
 			emptyField(e.Orcid) ||
-			emptyField(e.Uri) ||
+			emptyField(e.URI) ||
 			emptyField(e.CreatedAt) {
 			log.Printf("%t", e)
 			t.Fatalf("Expected non-empty field but one is empty\n")
@@ -169,7 +169,7 @@ func ensureValidSearchResults(t *testing.T, orcids []*api.OrcidDetails, expected
 
 func ensureValidOrcidDetails(t *testing.T, orcid *api.OrcidDetails) {
 	if emptyField(orcid.Orcid) ||
-		emptyField(orcid.Uri) ||
+		emptyField(orcid.URI) ||
 		//emptyField( orcid.DisplayName ) ||
 		emptyField(orcid.FirstName) ||
 		emptyField(orcid.LastName) {

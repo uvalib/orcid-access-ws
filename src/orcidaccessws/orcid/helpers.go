@@ -24,7 +24,7 @@ func logActivityUpdateRequest(activity api.ActivityUpdate) {
 		fmt.Println("Work Title:", activity.Work.Title)
 		fmt.Println("Work Abstract:", activity.Work.Abstract)
 		fmt.Println("PublicationDate:", activity.Work.PublicationDate)
-		fmt.Println("Url:", activity.Work.Url)
+		fmt.Println("URL:", activity.Work.URL)
 		fmt.Println("Authors:", activity.Work.Authors)
 		fmt.Println("ResourceType:", activity.Work.ResourceType)
 	}
@@ -51,7 +51,7 @@ func makeUpdateActivityBody(activity api.ActivityUpdate) (string, error) {
 		PublicationMonth string
 		PublicationDay   string
 		Identifier       string
-		Url              string
+		URL              string
 		Authors          []api.Person
 	}{
 		activity.UpdateCode,
@@ -61,8 +61,8 @@ func makeUpdateActivityBody(activity api.ActivityUpdate) (string, error) {
 		YYYY,
 		MM,
 		DD,
-		idFromDoiUrl(activity.Work.Url),
-		activity.Work.Url,
+		idFromDoiURL(activity.Work.URL),
+		activity.Work.URL,
 		htmlEncodePersonArray(api.SortPeople(activity.Work.Authors)),
 	}
 
@@ -103,8 +103,8 @@ func checkCommonResponse(body string) (int, error) {
 	}
 
 	// check protocol version to ensure we know what to do with this
-	if cr.Version != PUBLIC_PROTOCOL_VERSION {
-		logger.Log(fmt.Sprintf("ORCID protocol version not supported. Require: %s, received: %s", PUBLIC_PROTOCOL_VERSION, cr.Version))
+	if cr.Version != publicProtocolVersion {
+		logger.Log(fmt.Sprintf("ORCID protocol version not supported. Require: %s, received: %s", publicProtocolVersion, cr.Version))
 		return http.StatusHTTPVersionNotSupported, nil
 	}
 
@@ -139,8 +139,8 @@ func constructDetails(profile *orcidProfile) *api.OrcidDetails {
 
 	od := new(api.OrcidDetails)
 
-	od.Orcid = profile.Id.Id
-	od.Uri = profile.Id.Uri
+	od.Orcid = profile.ID.ID
+	od.URI = profile.ID.URI
 	od.DisplayName = profile.Bio.PersonalDetails.CreditName.Value
 	od.FirstName = profile.Bio.PersonalDetails.GivenName.Value
 	od.LastName = profile.Bio.PersonalDetails.FamilyName.Value
@@ -153,7 +153,7 @@ func constructDetails(profile *orcidProfile) *api.OrcidDetails {
 
 	od.ResearchUrls = make([]string, 0)
 	for _, e := range profile.Bio.Urls.Urls {
-		od.ResearchUrls = append(od.ResearchUrls, e.Url.Value)
+		od.ResearchUrls = append(od.ResearchUrls, e.URL.Value)
 	}
 
 	return (od)
@@ -206,7 +206,7 @@ func splitDate(date string) (string, string, string) {
 	return YYYY, MM, DD
 }
 
-func idFromDoiUrl(url string) string {
+func idFromDoiURL(url string) string {
 	return strings.Replace(url, "https://doi.org/", "", -1)
 }
 

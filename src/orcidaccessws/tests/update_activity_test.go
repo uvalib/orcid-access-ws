@@ -80,7 +80,7 @@ func TestUpdateActivityEmptyWorkUrl(t *testing.T) {
 	expected := http.StatusBadRequest
 	id := goodCid
 	newActivity := workActivity()
-	newActivity.Work.Url = ""
+	newActivity.Work.URL = ""
 	status, _ := client.UpdateActivity(cfg.Endpoint, id, goodToken, newActivity)
 	if status != expected {
 		t.Fatalf("Expected %v, got %v\n", expected, status)

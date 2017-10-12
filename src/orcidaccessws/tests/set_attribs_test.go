@@ -27,7 +27,7 @@ func TestSetOrcidAttributesNew(t *testing.T) {
 	}
 
 	if current == nil || len(current) == 0 {
-		t.Fatalf("Expected to find orcid for %s and did not\n", attributes.Id)
+		t.Fatalf("Expected to find orcid for %s and did not\n", attributes.ID)
 	}
 
 	ensureIdenticalOrcidsAttributes(t, current[0], &attributes)
@@ -50,7 +50,7 @@ func TestSetOrcidAttributesUpdate(t *testing.T) {
 	}
 
 	if current == nil || len(current) == 0 {
-		t.Fatalf("Expected to find orcid for %s and did not\n", attributes1.Id)
+		t.Fatalf("Expected to find orcid for %s and did not\n", attributes1.ID)
 	}
 
 	ensureIdenticalOrcidsAttributes(t, current[0], &attributes1)
@@ -66,7 +66,7 @@ func TestSetOrcidAttributesUpdate(t *testing.T) {
 	}
 
 	if current == nil || len(current) == 0 {
-		t.Fatalf("Expected to find orcid for %s and did not\n", attributes2.Id)
+		t.Fatalf("Expected to find orcid for %s and did not\n", attributes2.ID)
 	}
 
 	ensureIdenticalOrcidsAttributes(t, current[0], &attributes2)

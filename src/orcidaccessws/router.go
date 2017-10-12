@@ -1,116 +1,123 @@
 package main
 
 import (
-	"github.com/gorilla/mux"
-	"net/http"
-	"orcidaccessws/handlers"
+   "github.com/gorilla/mux"
+   "net/http"
+   "orcidaccessws/handlers"
 )
 
-type Route struct {
-	Name        string
-	Method      string
-	Pattern     string
-	HandlerFunc http.HandlerFunc
+type route struct {
+   Name        string
+   Method      string
+   Pattern     string
+   HandlerFunc http.HandlerFunc
 }
 
-type Routes []Route
+type routeSlice []route
 
-var routes = Routes{
+var routes = routeSlice{
 
-	Route{
-		"HealthCheck",
-		"GET",
-		"/healthcheck",
-		handlers.HealthCheck,
-	},
+   route{
+      "HealthCheck",
+      "GET",
+      "/healthcheck",
+      handlers.HealthCheck,
+   },
 
-	Route{
-		"VersionGet",
-		"GET",
-		"/version",
-		handlers.VersionGet,
-	},
+   route{
+      "VersionInfo",
+      "GET",
+      "/version",
+      handlers.VersionInfo,
+   },
 
-	Route{
-		"RuntimeInfo",
-		"GET",
-		"/runtime",
-		handlers.RuntimeInfo,
-	},
+   route{
+      "RuntimeInfo",
+      "GET",
+      "/runtime",
+      handlers.RuntimeInfo,
+   },
 
-	Route{
-		"Stats",
-		"GET",
-		"/statistics",
-		handlers.StatsGet,
-	},
+   route{
+      "Stats",
+      "GET",
+      "/statistics",
+      handlers.StatsGet,
+   },
 
-	Route{
-		"GetOrcidAttributes",
-		"GET",
-		"/cid/{id}",
-		handlers.GetOrcidAttributes,
-	},
+   route{
+      "GetOrcidAttributes",
+      "GET",
+      "/cid/{id}",
+      handlers.GetOrcidAttributes,
+   },
 
-	Route{
-		"GetAllOrcidAttributes",
-		"GET",
-		"/cid",
-		handlers.GetAllOrcidAttributes,
-	},
+   route{
+      "GetAllOrcidAttributes",
+      "GET",
+      "/cid",
+      handlers.GetAllOrcidAttributes,
+   },
 
-	Route{
-		"GetOrcidDetails",
-		"GET",
-		"/orcid/{id}",
-		handlers.GetOrcidDetails,
-	},
+   route{
+      "GetOrcidDetails",
+      "GET",
+      "/orcid/{id}",
+      handlers.GetOrcidDetails,
+   },
 
-	Route{
-		"SearchOrcid",
-		"GET",
-		"/orcid",
-		handlers.SearchOrcid,
-	},
+   route{
+      "SearchOrcid",
+      "GET",
+      "/orcid",
+      handlers.SearchOrcid,
+   },
 
-	Route{
-		"SetOrcidAttributes",
-		"PUT",
-		"/cid/{id}",
-		handlers.SetOrcidAttributes,
-	},
+   route{
+      "SetOrcidAttributes",
+      "PUT",
+      "/cid/{id}",
+      handlers.SetOrcidAttributes,
+   },
 
-	Route{
-		"UpdateActivity",
-		"PUT",
-		"/cid/{id}/activity",
-		handlers.UpdateActivity,
-	},
+   route{
+      "UpdateActivity",
+      "PUT",
+      "/cid/{id}/activity",
+      handlers.UpdateActivity,
+   },
 
-	Route{
-		"DeleteOrcidAttributes",
-		"DELETE",
-		"/cid/{id}",
-		handlers.DeleteOrcidAttributes,
-	},
+   route{
+      "DeleteOrcidAttributes",
+      "DELETE",
+      "/cid/{id}",
+      handlers.DeleteOrcidAttributes,
+   },
 }
 
+//
+// NewRouter -- build and return the router
+//
 func NewRouter() *mux.Router {
 
-	router := mux.NewRouter().StrictSlash(true)
-	for _, route := range routes {
+   router := mux.NewRouter().StrictSlash(true)
+   for _, route := range routes {
 
-		var handler http.Handler
+      var handler http.Handler
 
-		handler = route.HandlerFunc
-		handler = HandlerLogger(handler, route.Name)
+      handler = route.HandlerFunc
+      handler = HandlerLogger(handler, route.Name)
 
-		router.
-			Methods(route.Method).
-			Path(route.Pattern).
-			Name(route.Name).
-			Handler(handler)
-	}
+      router.
+         Methods(route.Method).
+         Path(route.Pattern).
+         Name(route.Name).
+         Handler(handler)
+   }
 
-	return router
+   return router
 }
+
+//
+// end of file
+//
