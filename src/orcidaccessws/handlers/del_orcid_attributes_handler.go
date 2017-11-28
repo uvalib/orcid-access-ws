@@ -1,13 +1,13 @@
 package handlers
 
 import (
-   "fmt"
-   "github.com/gorilla/mux"
-   "net/http"
-   "orcidaccessws/authtoken"
-   "orcidaccessws/config"
-   "orcidaccessws/dao"
-   "orcidaccessws/logger"
+	"fmt"
+	"github.com/gorilla/mux"
+	"net/http"
+	"orcidaccessws/authtoken"
+	"orcidaccessws/config"
+	"orcidaccessws/dao"
+	"orcidaccessws/logger"
 )
 
 //
@@ -15,40 +15,40 @@ import (
 //
 func DeleteOrcidAttributes(w http.ResponseWriter, r *http.Request) {
 
-   vars := mux.Vars(r)
-   id := vars["id"]
-   token := r.URL.Query().Get("auth")
+	vars := mux.Vars(r)
+	id := vars["id"]
+	token := r.URL.Query().Get("auth")
 
-   // update the statistics
-   Statistics.RequestCount++
-   Statistics.DelOrcidAttribsCount++
+	// update the statistics
+	Statistics.RequestCount++
+	Statistics.DelOrcidAttribsCount++
 
-   // parameters OK?
-   if isEmpty(id) || isEmpty(token) {
-      status := http.StatusBadRequest
-      encodeStandardResponse(w, status, http.StatusText(status))
-      return
-   }
+	// parameters OK?
+	if isEmpty(id) || isEmpty(token) {
+		status := http.StatusBadRequest
+		encodeStandardResponse(w, status, http.StatusText(status))
+		return
+	}
 
-   // validate the token
-   if authtoken.Validate(config.Configuration.AuthTokenEndpoint, "setorcid", token, config.Configuration.Timeout) == false {
-      status := http.StatusForbidden
-      encodeStandardResponse(w, status, http.StatusText(status))
-      return
-   }
+	// validate the token
+	if authtoken.Validate(config.Configuration.AuthTokenEndpoint, "setorcid", token, config.Configuration.Timeout) == false {
+		status := http.StatusForbidden
+		encodeStandardResponse(w, status, http.StatusText(status))
+		return
+	}
 
-   // get the ORCID details
-   err := dao.DB.DelOrcidAttributesByCid(id)
-   if err != nil {
-      logger.Log(fmt.Sprintf("ERROR: %s", err.Error()))
-      status := http.StatusInternalServerError
-      encodeStandardResponse(w, status,
-         fmt.Sprintf("%s (%s)", http.StatusText(status), err))
-      return
-   }
+	// get the ORCID details
+	err := dao.DB.DelOrcidAttributesByCid(id)
+	if err != nil {
+		logger.Log(fmt.Sprintf("ERROR: %s", err.Error()))
+		status := http.StatusInternalServerError
+		encodeStandardResponse(w, status,
+			fmt.Sprintf("%s (%s)", http.StatusText(status), err))
+		return
+	}
 
-   status := http.StatusOK
-   encodeStandardResponse(w, status, http.StatusText(status))
+	status := http.StatusOK
+	encodeStandardResponse(w, status, http.StatusText(status))
 }
 
 //

@@ -84,13 +84,13 @@ func makeUpdateActivityBody(activity api.ActivityUpdate) (string, error) {
 //
 // check the error response to identify an appropriate http status response
 //
-func mapErrorResponseToStatus( err error  ) int {
-   //logger.Log(fmt.Sprintf("ERROR: [%s]", err.Error()))
-   if strings.Contains( err.Error(), " timeout" ) {
-      return http.StatusRequestTimeout
-   }
+func mapErrorResponseToStatus(err error) int {
+	//logger.Log(fmt.Sprintf("ERROR: [%s]", err.Error()))
+	if strings.Contains(err.Error(), " timeout") {
+		return http.StatusRequestTimeout
+	}
 
-   return http.StatusInternalServerError
+	return http.StatusInternalServerError
 }
 
 func checkCommonResponse(body string) (int, error) {

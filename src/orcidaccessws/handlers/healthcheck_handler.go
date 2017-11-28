@@ -1,9 +1,9 @@
 package handlers
 
 import (
-   "net/http"
-   "orcidaccessws/dao"
-   "orcidaccessws/orcid"
+	"net/http"
+	"orcidaccessws/dao"
+	"orcidaccessws/orcid"
 )
 
 //
@@ -11,35 +11,35 @@ import (
 //
 func HealthCheck(w http.ResponseWriter, r *http.Request) {
 
-   // update the statistics
-   Statistics.RequestCount++
-   Statistics.HeartbeatCount++
+	// update the statistics
+	Statistics.RequestCount++
+	Statistics.HeartbeatCount++
 
-   status := http.StatusOK
-   dbErr := dao.DB.CheckDB()
-   orcidPublicErr := orcid.GetPublicEndpointStatus( )
-   orcidSecureErr := orcid.GetSecureEndpointStatus( )
+	status := http.StatusOK
+	dbErr := dao.DB.CheckDB()
+	orcidPublicErr := orcid.GetPublicEndpointStatus()
+	orcidSecureErr := orcid.GetSecureEndpointStatus()
 
-   var dbMessage, orcidPublicMessage, orcidSecureMessage string
+	var dbMessage, orcidPublicMessage, orcidSecureMessage string
 
-   if dbErr != nil || orcidPublicErr != nil || orcidSecureErr != nil {
+	if dbErr != nil || orcidPublicErr != nil || orcidSecureErr != nil {
 
-      status = http.StatusInternalServerError
+		status = http.StatusInternalServerError
 
-      if dbErr != nil {
-         dbMessage = dbErr.Error()
-      }
+		if dbErr != nil {
+			dbMessage = dbErr.Error()
+		}
 
-      if orcidPublicErr != nil {
-         orcidPublicMessage = orcidPublicErr.Error()
-      }
+		if orcidPublicErr != nil {
+			orcidPublicMessage = orcidPublicErr.Error()
+		}
 
-      if orcidSecureErr != nil {
-         orcidSecureMessage = orcidSecureErr.Error()
-      }
-   }
+		if orcidSecureErr != nil {
+			orcidSecureMessage = orcidSecureErr.Error()
+		}
+	}
 
-   encodeHealthCheckResponse(w, status, dbMessage, orcidPublicMessage, orcidSecureMessage)
+	encodeHealthCheckResponse(w, status, dbMessage, orcidPublicMessage, orcidSecureMessage)
 }
 
 //
