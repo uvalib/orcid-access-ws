@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"log"
+	_ "expvar"
 	"net/http"
 	"orcidaccessws/config"
 	"orcidaccessws/dao"
