@@ -1,7 +1,7 @@
 FROM alpine:3.7
 
 # update the packages
-RUN apk update && apk upgrade && apk add bash tzdata ca-certificates
+RUN apk update && apk upgrade && apk add bash tzdata ca-certificates && rm -fr /var/cache/apk/*
 
 # Create the run user and group
 RUN addgroup webservice && adduser webservice -G webservice -D
@@ -26,8 +26,8 @@ EXPOSE 8080
 CMD scripts/entry.sh
 
 # Move in necessary assets
-COPY scripts/entry.sh $APP_HOME/scripts/entry.sh
 COPY data/container_bash_profile /home/webservice/.profile
+COPY scripts/entry.sh $APP_HOME/scripts/entry.sh
 COPY data/work-activity-template.xml $APP_HOME/data/work-activity-template.xml
 COPY bin/orcid-access-ws.linux $APP_HOME/bin/orcid-access-ws
 
