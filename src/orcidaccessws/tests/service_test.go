@@ -145,7 +145,7 @@ func ensureValidOrcidsAttributes(t *testing.T, orcids []*api.OrcidAttributes) {
 			emptyField(e.Orcid) ||
 			emptyField(e.URI) ||
 			emptyField(e.CreatedAt) {
-			log.Printf("%t", e)
+			log.Printf("%v", e)
 			t.Fatalf("Expected non-empty field but one is empty\n")
 		}
 	}
@@ -173,7 +173,7 @@ func ensureValidOrcidDetails(t *testing.T, orcid *api.OrcidDetails) {
 		//emptyField( orcid.DisplayName ) ||
 		emptyField(orcid.FirstName) ||
 		emptyField(orcid.LastName) {
-		log.Printf("%t", orcid)
+		log.Printf("%v", orcid)
 		t.Fatalf("Expected non-empty field but one is empty\n")
 	}
 }
