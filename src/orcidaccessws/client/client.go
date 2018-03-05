@@ -93,36 +93,6 @@ func MetricsCheck(endpoint string) (int, string) {
 }
 
 //
-// Statistics -- call the statistics method on the service
-//
-func Statistics(endpoint string) (int, *api.Statistics) {
-
-	url := fmt.Sprintf("%s/statistics", endpoint)
-	//fmt.Printf( "%s\n", url )
-
-	resp, body, errs := gorequest.New().
-		SetDebug(debugHTTP).
-		Get(url).
-		Timeout(time.Duration(serviceTimeout) * time.Second).
-		End()
-
-	if errs != nil {
-		return http.StatusInternalServerError, nil
-	}
-
-	defer io.Copy(ioutil.Discard, resp.Body)
-	defer resp.Body.Close()
-
-	r := api.StatisticsResponse{}
-	err := json.Unmarshal([]byte(body), &r)
-	if err != nil {
-		return http.StatusInternalServerError, nil
-	}
-
-	return resp.StatusCode, &r.Details
-}
-
-//
 // GetOrcidAttributes -- call the get orcid attributes method on the service
 //
 func GetOrcidAttributes(endpoint string, cid string, token string) (int, []*api.OrcidAttributes) {

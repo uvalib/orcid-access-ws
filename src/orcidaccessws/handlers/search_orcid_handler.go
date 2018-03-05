@@ -24,10 +24,6 @@ func SearchOrcid(w http.ResponseWriter, r *http.Request) {
 	start := r.URL.Query().Get("start")
 	count := r.URL.Query().Get("max")
 
-	// update the statistics
-	Statistics.RequestCount++
-	Statistics.SearchOrcidDetailsCount++
-
 	// parameters OK?
 	if isEmpty(query) || isEmpty(token) {
 		status := http.StatusBadRequest

@@ -19,10 +19,6 @@ func DeleteOrcidAttributes(w http.ResponseWriter, r *http.Request) {
 	id := vars["id"]
 	token := r.URL.Query().Get("auth")
 
-	// update the statistics
-	Statistics.RequestCount++
-	Statistics.DelOrcidAttribsCount++
-
 	// parameters OK?
 	if isEmpty(id) || isEmpty(token) {
 		status := http.StatusBadRequest

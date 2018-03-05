@@ -34,13 +34,6 @@ var routes = routeSlice{
 	},
 
 	route{
-		"Stats",
-		"GET",
-		"/statistics",
-		handlers.StatsGet,
-	},
-
-	route{
 		"GetOrcidAttributes",
 		"GET",
 		"/cid/{id}",

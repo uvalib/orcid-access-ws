@@ -11,10 +11,6 @@ import (
 //
 func HealthCheck(w http.ResponseWriter, r *http.Request) {
 
-	// update the statistics
-	Statistics.RequestCount++
-	Statistics.HeartbeatCount++
-
 	status := http.StatusOK
 	dbErr := dao.DB.CheckDB()
 	orcidPublicErr := orcid.GetPublicEndpointStatus()

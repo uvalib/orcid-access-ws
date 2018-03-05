@@ -89,19 +89,6 @@ func encodeHealthCheckResponse(w http.ResponseWriter, status int, dbMsg string, 
 	}
 }
 
-func encodeStatsResponse(w http.ResponseWriter, statistics api.Statistics) {
-
-	status := http.StatusOK
-
-	jsonAttributes(w)
-	w.WriteHeader(status)
-
-	if err := json.NewEncoder(w).Encode(api.StatisticsResponse{Status: status, Message: http.StatusText(status), Details: statistics}); err != nil {
-		log.Fatal(err)
-	}
-
-}
-
 func encodeVersionResponse(w http.ResponseWriter, status int, version string) {
 	jsonAttributes(w)
 	w.WriteHeader(status)

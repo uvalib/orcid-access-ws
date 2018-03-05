@@ -16,10 +16,6 @@ func GetAllOrcidAttributes(w http.ResponseWriter, r *http.Request) {
 
 	token := r.URL.Query().Get("auth")
 
-	// update the statistics
-	Statistics.RequestCount++
-	Statistics.GetOrcidAttribsCount++
-
 	// parameters OK?
 	if isEmpty(token) {
 		status := http.StatusBadRequest
