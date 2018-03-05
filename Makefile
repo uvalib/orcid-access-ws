@@ -6,7 +6,7 @@
 GOCMD=go
 GOBUILD=$(GOCMD) build
 GOCLEAN=$(GOCMD) clean
-GOTEST=$(GOCMD) test
+GOTEST=GOCACHE=off $(GOCMD) test
 GOVET=$(GOCMD) vet
 GOFMT=$(GOCMD) fmt
 GOGET=$(GOCMD) get
