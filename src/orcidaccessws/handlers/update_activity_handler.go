@@ -35,7 +35,7 @@ func UpdateActivity(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// validate the token
-	if authtoken.Validate(config.Configuration.AuthTokenEndpoint, "setorcid", token, config.Configuration.Timeout) == false {
+	if authtoken.Validate(config.Configuration.AuthTokenEndpoint, "setorcid", token, config.Configuration.ServiceTimeout) == false {
 		status := http.StatusForbidden
 		encodeUpdateActivityResponse(w, status, http.StatusText(status), emptyUpdateCode)
 		return

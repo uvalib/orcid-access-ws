@@ -29,7 +29,7 @@ type Config struct {
 
 	// token authentication
 	AuthTokenEndpoint string
-	Timeout           int
+	ServiceTimeout    int
 
 	// diagnostic only
 	Debug bool
@@ -56,7 +56,7 @@ func loadConfig() Config {
 	flag.StringVar(&c.OrcidOauthURL, "orcidoauthurl", "https://sandbox.orcid.org", "The ORCID service OAuth URL")
 	flag.StringVar(&c.OrcidClientID, "orcidclientid", "client-id", "The ORCID client identifier")
 	flag.StringVar(&c.OrcidClientSecret, "orcidclientsecret", "client-secret", "The ORCID client secret")
-	flag.IntVar(&c.Timeout, "timeout", 15, "The external service timeout in seconds")
+	flag.IntVar(&c.ServiceTimeout, "timeout", 15, "The external service timeout in seconds")
 	flag.StringVar(&c.AuthTokenEndpoint, "tokenauth", "http://docker1.lib.virginia.edu:8200", "The token authentication endpoint")
 	flag.BoolVar(&c.Debug, "debug", false, "Enable debugging")
 
@@ -74,7 +74,7 @@ func loadConfig() Config {
 	logger.Log(fmt.Sprintf("OrcidClientID:       %s", c.OrcidClientID))
 	logger.Log(fmt.Sprintf("OrcidClientSecret:   %s", strings.Repeat("*", len(c.OrcidClientSecret))))
 	logger.Log(fmt.Sprintf("AuthTokenEndpoint    %s", c.AuthTokenEndpoint))
-	logger.Log(fmt.Sprintf("Timeout:             %d", c.Timeout))
+	logger.Log(fmt.Sprintf("ServiceTimeout:      %d", c.ServiceTimeout))
 	logger.Log(fmt.Sprintf("Debug                %t", c.Debug))
 
 	return c

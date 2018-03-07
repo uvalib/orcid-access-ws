@@ -61,7 +61,7 @@ func UpdateOrcidActivity(orcid string, oauthToken string, activity api.ActivityU
 			Set("Content-Type", "application/xml").
 			Set("Authorization", auth).
 			Send(requestBody).
-			Timeout(time.Duration(config.Configuration.Timeout) * time.Second).
+			Timeout(time.Duration(config.Configuration.ServiceTimeout) * time.Second).
 			End()
 	} else {
 		resp, body, errs = gorequest.New().
@@ -71,7 +71,7 @@ func UpdateOrcidActivity(orcid string, oauthToken string, activity api.ActivityU
 			Set("Content-Type", "application/xml").
 			Set("Authorization", auth).
 			Send(requestBody).
-			Timeout(time.Duration(config.Configuration.Timeout) * time.Second).
+			Timeout(time.Duration(config.Configuration.ServiceTimeout) * time.Second).
 			End()
 	}
 	duration := time.Since(start)
@@ -160,7 +160,7 @@ func getOauthToken() (string, int, error) {
 		Send(pl).
 		Set("Accept", "application/json").
 		Set("Content-Type", "application/x-www-form-urlencoded").
-		Timeout(time.Duration(config.Configuration.Timeout) * time.Second).
+		Timeout(time.Duration(config.Configuration.ServiceTimeout) * time.Second).
 		End()
 	duration := time.Since(start)
 
@@ -212,7 +212,7 @@ func RenewAccessToken(staleToken string) (string, string, int, error) {
 		Set("grant_type", "refresh").
 		Set("client_id", config.Configuration.OrcidClientID).
 		Set("client_secret", config.Configuration.OrcidClientSecret).
-		Timeout(time.Duration(config.Configuration.Timeout) * time.Second).
+		Timeout(time.Duration(config.Configuration.ServiceTimeout) * time.Second).
 		End()
 	duration := time.Since(start)
 
@@ -248,7 +248,7 @@ func GetOrcidDetails(orcid string) (*api.OrcidDetails, int, error) {
 		SetDebug(config.Configuration.Debug).
 		Get(url).
 		Set("Accept", "application/json").
-		Timeout(time.Duration(config.Configuration.Timeout) * time.Second).
+		Timeout(time.Duration(config.Configuration.ServiceTimeout) * time.Second).
 		End()
 	duration := time.Since(start)
 
@@ -301,7 +301,7 @@ func SearchOrcid(search string, startIx string, maxResults string) ([]*api.Orcid
 		SetDebug(config.Configuration.Debug).
 		Get(url).
 		Set("Accept", "application/json").
-		Timeout(time.Duration(config.Configuration.Timeout) * time.Second).
+		Timeout(time.Duration(config.Configuration.ServiceTimeout) * time.Second).
 		End()
 	duration := time.Since(start)
 
@@ -394,7 +394,7 @@ func issueAuthorizedGet(url string, accept string, authToken string) error {
 		Get(url).
 		Set("Accept", accept).
 		Set("Authorization", auth).
-		Timeout(time.Duration(config.Configuration.Timeout) * time.Second).
+		Timeout(time.Duration(config.Configuration.ServiceTimeout) * time.Second).
 		End()
 	duration := time.Since(start)
 
