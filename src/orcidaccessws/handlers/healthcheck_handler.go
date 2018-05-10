@@ -4,6 +4,8 @@ import (
 	"net/http"
 	"orcidaccessws/dao"
 	"orcidaccessws/orcid"
+	"orcidaccessws/logger"
+	"fmt"
 )
 
 //
@@ -24,14 +26,17 @@ func HealthCheck(w http.ResponseWriter, r *http.Request) {
 
 		if dbErr != nil {
 			dbMessage = dbErr.Error()
+			logger.Log(fmt.Sprintf( "ERROR: Database reports '%s'", dbMessage ) )
 		}
 
 		if orcidPublicErr != nil {
 			orcidPublicMessage = orcidPublicErr.Error()
+			logger.Log(fmt.Sprintf( "ERROR: ORCID public endpoint reports '%s'", orcidPublicMessage ) )
 		}
 
 		if orcidSecureErr != nil {
 			orcidSecureMessage = orcidSecureErr.Error()
+			logger.Log(fmt.Sprintf( "ERROR: ORCID secure endpoint reports '%s'", orcidSecureMessage ) )
 		}
 	}
 
