@@ -1,9 +1,7 @@
 /.idea
-/src/github.com
-/src/golang.org
 /bin
 /pkg
-/src/orcidaccessws/tests/service_test.yml
+/orcidaccessws/tests/service_test.yml
 /env.*
 /scripts/load/env.*
 /buildtag.build-0
