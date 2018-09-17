@@ -18,6 +18,9 @@ WORKDIR $APP_HOME
 RUN mkdir -p $APP_HOME/scripts $APP_HOME/bin $APP_HOME/data $APP_HOME/assets
 RUN chown -R webservice $APP_HOME && chgrp -R webservice $APP_HOME
 
+# Add the RDS certificates
+COPY data/rds-combined-ca-bundle.pem /etc/ssl/certs
+
 # Specify the user
 USER webservice
 
