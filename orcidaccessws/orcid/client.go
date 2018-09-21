@@ -271,6 +271,11 @@ func GetOrcidDetails(orcid string) (*api.OrcidDetails, int, error) {
 
 	logger.Log(fmt.Sprintf("Service (%s) returns http %d in %s", url, resp.StatusCode, duration))
 
+	// check for an http status
+	if resp.StatusCode != http.StatusOK {
+		return nil, resp.StatusCode, nil
+	}
+
 	pr := orcidPersonResponse{}
 	err = json.Unmarshal([]byte(body), &pr)
 	if err != nil {
