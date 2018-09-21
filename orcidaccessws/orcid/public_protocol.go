@@ -1,6 +1,27 @@
 package orcid
 
 //
+// v2.0 response structure
+//
+
+// a person query contains a person response
+type orcidPersonResponse struct {
+	Name      orcidName      `json:"name,omitempty"`
+	Biography orcidBiography `json:"biography,omitempty"`
+}
+
+type orcidName struct {
+    GivenName   stringValueField `json:"given-names,omitempty"`
+	FamilyName  stringValueField `json:"family-name,omitempty"`
+	DisplayName stringValueField `json:"credit-name,omitempty"`
+    Path        string           `json:"path,omitempty`
+}
+
+type orcidBiography struct {
+	Content string           `json:"content,omitempty"`
+}
+
+//
 // v1.2 response structure
 //
 

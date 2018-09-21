@@ -25,9 +25,9 @@ var goodCid = "dpg3k"
 var badCid = "badness"
 var goodToken = cfg.Token
 var badToken = "badness"
-var goodOrcid = "0000-0002-0566-4186"
+var goodOrcid = "0000-0003-4520-4923"
 var badOrcid = "9999-9999-0000-0000"
-var goodSearch = "Dave Goldstein"
+var goodSearch = "Ellen Ramsey"
 var notFoundSearch = "hurunglyzit"
 var empty = " "
 var goodSearchStart = "0"
@@ -168,11 +168,11 @@ func ensureValidSearchResults(t *testing.T, orcids []*api.OrcidDetails, expected
 }
 
 func ensureValidOrcidDetails(t *testing.T, orcid *api.OrcidDetails) {
-	if emptyField(orcid.Orcid) ||
-		emptyField(orcid.URI) ||
-		//emptyField( orcid.DisplayName ) ||
-		emptyField(orcid.FirstName) ||
-		emptyField(orcid.LastName) {
+	if emptyField( orcid.Orcid) ||
+		emptyField( orcid.URI) ||
+		emptyField( orcid.DisplayName ) ||
+		emptyField( orcid.FirstName) ||
+		emptyField( orcid.LastName) {
 		log.Printf("%v", orcid)
 		t.Fatalf("Expected non-empty field but one is empty\n")
 	}

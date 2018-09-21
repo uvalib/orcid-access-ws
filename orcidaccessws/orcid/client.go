@@ -143,7 +143,7 @@ func getOauthToken() (string, int, error) {
 
 	// construct target URL
 	url := fmt.Sprintf("%s/oauth/token", config.Configuration.OrcidOauthURL)
-	fmt.Printf("%s\n", url)
+	//fmt.Printf("%s\n", url)
 
 	// create the request payload
 	pl := oauthRequest{
@@ -200,7 +200,7 @@ func RenewAccessToken(staleToken string) (string, string, int, error) {
 
 	// construct target URL
 	url := fmt.Sprintf("%s/oauth/token", config.Configuration.OrcidOauthURL)
-	fmt.Printf("%s\n", url)
+	//fmt.Printf("%s\n", url)
 
 	// issue the request
 	start := time.Now()
@@ -239,14 +239,21 @@ func RenewAccessToken(staleToken string) (string, string, int, error) {
 func GetOrcidDetails(orcid string) (*api.OrcidDetails, int, error) {
 
 	// construct target URL
-	url := fmt.Sprintf("%s/%s/orcid-bio", config.Configuration.OrcidPublicURL, orcid)
+	url := fmt.Sprintf("%s/%s/person", config.Configuration.OrcidPublicURL, orcid)
 	//fmt.Printf( "%s\n", url )
+
+	// get an access token
+	token, err := getAccessToken()
+	if err != nil {
+		return nil, http.StatusInternalServerError, err
+	}
 
 	// issue the request
 	start := time.Now()
 	resp, body, errs := gorequest.New().
 		SetDebug(config.Configuration.Debug).
 		Get(url).
+		Set("Authorization", token).
 		Set("Accept", "application/json").
 		Timeout(time.Duration(config.Configuration.ServiceTimeout) * time.Second).
 		End()
@@ -264,84 +271,73 @@ func GetOrcidDetails(orcid string) (*api.OrcidDetails, int, error) {
 
 	logger.Log(fmt.Sprintf("Service (%s) returns http %d in %s", url, resp.StatusCode, duration))
 
-	// check the common response elements
-	status, err := checkCommonResponse(body)
-	if err != nil {
-		httpStatus := mapErrorResponseToStatus(err)
-		return nil, httpStatus, err
-	}
-
-	if status != http.StatusOK {
-		return nil, status, nil
-	}
-
-	pr := orcidProfileResponse{}
+	pr := orcidPersonResponse{}
 	err = json.Unmarshal([]byte(body), &pr)
 	if err != nil {
 		logger.Log(fmt.Sprintf("ERROR: json unmarshal: %s", err))
 		return nil, http.StatusInternalServerError, err
 	}
 
-	return transformDetailsResponse(&pr.Profile), http.StatusOK, nil
+	return transformDetailsResponse(&pr), http.StatusOK, nil
 }
 
 //
 // SearchOrcid -- search ORCID given the supplied parameters and return the set of ORCID details that match
 //
-func SearchOrcid(search string, startIx string, maxResults string) ([]*api.OrcidDetails, int, int, error) {
-
-	// construct target URL
-	url := fmt.Sprintf("%s/search?q=%s&start=%s&rows=%s", config.Configuration.OrcidPublicURL,
-		htmlEncodeString(search), startIx, maxResults)
-	fmt.Printf("%s\n", url)
-
-	// issue the request
-	start := time.Now()
-	resp, body, errs := gorequest.New().
-		SetDebug(config.Configuration.Debug).
-		Get(url).
-		Set("Accept", "application/json").
-		Timeout(time.Duration(config.Configuration.ServiceTimeout) * time.Second).
-		End()
-	duration := time.Since(start)
-
-	// check for errors
-	if errs != nil {
-		logger.Log(fmt.Sprintf("ERROR: service (%s) returns %s in %s", url, errs, duration))
-		httpStatus := mapErrorResponseToStatus(errs[0])
-		return nil, 0, httpStatus, errs[0]
-	}
-
-	defer io.Copy(ioutil.Discard, resp.Body)
-	defer resp.Body.Close()
-
-	logger.Log(fmt.Sprintf("Service (%s) returns http %d in %s", url, resp.StatusCode, duration))
-
-	// check the common response elements
-	status, err := checkCommonResponse(body)
-	if err != nil {
-		httpStatus := mapErrorResponseToStatus(err)
-		return nil, 0, httpStatus, err
-	}
-
-	if status != http.StatusOK {
-		return nil, 0, status, err
-	}
-
-	sr := orcidSearchResponse{}
-	err = json.Unmarshal([]byte(body), &sr)
-	if err != nil {
-		logger.Log(fmt.Sprintf("ERROR: json unmarshal: %s", err))
-		httpStatus := mapErrorResponseToStatus(err)
-		return nil, 0, httpStatus, err
-	}
-
-	//if sr.SearchResults.Results == nil || len( sr.SearchResults.Results ) == 0 {
-	//    return nil, sr.SearchResults.TotalFound, http.StatusNotFound, nil
-	//}
-
-	return transformSearchResponse(sr.SearchResults), sr.SearchResults.TotalFound, http.StatusOK, nil
-}
+//func SearchOrcid(search string, startIx string, maxResults string) ([]*api.OrcidDetails, int, int, error) {
+//
+//	// construct target URL
+//	url := fmt.Sprintf("%s/search?q=%s&start=%s&rows=%s", config.Configuration.OrcidPublicURL,
+//		htmlEncodeString(search), startIx, maxResults)
+//	fmt.Printf("%s\n", url)
+//
+//	// issue the request
+//	start := time.Now()
+//	resp, body, errs := gorequest.New().
+//		SetDebug(config.Configuration.Debug).
+//		Get(url).
+//		Set("Accept", "application/json").
+//		Timeout(time.Duration(config.Configuration.ServiceTimeout) * time.Second).
+//		End()
+//	duration := time.Since(start)
+//
+//	// check for errors
+//	if errs != nil {
+//		logger.Log(fmt.Sprintf("ERROR: service (%s) returns %s in %s", url, errs, duration))
+//		httpStatus := mapErrorResponseToStatus(errs[0])
+//		return nil, 0, httpStatus, errs[0]
+//	}
+//
+//	defer io.Copy(ioutil.Discard, resp.Body)
+//	defer resp.Body.Close()
+//
+//	logger.Log(fmt.Sprintf("Service (%s) returns http %d in %s", url, resp.StatusCode, duration))
+//
+//	// check the common response elements
+//	status, err := checkCommonResponse(body)
+//	if err != nil {
+//		httpStatus := mapErrorResponseToStatus(err)
+//		return nil, 0, httpStatus, err
+//	}
+//
+//	if status != http.StatusOK {
+//		return nil, 0, status, err
+//	}
+//
+//	sr := orcidSearchResponse{}
+//	err = json.Unmarshal([]byte(body), &sr)
+//	if err != nil {
+//		logger.Log(fmt.Sprintf("ERROR: json unmarshal: %s", err))
+//		httpStatus := mapErrorResponseToStatus(err)
+//		return nil, 0, httpStatus, err
+//	}
+//
+//	//if sr.SearchResults.Results == nil || len( sr.SearchResults.Results ) == 0 {
+//	//    return nil, sr.SearchResults.TotalFound, http.StatusNotFound, nil
+//	//}
+//
+//	return transformSearchResponse(sr.SearchResults), sr.SearchResults.TotalFound, http.StatusOK, nil
+//}
 
 //
 // GetPublicEndpointStatus -- get the public endpoint status
@@ -352,7 +348,7 @@ func GetPublicEndpointStatus() error {
 	url := fmt.Sprintf("%s/status", config.Configuration.OrcidPublicURL)
 	//fmt.Printf( "%s\n", url )
 
-	// get the access token
+	// get an access token
 	token, err := getAccessToken()
 	if err != nil {
 		return err

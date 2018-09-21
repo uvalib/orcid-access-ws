@@ -121,40 +121,40 @@ func checkCommonResponse(body string) (int, error) {
 	return http.StatusOK, nil
 }
 
-func transformDetailsResponse(profile *orcidProfile) *api.OrcidDetails {
-	return constructDetails(profile)
+func transformDetailsResponse(person *orcidPersonResponse) *api.OrcidDetails {
+	return constructDetails(person)
 }
 
-func transformSearchResponse(search orcidResults) []*api.OrcidDetails {
-	results := make([]*api.OrcidDetails, 0)
-	for _, e := range search.Results {
-		od := constructDetails(&e.Profile)
-		od.Relevancy = fmt.Sprintf("%.6f", e.Relevancy.Value)
-		results = append(results, od)
-	}
-	return (results)
-}
+//func transformSearchResponse(search orcidResults) []*api.OrcidDetails {
+//	results := make([]*api.OrcidDetails, 0)
+//	for _, e := range search.Results {
+//		od := constructDetails(&e.Profile)
+//		od.Relevancy = fmt.Sprintf("%.6f", e.Relevancy.Value)
+//		results = append(results, od)
+//	}
+//	return (results)
+//}
 
-func constructDetails(profile *orcidProfile) *api.OrcidDetails {
+func constructDetails(person *orcidPersonResponse) *api.OrcidDetails {
 
 	od := new(api.OrcidDetails)
 
-	od.Orcid = profile.ID.ID
-	od.URI = profile.ID.URI
-	od.DisplayName = profile.Bio.PersonalDetails.CreditName.Value
-	od.FirstName = profile.Bio.PersonalDetails.GivenName.Value
-	od.LastName = profile.Bio.PersonalDetails.FamilyName.Value
-	od.Biography = profile.Bio.Biography.Value
+	od.Orcid = person.Name.Path
+	od.URI = fmt.Sprintf( "%s/%s", config.Configuration.OrcidOauthURL, person.Name.Path )
+	od.DisplayName = person.Name.DisplayName.Value
+	od.FirstName = person.Name.GivenName.Value
+	od.LastName = person.Name.FamilyName.Value
+	od.Biography = person.Biography.Content
 
-	od.Keywords = make([]string, 0)
-	for _, e := range profile.Bio.Keywords.Keywords {
-		od.Keywords = append(od.Keywords, e.Value)
-	}
+//	od.Keywords = make([]string, 0)
+//	for _, e := range profile.Bio.Keywords.Keywords {
+//		od.Keywords = append(od.Keywords, e.Value)
+//	}
 
-	od.ResearchUrls = make([]string, 0)
-	for _, e := range profile.Bio.Urls.Urls {
-		od.ResearchUrls = append(od.ResearchUrls, e.URL.Value)
-	}
+//	od.ResearchUrls = make([]string, 0)
+//	for _, e := range profile.Bio.Urls.Urls {
+//		od.ResearchUrls = append(od.ResearchUrls, e.URL.Value)
+//	}
 
 	return (od)
 }
