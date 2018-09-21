@@ -44,7 +44,6 @@ func GetOrcidDetails(w http.ResponseWriter, r *http.Request) {
 	   return
 	}
 
-	status = http.StatusOK
 	encodeOrcidDetailsResponse(w, status, http.StatusText(status), orcid)
 }
 

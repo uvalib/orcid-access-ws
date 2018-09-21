@@ -273,7 +273,7 @@ func GetOrcidDetails(orcid string) (*api.OrcidDetails, int, error) {
 
 	// check for an http status
 	if resp.StatusCode != http.StatusOK {
-		return nil, resp.StatusCode, nil
+		return nil, resp.StatusCode, errors.New( orcid )
 	}
 
 	pr := orcidPersonResponse{}
