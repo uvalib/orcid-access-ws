@@ -209,7 +209,7 @@ func RenewAccessToken(staleToken string) (string, string, int, error) {
 		Get(url).
 		Set("Accept", "application/json").
 		Set("refresh_token", staleToken).
-		Set("grant_type", "refresh").
+		Set("grant_type", "refresh_token").
 		Set("client_id", config.Configuration.OrcidClientID).
 		Set("client_secret", config.Configuration.OrcidClientSecret).
 		Timeout(time.Duration(config.Configuration.ServiceTimeout) * time.Second).

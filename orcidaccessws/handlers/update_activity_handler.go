@@ -91,12 +91,11 @@ func UpdateActivity(w http.ResponseWriter, r *http.Request) {
 	updateCode, status, err := orcid.UpdateOrcidActivity(attributes[0].Orcid, attributes[0].OauthAccessToken, activity)
 
 	// the token might be expired, lets try to renew it
-	// TODO: DPG hard to test so lets not bother for now
 	if false { //status == http.StatusUnauthorized {
 		var newAccessToken = ""
 		var newRefreshToken = ""
 		// renew the access token...
-		newAccessToken, newRefreshToken, status, err = orcid.RenewAccessToken(attributes[0].OauthAccessToken)
+		newAccessToken, newRefreshToken, status, err = orcid.RenewAccessToken(attributes[0].OauthRefreshToken)
 		if status == http.StatusOK {
 			attributes[0].OauthAccessToken = newAccessToken
 			attributes[0].OauthRefreshToken = newRefreshToken
