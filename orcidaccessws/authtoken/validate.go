@@ -3,10 +3,10 @@ package authtoken
 import (
 	"fmt"
 	"github.com/parnurzeal/gorequest"
+	"github.com/uvalib/orcid-access-ws/orcidaccessws/logger"
 	"io"
 	"io/ioutil"
 	"net/http"
-	"github.com/uvalib/orcid-access-ws/orcidaccessws/logger"
 	"time"
 )
 

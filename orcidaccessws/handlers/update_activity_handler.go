@@ -5,15 +5,15 @@ import (
 	"errors"
 	"fmt"
 	"github.com/gorilla/mux"
-	"io"
-	"io/ioutil"
-	"net/http"
 	"github.com/uvalib/orcid-access-ws/orcidaccessws/api"
 	"github.com/uvalib/orcid-access-ws/orcidaccessws/authtoken"
 	"github.com/uvalib/orcid-access-ws/orcidaccessws/config"
 	"github.com/uvalib/orcid-access-ws/orcidaccessws/dao"
 	"github.com/uvalib/orcid-access-ws/orcidaccessws/logger"
 	"github.com/uvalib/orcid-access-ws/orcidaccessws/orcid"
+	"io"
+	"io/ioutil"
+	"net/http"
 )
 
 var emptyUpdateCode = ""

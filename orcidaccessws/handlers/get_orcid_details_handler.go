@@ -4,10 +4,10 @@ import (
 	"fmt"
 	//"fmt"
 	"github.com/gorilla/mux"
-	"github.com/uvalib/orcid-access-ws/orcidaccessws/orcid"
-	"net/http"
 	"github.com/uvalib/orcid-access-ws/orcidaccessws/authtoken"
 	"github.com/uvalib/orcid-access-ws/orcidaccessws/config"
+	"github.com/uvalib/orcid-access-ws/orcidaccessws/orcid"
+	"net/http"
 	//"github.com/uvalib/orcid-access-ws/orcidaccessws/orcid"
 )
 
@@ -39,9 +39,9 @@ func GetOrcidDetails(w http.ResponseWriter, r *http.Request) {
 
 	// we did got an error, return it
 	if status != http.StatusOK {
-	   encodeOrcidDetailsResponse(w, status,
-	      fmt.Sprintf("%s (%s)", http.StatusText(status), err), nil)
-	   return
+		encodeOrcidDetailsResponse(w, status,
+			fmt.Sprintf("%s (%s)", http.StatusText(status), err), nil)
+		return
 	}
 
 	encodeOrcidDetailsResponse(w, status, http.StatusText(status), orcid)

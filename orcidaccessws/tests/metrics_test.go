@@ -1,8 +1,8 @@
 package test
 
 import (
-	"net/http"
 	"github.com/uvalib/orcid-access-ws/orcidaccessws/client"
+	"net/http"
 	"strings"
 	"testing"
 )

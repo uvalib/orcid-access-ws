@@ -5,11 +5,11 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"html"
-	"net/http"
 	"github.com/uvalib/orcid-access-ws/orcidaccessws/api"
 	"github.com/uvalib/orcid-access-ws/orcidaccessws/config"
 	"github.com/uvalib/orcid-access-ws/orcidaccessws/logger"
+	"html"
+	"net/http"
 	"strings"
 	"text/template"
 )
@@ -140,21 +140,21 @@ func constructDetails(person *orcidPersonResponse) *api.OrcidDetails {
 	od := new(api.OrcidDetails)
 
 	od.Orcid = person.Name.Path
-	od.URI = fmt.Sprintf( "%s/%s", config.Configuration.OrcidOauthURL, person.Name.Path )
+	od.URI = fmt.Sprintf("%s/%s", config.Configuration.OrcidOauthURL, person.Name.Path)
 	od.DisplayName = person.Name.DisplayName.Value
 	od.FirstName = person.Name.GivenName.Value
 	od.LastName = person.Name.FamilyName.Value
 	od.Biography = person.Biography.Content
 
-//	od.Keywords = make([]string, 0)
-//	for _, e := range profile.Bio.Keywords.Keywords {
-//		od.Keywords = append(od.Keywords, e.Value)
-//	}
+	//	od.Keywords = make([]string, 0)
+	//	for _, e := range profile.Bio.Keywords.Keywords {
+	//		od.Keywords = append(od.Keywords, e.Value)
+	//	}
 
-//	od.ResearchUrls = make([]string, 0)
-//	for _, e := range profile.Bio.Urls.Urls {
-//		od.ResearchUrls = append(od.ResearchUrls, e.URL.Value)
-//	}
+	//	od.ResearchUrls = make([]string, 0)
+	//	for _, e := range profile.Bio.Urls.Urls {
+	//		od.ResearchUrls = append(od.ResearchUrls, e.URL.Value)
+	//	}
 
 	return (od)
 }

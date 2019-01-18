@@ -5,12 +5,12 @@ import (
 	"fmt"
 	"github.com/parnurzeal/gorequest"
 	"github.com/pkg/errors"
-	"io"
-	"io/ioutil"
-	"net/http"
 	"github.com/uvalib/orcid-access-ws/orcidaccessws/api"
 	"github.com/uvalib/orcid-access-ws/orcidaccessws/config"
 	"github.com/uvalib/orcid-access-ws/orcidaccessws/logger"
+	"io"
+	"io/ioutil"
+	"net/http"
 	"strings"
 	"time"
 )
@@ -273,7 +273,7 @@ func GetOrcidDetails(orcid string) (*api.OrcidDetails, int, error) {
 
 	// check for an http status
 	if resp.StatusCode != http.StatusOK {
-		return nil, resp.StatusCode, errors.New( orcid )
+		return nil, resp.StatusCode, errors.New(orcid)
 	}
 
 	pr := orcidPersonResponse{}

@@ -1,11 +1,11 @@
 package handlers
 
 import (
-	"net/http"
-	"github.com/uvalib/orcid-access-ws/orcidaccessws/dao"
-	"github.com/uvalib/orcid-access-ws/orcidaccessws/orcid"
-	"github.com/uvalib/orcid-access-ws/orcidaccessws/logger"
 	"fmt"
+	"github.com/uvalib/orcid-access-ws/orcidaccessws/dao"
+	"github.com/uvalib/orcid-access-ws/orcidaccessws/logger"
+	"github.com/uvalib/orcid-access-ws/orcidaccessws/orcid"
+	"net/http"
 )
 
 //
@@ -26,17 +26,17 @@ func HealthCheck(w http.ResponseWriter, r *http.Request) {
 
 		if dbErr != nil {
 			dbMessage = dbErr.Error()
-			logger.Log(fmt.Sprintf( "ERROR: Database reports '%s'", dbMessage ) )
+			logger.Log(fmt.Sprintf("ERROR: Database reports '%s'", dbMessage))
 		}
 
 		if orcidPublicErr != nil {
 			orcidPublicMessage = orcidPublicErr.Error()
-			logger.Log(fmt.Sprintf( "ERROR: ORCID public endpoint reports '%s'", orcidPublicMessage ) )
+			logger.Log(fmt.Sprintf("ERROR: ORCID public endpoint reports '%s'", orcidPublicMessage))
 		}
 
 		if orcidSecureErr != nil {
 			orcidSecureMessage = orcidSecureErr.Error()
-			logger.Log(fmt.Sprintf( "ERROR: ORCID secure endpoint reports '%s'", orcidSecureMessage ) )
+			logger.Log(fmt.Sprintf("ERROR: ORCID secure endpoint reports '%s'", orcidSecureMessage))
 		}
 	}
 

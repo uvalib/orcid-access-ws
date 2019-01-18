@@ -11,14 +11,14 @@ type orcidPersonResponse struct {
 }
 
 type orcidName struct {
-    GivenName   stringValueField `json:"given-names,omitempty"`
+	GivenName   stringValueField `json:"given-names,omitempty"`
 	FamilyName  stringValueField `json:"family-name,omitempty"`
 	DisplayName stringValueField `json:"credit-name,omitempty"`
-    Path        string           `json:"path,omitempty`
+	Path        string           `json:"path,omitempty`
 }
 
 type orcidBiography struct {
-	Content string           `json:"content,omitempty"`
+	Content string `json:"content,omitempty"`
 }
 
 //

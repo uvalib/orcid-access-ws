@@ -3,11 +3,11 @@ package handlers
 import (
 	"fmt"
 	"github.com/gorilla/mux"
-	"net/http"
 	"github.com/uvalib/orcid-access-ws/orcidaccessws/authtoken"
 	"github.com/uvalib/orcid-access-ws/orcidaccessws/config"
 	"github.com/uvalib/orcid-access-ws/orcidaccessws/dao"
 	"github.com/uvalib/orcid-access-ws/orcidaccessws/logger"
+	"net/http"
 )
 
 //

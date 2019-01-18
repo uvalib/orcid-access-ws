@@ -2,12 +2,12 @@ package main
 
 import (
 	"fmt"
-	"log"
-	"net/http"
 	"github.com/uvalib/orcid-access-ws/orcidaccessws/config"
 	"github.com/uvalib/orcid-access-ws/orcidaccessws/dao"
 	"github.com/uvalib/orcid-access-ws/orcidaccessws/handlers"
 	"github.com/uvalib/orcid-access-ws/orcidaccessws/logger"
+	"log"
+	"net/http"
 	"time"
 )
 

@@ -2,8 +2,8 @@ package main
 
 import (
 	"fmt"
-	"net/http"
 	"github.com/uvalib/orcid-access-ws/orcidaccessws/logger"
+	"net/http"
 	"time"
 )
 

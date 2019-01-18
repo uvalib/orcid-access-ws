@@ -4,8 +4,8 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
-	"net/http"
 	"github.com/uvalib/orcid-access-ws/orcidaccessws/handlers"
+	"net/http"
 )
 
 type route struct {

@@ -2,11 +2,11 @@ package test
 
 import (
 	"fmt"
+	"github.com/uvalib/orcid-access-ws/orcidaccessws/api"
 	"gopkg.in/yaml.v2"
 	"io/ioutil"
 	"log"
 	"math/rand"
-	"github.com/uvalib/orcid-access-ws/orcidaccessws/api"
 	"strconv"
 	"strings"
 	"testing"
@@ -168,11 +168,11 @@ func ensureValidSearchResults(t *testing.T, orcids []*api.OrcidDetails, expected
 }
 
 func ensureValidOrcidDetails(t *testing.T, orcid *api.OrcidDetails) {
-	if emptyField( orcid.Orcid) ||
-		emptyField( orcid.URI) ||
-		emptyField( orcid.DisplayName ) ||
-		emptyField( orcid.FirstName) ||
-		emptyField( orcid.LastName) {
+	if emptyField(orcid.Orcid) ||
+		emptyField(orcid.URI) ||
+		emptyField(orcid.DisplayName) ||
+		emptyField(orcid.FirstName) ||
+		emptyField(orcid.LastName) {
 		log.Printf("%v", orcid)
 		t.Fatalf("Expected non-empty field but one is empty\n")
 	}
