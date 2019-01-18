@@ -31,7 +31,7 @@ func GetAllOrcidAttributes(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// get the ORCID details
-	attributes, err := dao.DB.GetAllOrcidAttributes()
+	attributes, err := dao.Store.GetAllOrcidAttributes()
 	if err != nil {
 		logger.Log(fmt.Sprintf("ERROR: %s", err.Error()))
 		status := http.StatusInternalServerError

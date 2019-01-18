@@ -34,7 +34,7 @@ func DeleteOrcidAttributes(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// get the ORCID details
-	err := dao.DB.DelOrcidAttributesByCid(id)
+	err := dao.Store.DelOrcidAttributesByCid(id)
 	if err != nil {
 		logger.Log(fmt.Sprintf("ERROR: %s", err.Error()))
 		status := http.StatusInternalServerError

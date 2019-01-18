@@ -62,7 +62,7 @@ func UpdateActivity(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// get the users ORCID attributes
-	attributes, err := dao.DB.GetOrcidAttributesByCid(id)
+	attributes, err := dao.Store.GetOrcidAttributesByCid(id)
 	if err != nil {
 		logger.Log(fmt.Sprintf("ERROR: %s", err.Error()))
 		status := http.StatusInternalServerError
@@ -100,7 +100,7 @@ func UpdateActivity(w http.ResponseWriter, r *http.Request) {
 			attributes[0].OauthAccessToken = newAccessToken
 			attributes[0].OauthRefreshToken = newRefreshToken
 			// save the new tokens
-			err = dao.DB.SetOrcidAttributesByCid(id, *attributes[0])
+			err = dao.Store.SetOrcidAttributesByCid(id, *attributes[0])
 
 			// if successful, retry the activity update
 			if err == nil {

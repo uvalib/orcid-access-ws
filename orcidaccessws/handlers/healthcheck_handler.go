@@ -14,7 +14,7 @@ import (
 func HealthCheck(w http.ResponseWriter, r *http.Request) {
 
 	status := http.StatusOK
-	dbErr := dao.DB.CheckDB()
+	dbErr := dao.Store.Check()
 	orcidPublicErr := orcid.GetPublicEndpointStatus()
 	orcidSecureErr := orcid.GetSecureEndpointStatus()
 
@@ -26,7 +26,7 @@ func HealthCheck(w http.ResponseWriter, r *http.Request) {
 
 		if dbErr != nil {
 			dbMessage = dbErr.Error()
-			logger.Log(fmt.Sprintf("ERROR: Database reports '%s'", dbMessage))
+			logger.Log(fmt.Sprintf("ERROR: Datastore reports '%s'", dbMessage))
 		}
 
 		if orcidPublicErr != nil {
