@@ -3,6 +3,8 @@ package dao
 import (
 	"database/sql"
 	"fmt"
+	"time"
+
 	// needed
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/uvalib/orcid-access-ws/orcidaccessws/api"
@@ -18,7 +20,7 @@ type storage struct {
 //
 // newDBStore -- create a DB version of the storage singleton
 //
-func newDBStore( ) ( Storage, error ) {
+func newDBStore() (Storage, error) {
 
 	dataSourceName := fmt.Sprintf("%s:%s@tcp(%s)/%s?allowOldPasswords=1&tls=%s&sql_notes=false&timeout=%s&readTimeout=%s&writeTimeout=%s",
 		config.Configuration.DbUser,
@@ -37,6 +39,12 @@ func newDBStore( ) ( Storage, error ) {
 	if err = db.Ping(); err != nil {
 		return nil, err
 	}
+
+	//taken from https://github.com/go-sql-driver/mysql/issues/461
+	db.SetConnMaxLifetime(time.Minute * 5)
+	db.SetMaxIdleConns(2)
+	db.SetMaxOpenConns(2)
+
 	return &storage{db}, nil
 }
 
