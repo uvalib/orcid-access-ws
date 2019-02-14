@@ -16,7 +16,7 @@ func main() {
 	logger.Log(fmt.Sprintf("===> version: '%s' <===", handlers.Version()))
 
 	// create the storage singleton
-	err := dao.NewDatastore( )
+	err := dao.NewDatastore()
 	if err != nil {
 		log.Fatal(err)
 	}
