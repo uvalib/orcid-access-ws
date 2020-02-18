@@ -27,7 +27,7 @@ func GetOrcidAttributes(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// validate the token
-	if authtoken.Validate(config.Configuration.AuthTokenEndpoint, "getorcid", token, config.Configuration.ServiceTimeout) == false {
+	if authtoken.Validate(config.Configuration.SharedSecret, token) == false {
 		status := http.StatusForbidden
 		encodeOrcidAttributesResponse(w, status, http.StatusText(status), nil)
 		return

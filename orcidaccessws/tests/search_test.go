@@ -13,7 +13,7 @@ import (
 //func TestSearchOrcidHappyDay(t *testing.T) {
 //
 //	expected := http.StatusOK
-//	status, orcids, total := client.SearchOrcid(cfg.Endpoint, goodSearch, goodSearchStart, goodSearchMax, goodToken)
+//	status, orcids, total := client.SearchOrcid(cfg.Endpoint, goodSearch, goodSearchStart, goodSearchMax, goodToken( cfg.Secret ))
 //	if status != expected {
 //		t.Fatalf("Expected %v, got %v\n", expected, status)
 //	}
@@ -24,7 +24,7 @@ import (
 //func TestSearchOrcidMaxRows(t *testing.T) {
 //
 //	expected := http.StatusOK
-//	status, orcids, total := client.SearchOrcid(cfg.Endpoint, goodSearch, goodSearchStart, goodSearchMax, goodToken)
+//	status, orcids, total := client.SearchOrcid(cfg.Endpoint, goodSearch, goodSearchStart, goodSearchMax, goodToken( cfg.Secret ))
 //	if status != expected {
 //		t.Fatalf("Expected %v, got %v\n", expected, status)
 //	}
@@ -50,7 +50,7 @@ func TestSearchOrcidBadMax(t *testing.T) {
 
 func TestSearchOrcidEmptySearch(t *testing.T) {
 	expected := http.StatusBadRequest
-	status, _, _ := client.SearchOrcid(cfg.Endpoint, empty, goodSearchStart, goodSearchMax, goodToken)
+	status, _, _ := client.SearchOrcid(cfg.Endpoint, empty, goodSearchStart, goodSearchMax, goodToken( cfg.Secret ))
 	if status != expected {
 		t.Fatalf("Expected %v, got %v\n", expected, status)
 	}
@@ -58,7 +58,7 @@ func TestSearchOrcidEmptySearch(t *testing.T) {
 
 //func TestSearchOrcidNotFoundSearch(t *testing.T) {
 //	expected := http.StatusNotFound
-//	status, _, _ := client.SearchOrcid(cfg.Endpoint, notFoundSearch, goodSearchStart, goodSearchMax, goodToken)
+//	status, _, _ := client.SearchOrcid(cfg.Endpoint, notFoundSearch, goodSearchStart, goodSearchMax, goodToken( cfg.Secret ))
 //	if status != expected {
 //		t.Fatalf("Expected %v, got %v\n", expected, status)
 //	}
@@ -74,7 +74,7 @@ func TestSearchOrcidEmptyToken(t *testing.T) {
 
 func TestSearchOrcidBadToken(t *testing.T) {
 	expected := http.StatusForbidden
-	status, _, _ := client.SearchOrcid(cfg.Endpoint, goodSearch, goodSearchStart, goodSearchMax, badToken)
+	status, _, _ := client.SearchOrcid(cfg.Endpoint, goodSearch, goodSearchStart, goodSearchMax, badToken( cfg.Secret ))
 	if status != expected {
 		t.Fatalf("Expected %v, got %v\n", expected, status)
 	}

@@ -11,20 +11,18 @@ import (
 	"strings"
 	"testing"
 	"time"
-	//"github.com/uvalib/orcid-access-ws/orcidaccessws/orcid"
+	"github.com/dgrijalva/jwt-go"
 )
 
 type config struct {
 	Endpoint string
-	Token    string
+	Secret   string
 }
 
 var cfg = loadConfig()
 
 var goodCid = "dpg3k"
 var badCid = "badness"
-var goodToken = cfg.Token
-var badToken = "badness"
 var goodOrcid = "0000-0003-4520-4923"
 var badOrcid = "9999-9999-0000-0000"
 var goodSearch = "Ellen Ramsey"
@@ -194,10 +192,53 @@ func loadConfig() config {
 		log.Fatal(err)
 	}
 
-	log.Printf("endpoint [%s]\n", c.Endpoint)
-	log.Printf("token    [%s]\n", c.Token)
-
+	log.Printf("endpoint  [%s]\n", c.Endpoint)
+	log.Printf("secret    [%s]\n", c.Secret)
 	return c
+}
+
+func badToken(secret string) string {
+
+	// Declare the expiration time of the token
+	expirationTime := time.Now().Add(-5 * time.Minute)
+
+	// Create the JWT claims, which includes the username and expiry time
+	claims := &jwt.StandardClaims{
+		// In JWT, the expiry time is expressed as unix milliseconds
+		ExpiresAt: expirationTime.Unix(),
+	}
+
+	// Declare the token with the algorithm used for signing, and the claims
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+
+	// Create the JWT string
+	tokenString, err := token.SignedString([]byte(secret))
+	if err != nil {
+		log.Fatal(err)
+	}
+	return tokenString
+}
+
+func goodToken(secret string) string {
+
+	// Declare the expiration time of the token
+	expirationTime := time.Now().Add(5 * time.Minute)
+
+	// Create the JWT claims, which includes the username and expiry time
+	claims := &jwt.StandardClaims{
+		// In JWT, the expiry time is expressed as unix milliseconds
+		ExpiresAt: expirationTime.Unix(),
+	}
+
+	// Declare the token with the algorithm used for signing, and the claims
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+
+	// Create the JWT string
+	tokenString, err := token.SignedString([]byte(secret))
+	if err != nil {
+		log.Fatal(err)
+	}
+	return tokenString
 }
 
 //

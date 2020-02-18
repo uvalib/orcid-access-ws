@@ -15,7 +15,7 @@ func TestUpdateActivityNew(t *testing.T) {
 	expected := http.StatusOK
 	id := goodCid
 	newActivity := workActivity()
-	status, code := client.UpdateActivity(cfg.Endpoint, id, goodToken, newActivity)
+	status, code := client.UpdateActivity(cfg.Endpoint, id, goodToken( cfg.Secret ), newActivity)
 	if status != expected {
 		t.Fatalf("Expected %v, got %v\n", expected, status)
 	}
@@ -30,7 +30,7 @@ func TestUpdateActivityUpdate(t *testing.T) {
 	expected := http.StatusOK
 	id := goodCid
 	newActivity := workActivity()
-	status, code := client.UpdateActivity(cfg.Endpoint, id, goodToken, newActivity)
+	status, code := client.UpdateActivity(cfg.Endpoint, id, goodToken( cfg.Secret ), newActivity)
 	if status != expected {
 		t.Fatalf("Expected %v, got %v\n", expected, status)
 	}
@@ -40,7 +40,7 @@ func TestUpdateActivityUpdate(t *testing.T) {
 	}
 
 	newActivity.UpdateCode = code
-	status, code = client.UpdateActivity(cfg.Endpoint, id, goodToken, newActivity)
+	status, code = client.UpdateActivity(cfg.Endpoint, id, goodToken( cfg.Secret ), newActivity)
 	if status != expected {
 		t.Fatalf("Expected %v, got %v\n", expected, status)
 	}
@@ -59,7 +59,7 @@ func TestUpdateActivityEmptyWorkTitle(t *testing.T) {
 	id := goodCid
 	newActivity := workActivity()
 	newActivity.Work.Title = ""
-	status, _ := client.UpdateActivity(cfg.Endpoint, id, goodToken, newActivity)
+	status, _ := client.UpdateActivity(cfg.Endpoint, id, goodToken( cfg.Secret ), newActivity)
 	if status != expected {
 		t.Fatalf("Expected %v, got %v\n", expected, status)
 	}
@@ -70,7 +70,7 @@ func TestUpdateActivityEmptyWorkResourceType(t *testing.T) {
 	id := goodCid
 	newActivity := workActivity()
 	newActivity.Work.ResourceType = ""
-	status, _ := client.UpdateActivity(cfg.Endpoint, id, goodToken, newActivity)
+	status, _ := client.UpdateActivity(cfg.Endpoint, id, goodToken( cfg.Secret ), newActivity)
 	if status != expected {
 		t.Fatalf("Expected %v, got %v\n", expected, status)
 	}
@@ -81,7 +81,7 @@ func TestUpdateActivityEmptyWorkUrl(t *testing.T) {
 	id := goodCid
 	newActivity := workActivity()
 	newActivity.Work.URL = ""
-	status, _ := client.UpdateActivity(cfg.Endpoint, id, goodToken, newActivity)
+	status, _ := client.UpdateActivity(cfg.Endpoint, id, goodToken( cfg.Secret ), newActivity)
 	if status != expected {
 		t.Fatalf("Expected %v, got %v\n", expected, status)
 	}
@@ -90,7 +90,7 @@ func TestUpdateActivityEmptyWorkUrl(t *testing.T) {
 func TestUpdateActivityEmptyId(t *testing.T) {
 	expected := http.StatusBadRequest
 	newActivity := workActivity()
-	status, _ := client.UpdateActivity(cfg.Endpoint, empty, goodToken, newActivity)
+	status, _ := client.UpdateActivity(cfg.Endpoint, empty, goodToken( cfg.Secret ), newActivity)
 	if status != expected {
 		t.Fatalf("Expected %v, got %v\n", expected, status)
 	}
@@ -99,7 +99,7 @@ func TestUpdateActivityEmptyId(t *testing.T) {
 func TestUpdateActivityNotFoundId(t *testing.T) {
 	expected := http.StatusNotFound
 	newActivity := workActivity()
-	status, _ := client.UpdateActivity(cfg.Endpoint, badCid, goodToken, newActivity)
+	status, _ := client.UpdateActivity(cfg.Endpoint, badCid, goodToken( cfg.Secret ), newActivity)
 	if status != expected {
 		t.Fatalf("Expected %v, got %v\n", expected, status)
 	}
@@ -117,7 +117,7 @@ func TestUpdateActivityEmptyToken(t *testing.T) {
 func TestUpdateActivityBadToken(t *testing.T) {
 	expected := http.StatusForbidden
 	newActivity := workActivity()
-	status, _ := client.UpdateActivity(cfg.Endpoint, goodCid, badToken, newActivity)
+	status, _ := client.UpdateActivity(cfg.Endpoint, goodCid, badToken( cfg.Secret ), newActivity)
 	if status != expected {
 		t.Fatalf("Expected %v, got %v\n", expected, status)
 	}
@@ -128,7 +128,7 @@ func TestUpdateActivityBadWorkResourceType(t *testing.T) {
 	id := goodCid
 	newActivity := workActivity()
 	newActivity.Work.ResourceType = "a-bad-resource-type"
-	status, _ := client.UpdateActivity(cfg.Endpoint, id, goodToken, newActivity)
+	status, _ := client.UpdateActivity(cfg.Endpoint, id, goodToken( cfg.Secret ), newActivity)
 	if status != expected {
 		t.Fatalf("Expected %v, got %v\n", expected, status)
 	}

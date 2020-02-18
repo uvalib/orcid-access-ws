@@ -16,12 +16,12 @@ func TestDeleteOrcidAtributesHappyDay(t *testing.T) {
 
 	id := randomCid()
 	attributes := randomOrcidAttributes()
-	status := client.SetOrcidAttributes(cfg.Endpoint, id, goodToken, attributes)
+	status := client.SetOrcidAttributes(cfg.Endpoint, id, goodToken( cfg.Secret ), attributes)
 	if status != expected {
 		t.Fatalf("Expected %v, got %v\n", expected, status)
 	}
 
-	status = client.DelOrcidAttributes(cfg.Endpoint, id, goodToken)
+	status = client.DelOrcidAttributes(cfg.Endpoint, id, goodToken( cfg.Secret ))
 	if status != expected {
 		t.Fatalf("Expected %v, got %v\n", expected, status)
 	}
@@ -29,7 +29,7 @@ func TestDeleteOrcidAtributesHappyDay(t *testing.T) {
 
 func TestDeleteOrcidAttributesEmptyId(t *testing.T) {
 	expected := http.StatusBadRequest
-	status := client.DelOrcidAttributes(cfg.Endpoint, empty, goodToken)
+	status := client.DelOrcidAttributes(cfg.Endpoint, empty, goodToken( cfg.Secret ))
 	if status != expected {
 		t.Fatalf("Expected %v, got %v\n", expected, status)
 	}
@@ -37,7 +37,7 @@ func TestDeleteOrcidAttributesEmptyId(t *testing.T) {
 
 //func TestDeleteOrcidAttributesNotFoundId( t *testing.T ) {
 //    expected := http.StatusNotFound
-//    status := client.DelOrcidAttributes( cfg.Endpoint, badCid, goodToken )
+//    status := client.DelOrcidAttributes( cfg.Endpoint, badCid, goodToken( cfg.Secret ) )
 //    if status != expected {
 //        t.Fatalf( "Expected %v, got %v\n", expected, status )
 //    }
@@ -53,7 +53,7 @@ func TestDeleteOrcidAttributesEmptyToken(t *testing.T) {
 
 func TestDeleteOrcidAttributesBadToken(t *testing.T) {
 	expected := http.StatusForbidden
-	status := client.DelOrcidAttributes(cfg.Endpoint, goodCid, badToken)
+	status := client.DelOrcidAttributes(cfg.Endpoint, goodCid, badToken( cfg.Secret ))
 	if status != expected {
 		t.Fatalf("Expected %v, got %v\n", expected, status)
 	}

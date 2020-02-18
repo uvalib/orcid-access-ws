@@ -29,8 +29,10 @@ type Config struct {
 	OrcidClientSecret string
 
 	// token authentication
-	AuthTokenEndpoint string
-	ServiceTimeout    int
+	SharedSecret string
+
+	// Service timeout
+	ServiceTimeout int
 
 	// diagnostic only
 	Debug bool
@@ -59,7 +61,7 @@ func loadConfig() Config {
 	flag.StringVar(&c.OrcidClientID, "orcidclientid", "client-id", "The ORCID client identifier")
 	flag.StringVar(&c.OrcidClientSecret, "orcidclientsecret", "client-secret", "The ORCID client secret")
 	flag.IntVar(&c.ServiceTimeout, "timeout", 15, "The external service timeout in seconds")
-	flag.StringVar(&c.AuthTokenEndpoint, "tokenauth", "http://docker1.lib.virginia.edu:8200", "The token authentication endpoint")
+	flag.StringVar(&c.SharedSecret, "secret", "", "The JWT shared secret")
 	flag.BoolVar(&c.Debug, "debug", false, "Enable debugging")
 
 	flag.Parse()
@@ -76,7 +78,7 @@ func loadConfig() Config {
 	logger.Log(fmt.Sprintf("OrcidOauthURL:       %s", c.OrcidOauthURL))
 	logger.Log(fmt.Sprintf("OrcidClientID:       %s", c.OrcidClientID))
 	logger.Log(fmt.Sprintf("OrcidClientSecret:   %s", strings.Repeat("*", len(c.OrcidClientSecret))))
-	logger.Log(fmt.Sprintf("AuthTokenEndpoint    %s", c.AuthTokenEndpoint))
+	logger.Log(fmt.Sprintf("SharedSecret:        %s", strings.Repeat("*", len(c.SharedSecret))))
 	logger.Log(fmt.Sprintf("ServiceTimeout:      %d", c.ServiceTimeout))
 	logger.Log(fmt.Sprintf("Debug                %t", c.Debug))
 
