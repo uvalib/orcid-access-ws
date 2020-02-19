@@ -80,7 +80,7 @@ func loadConfig() Config {
 	logger.Log(fmt.Sprintf("OrcidClientSecret:   %s", strings.Repeat("*", len(c.OrcidClientSecret))))
 	logger.Log(fmt.Sprintf("SharedSecret:        %s", strings.Repeat("*", len(c.SharedSecret))))
 	logger.Log(fmt.Sprintf("ServiceTimeout:      %d", c.ServiceTimeout))
-	logger.Log(fmt.Sprintf("Debug                %t", c.Debug))
+	logger.Log(fmt.Sprintf("Debug:               %t", c.Debug))
 
 	return c
 }
