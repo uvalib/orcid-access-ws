@@ -22,9 +22,11 @@ func HealthCheck(w http.ResponseWriter, r *http.Request) {
 
 	if dbErr != nil || orcidPublicErr != nil || orcidSecureErr != nil {
 
-		status = http.StatusInternalServerError
-
 		if dbErr != nil {
+            // only a database connection problem is considered an error (cos we can actually do something
+			// about it)...
+			status = http.StatusInternalServerError
+
 			dbMessage = dbErr.Error()
 			logger.Log(fmt.Sprintf("ERROR: Datastore reports '%s'", dbMessage))
 		}
