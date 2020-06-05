@@ -19,6 +19,9 @@ var emptyUpdateCode = ""
 var emptyAccessToken = ""
 var currentAccessToken = ""
 
+// we want to handle this differently from other requests because it is used as part of healthchecking
+var authTimeout = 5 * time.Second
+
 //
 // UpdateOrcidActivity -- update the user activity
 //
@@ -160,7 +163,7 @@ func getOauthToken() (string, int, error) {
 		Send(pl).
 		Set("Accept", "application/json").
 		Set("Content-Type", "application/x-www-form-urlencoded").
-		Timeout(time.Duration(config.Configuration.ServiceTimeout) * time.Second).
+		Timeout( authTimeout ).
 		End()
 	duration := time.Since(start)
 
@@ -395,7 +398,7 @@ func issueAuthorizedGet(url string, accept string, authToken string) error {
 		Get(url).
 		Set("Accept", accept).
 		Set("Authorization", auth).
-		Timeout(time.Duration(config.Configuration.ServiceTimeout) * time.Second).
+		Timeout( authTimeout ).
 		End()
 	duration := time.Since(start)
 
