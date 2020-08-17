@@ -163,7 +163,7 @@ func getOauthToken() (string, int, error) {
 		Send(pl).
 		Set("Accept", "application/json").
 		Set("Content-Type", "application/x-www-form-urlencoded").
-		Timeout( authTimeout ).
+		Timeout(authTimeout).
 		End()
 	duration := time.Since(start)
 
@@ -398,7 +398,7 @@ func issueAuthorizedGet(url string, accept string, authToken string) error {
 		Get(url).
 		Set("Accept", accept).
 		Set("Authorization", auth).
-		Timeout( authTimeout ).
+		Timeout(authTimeout).
 		End()
 	duration := time.Since(start)
 

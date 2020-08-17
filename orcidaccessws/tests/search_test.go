@@ -50,7 +50,7 @@ func TestSearchOrcidBadMax(t *testing.T) {
 
 func TestSearchOrcidEmptySearch(t *testing.T) {
 	expected := http.StatusBadRequest
-	status, _, _ := client.SearchOrcid(cfg.Endpoint, empty, goodSearchStart, goodSearchMax, goodToken( cfg.Secret ))
+	status, _, _ := client.SearchOrcid(cfg.Endpoint, empty, goodSearchStart, goodSearchMax, goodToken(cfg.Secret))
 	if status != expected {
 		t.Fatalf("Expected %v, got %v\n", expected, status)
 	}
@@ -74,7 +74,7 @@ func TestSearchOrcidEmptyToken(t *testing.T) {
 
 func TestSearchOrcidBadToken(t *testing.T) {
 	expected := http.StatusForbidden
-	status, _, _ := client.SearchOrcid(cfg.Endpoint, goodSearch, goodSearchStart, goodSearchMax, badToken( cfg.Secret ))
+	status, _, _ := client.SearchOrcid(cfg.Endpoint, goodSearch, goodSearchStart, goodSearchMax, badToken(cfg.Secret))
 	if status != expected {
 		t.Fatalf("Expected %v, got %v\n", expected, status)
 	}

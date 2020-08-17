@@ -13,7 +13,7 @@ import (
 func TestGetAllOrcidAttributesHappyDay(t *testing.T) {
 
 	expected := http.StatusOK
-	status, attributes := client.GetAllOrcidAttributes(cfg.Endpoint, goodToken( cfg.Secret ))
+	status, attributes := client.GetAllOrcidAttributes(cfg.Endpoint, goodToken(cfg.Secret))
 	if status != expected {
 		t.Fatalf("Expected %v, got %v\n", expected, status)
 	}
@@ -31,7 +31,7 @@ func TestGetAllOrcidAttributesEmptyToken(t *testing.T) {
 
 func TestGetAllOrcidAttributesBadToken(t *testing.T) {
 	expected := http.StatusForbidden
-	status, _ := client.GetAllOrcidAttributes(cfg.Endpoint, badToken( cfg.Secret ))
+	status, _ := client.GetAllOrcidAttributes(cfg.Endpoint, badToken(cfg.Secret))
 	if status != expected {
 		t.Fatalf("Expected %v, got %v\n", expected, status)
 	}

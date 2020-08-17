@@ -14,7 +14,7 @@ func TestGetOrcidDetailsHappyDay(t *testing.T) {
 
 	expected := http.StatusOK
 	id := goodOrcid
-	status, orcid := client.GetOrcidDetails(cfg.Endpoint, id, goodToken( cfg.Secret ))
+	status, orcid := client.GetOrcidDetails(cfg.Endpoint, id, goodToken(cfg.Secret))
 	if status != expected {
 		t.Fatalf("Expected %v, got %v\n", expected, status)
 	}
@@ -28,7 +28,7 @@ func TestGetOrcidDetailsHappyDay(t *testing.T) {
 
 func TestGetOrcidDetailsEmptyId(t *testing.T) {
 	expected := http.StatusBadRequest
-	status, _ := client.GetOrcidDetails(cfg.Endpoint, empty, goodToken( cfg.Secret ))
+	status, _ := client.GetOrcidDetails(cfg.Endpoint, empty, goodToken(cfg.Secret))
 	if status != expected {
 		t.Fatalf("Expected %v, got %v\n", expected, status)
 	}
@@ -36,7 +36,7 @@ func TestGetOrcidDetailsEmptyId(t *testing.T) {
 
 func TestGetOrcidDetailsNotFoundId(t *testing.T) {
 	expected := http.StatusNotFound
-	status, _ := client.GetOrcidDetails(cfg.Endpoint, badOrcid, goodToken( cfg.Secret ))
+	status, _ := client.GetOrcidDetails(cfg.Endpoint, badOrcid, goodToken(cfg.Secret))
 	if status != expected {
 		t.Fatalf("Expected %v, got %v\n", expected, status)
 	}
@@ -52,7 +52,7 @@ func TestGetOrcidDetailsEmptyToken(t *testing.T) {
 
 func TestGetOrcidDetailsBadToken(t *testing.T) {
 	expected := http.StatusForbidden
-	status, _ := client.GetOrcidDetails(cfg.Endpoint, goodOrcid, badToken( cfg.Secret ))
+	status, _ := client.GetOrcidDetails(cfg.Endpoint, goodOrcid, badToken(cfg.Secret))
 	if status != expected {
 		t.Fatalf("Expected %v, got %v\n", expected, status)
 	}

@@ -2,6 +2,7 @@ package test
 
 import (
 	"fmt"
+	"github.com/dgrijalva/jwt-go"
 	"github.com/uvalib/orcid-access-ws/orcidaccessws/api"
 	"gopkg.in/yaml.v2"
 	"io/ioutil"
@@ -11,7 +12,6 @@ import (
 	"strings"
 	"testing"
 	"time"
-	"github.com/dgrijalva/jwt-go"
 )
 
 type config struct {

@@ -23,7 +23,7 @@ func HealthCheck(w http.ResponseWriter, r *http.Request) {
 	if dbErr != nil || orcidPublicErr != nil || orcidSecureErr != nil {
 
 		if dbErr != nil {
-            // only a database connection problem is considered an error (cos we can actually do something
+			// only a database connection problem is considered an error (cos we can actually do something
 			// about it)...
 			status = http.StatusInternalServerError
 
