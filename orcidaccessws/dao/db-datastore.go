@@ -185,7 +185,7 @@ func orcidResults(rows *sql.Rows) ([]*api.OrcidAttributes, error) {
 		return nil, err
 	}
 
-	logger.Log(fmt.Sprintf("OrcidAttributes request returns %d row(s)", len(results)))
+	logger.Log(fmt.Sprintf("INFO: OrcidAttributes request returns %d row(s)", len(results)))
 	return results, nil
 }
 

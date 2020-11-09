@@ -319,7 +319,7 @@ func GetOrcidDetails(orcid string) (*api.OrcidDetails, int, error) {
 //	defer io.Copy(ioutil.Discard, resp.Body)
 //	defer resp.Body.Close()
 //
-//	logger.Log(fmt.Sprintf("Service (%s) returns http %d in %s", url, resp.StatusCode, duration))
+//	logger.Log(fmt.Sprintf("INFO: Service (%s) returns http %d in %s", url, resp.StatusCode, duration))
 //
 //	// check the common response elements
 //	status, err := checkCommonResponse(body)

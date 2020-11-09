@@ -69,7 +69,7 @@ func SearchOrcid(w http.ResponseWriter, r *http.Request) {
 	//   return
 	//}
 
-	//logger.Log(fmt.Sprintf("ORCID search: %d result(s) located", len(orcids)))
+	//logger.Log(fmt.Sprintf("INFO: ORCID search: %d result(s) located", len(orcids)))
 
 	// everything OK but found no items
 	//if len(orcids) == 0 {

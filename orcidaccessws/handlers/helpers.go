@@ -16,7 +16,7 @@ import (
 
 func encodeStandardResponse(w http.ResponseWriter, status int, message string) {
 
-	logger.Log(fmt.Sprintf("encodeStandardResponse status: %d (%s)", status, message))
+	logger.Log(fmt.Sprintf("INFO: encodeStandardResponse status: %d (%s)", status, message))
 	jsonAttributes(w)
 	w.WriteHeader(status)
 	if err := json.NewEncoder(w).Encode(api.StandardResponse{Status: status, Message: message}); err != nil {
@@ -26,7 +26,7 @@ func encodeStandardResponse(w http.ResponseWriter, status int, message string) {
 
 func encodeOrcidAttributesResponse(w http.ResponseWriter, status int, message string, attributes []*api.OrcidAttributes) {
 
-	logger.Log(fmt.Sprintf("encodeOrcidAttributesResponse status: %d (%s)", status, message))
+	logger.Log(fmt.Sprintf("INFO: encodeOrcidAttributesResponse status: %d (%s)", status, message))
 	jsonAttributes(w)
 	w.WriteHeader(status)
 	if err := json.NewEncoder(w).Encode(api.OrcidAttributesResponse{Status: status, Message: message, Attributes: attributes}); err != nil {
@@ -36,7 +36,7 @@ func encodeOrcidAttributesResponse(w http.ResponseWriter, status int, message st
 
 func encodeUpdateActivityResponse(w http.ResponseWriter, status int, message string, updateCode string) {
 
-	logger.Log(fmt.Sprintf("encodeUpdateActivityResponse status: %d (%s)", status, message))
+	logger.Log(fmt.Sprintf("INFO: encodeUpdateActivityResponse status: %d (%s)", status, message))
 	jsonAttributes(w)
 	w.WriteHeader(status)
 	if err := json.NewEncoder(w).Encode(api.UpdateActivityResponse{Status: status, Message: message, UpdateCode: updateCode}); err != nil {
@@ -46,7 +46,7 @@ func encodeUpdateActivityResponse(w http.ResponseWriter, status int, message str
 
 func encodeOrcidDetailsResponse(w http.ResponseWriter, status int, message string, details *api.OrcidDetails) {
 
-	logger.Log(fmt.Sprintf("encodeOrcidDetailsResponse status: %d (%s)", status, message))
+	logger.Log(fmt.Sprintf("INFO: encodeOrcidDetailsResponse status: %d (%s)", status, message))
 	jsonAttributes(w)
 	w.WriteHeader(status)
 	if err := json.NewEncoder(w).Encode(api.OrcidDetailsResponse{Status: status, Message: message, Details: details}); err != nil {
@@ -57,7 +57,7 @@ func encodeOrcidDetailsResponse(w http.ResponseWriter, status int, message strin
 func encodeOrcidSearchResponse(w http.ResponseWriter, status int, message string, results []*api.OrcidDetails,
 	start int, count int, total int) {
 
-	logger.Log(fmt.Sprintf("encodeOrcidSearchResponse status: %d (%s)", status, message))
+	logger.Log(fmt.Sprintf("INFO: encodeOrcidSearchResponse status: %d (%s)", status, message))
 	jsonAttributes(w)
 	w.WriteHeader(status)
 	if err := json.NewEncoder(w).Encode(api.OrcidSearchResponse{Status: status, Message: message, Results: results,
