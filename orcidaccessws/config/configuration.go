@@ -3,8 +3,9 @@ package config
 import (
 	"flag"
 	"fmt"
-	"github.com/uvalib/orcid-access-ws/orcidaccessws/logger"
 	"strings"
+
+	"github.com/uvalib/orcid-access-ws/orcidaccessws/logger"
 )
 
 //
@@ -55,8 +56,8 @@ func loadConfig() Config {
 	flag.StringVar(&c.DbName, "dbname", "orcidaccess_development", "The database name")
 	flag.StringVar(&c.DbUser, "dbuser", "orcidaccess", "The database username")
 	flag.StringVar(&c.DbPassphrase, "dbpassword", "", "The database passphrase")
-	flag.StringVar(&c.OrcidPublicURL, "orcidpublicurl", "https://pub.orcid.org/v1.2", "The ORCID service public URL")
-	flag.StringVar(&c.OrcidSecureURL, "orcidsecureurl", "https://api.sandbox.orcid.org/v2.0", "The ORCID service secure URL")
+	flag.StringVar(&c.OrcidPublicURL, "orcidpublicurl", "https://pub.orcid.org/v3.0", "The ORCID service public URL")
+	flag.StringVar(&c.OrcidSecureURL, "orcidsecureurl", "https://api.sandbox.orcid.org/v3.0", "The ORCID service secure URL")
 	flag.StringVar(&c.OrcidOauthURL, "orcidoauthurl", "https://sandbox.orcid.org", "The ORCID service OAuth URL")
 	flag.StringVar(&c.OrcidClientID, "orcidclientid", "client-id", "The ORCID client identifier")
 	flag.StringVar(&c.OrcidClientSecret, "orcidclientsecret", "client-secret", "The ORCID client secret")

@@ -3,7 +3,7 @@
 <work:work
 	xmlns:common="http://www.orcid.org/ns/common" xmlns:work="http://www.orcid.org/ns/work"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.orcid.org/ns/work /work-2.0.xsd ">	
+	xsi:schemaLocation="http://www.orcid.org/ns/work /work-3.0.xsd ">
 
 <!-- title is required -->
 	<work:title>
@@ -17,7 +17,7 @@
 	<work:type>RESOURCE-TYPE(need to map LibraOC types to the “ORCID” types)</work:type>
 
 <!-- publication-date is NOT required -->
-<!-- only send, if nothing entered in Libra “Publication Date” Use Create Date here --> 
+<!-- only send, if nothing entered in Libra “Publication Date” Use Create Date here -->
 <!-- do not use if "Publication Date" has text, because it is free text -->
 	<common:publication-date>
 		<common:year>YYYY</common:year>
@@ -30,7 +30,7 @@
 		<common:external-id>
 <!--  type stays "doi" -->
 			<common:external-id-type>doi</common:external-id-type>
-			<common:external-id-value>DOI (base)</common:external-id-value>			
+			<common:external-id-value>DOI (base)</common:external-id-value>
 			<common:external-id-url>FULL DOI URL</common:external-id-url>
 <!-- relationship is "self" -->
 			<common:external-id-relationship>self</common:external-id-relationship>
