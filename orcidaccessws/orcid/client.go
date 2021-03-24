@@ -165,13 +165,11 @@ var employmentXML = `<?xml version="1.0" encoding="UTF-8"?>
 //
 // SendEmployment updates the user's ORCID with UVA Employent info
 //
-func SendEmployment(attributes api.OrcidAttributes) error {
+func SendEmployment(attributes api.OrcidAttributes) {
 
 	// First check for existing UVA Employment
-	if hasEmp, err := hasExistingEmployment(attributes); err != nil {
-		return err
-	} else if hasEmp {
-		return nil
+	if hasEmp, err := hasExistingEmployment(attributes); err != nil || hasEmp {
+		return
 	}
 
 	url := fmt.Sprintf("%s/%s/employment", config.Configuration.OrcidSecureURL, attributes.Orcid)
@@ -192,19 +190,19 @@ func SendEmployment(attributes api.OrcidAttributes) error {
 	defer io.Copy(ioutil.Discard, resp.Body)
 	defer resp.Body.Close()
 	// check for errors
-	if errs != nil {
-		logger.Log(fmt.Sprintf("ERROR: service (%s) returns %s in %s", url, errs, duration))
-		return errs[0]
+	if errs != nil || resp.StatusCode != http.StatusCreated {
+		logger.Log(fmt.Sprintf("ERROR: service (%s) returns %s %s in %s \n %s", url, resp.Status, errs, duration, resp.Body))
+		return
 	}
-	logger.Log(fmt.Sprintf("Employment created for %s: %s", attributes.Cid, resp.Status))
+	logger.Log(fmt.Sprintf("Employment created for %s", attributes.Orcid))
 
-	return nil
+	return
 }
 
 //
 // hasExistingEmployment checks for existing UVA Employment matching our OrcidClientID
 //
-func hasExistingEmployment(attributes api.OrcidAttributes) (bool, error) {
+func hasExistingEmployment(attributes api.OrcidAttributes) (bool, []error) {
 	hasEmployment := false
 	// Only need to know employment here
 	var employmentStruct struct {
@@ -237,14 +235,14 @@ func hasExistingEmployment(attributes api.OrcidAttributes) (bool, error) {
 	defer io.Copy(ioutil.Discard, resp.Body)
 	defer resp.Body.Close()
 	// check for errors
-	if errs != nil {
-		logger.Log(fmt.Sprintf("ERROR: service (%s) returns %s in %s", url, errs, duration))
-		return false, errs[0]
+	if errs != nil || resp.StatusCode != http.StatusOK {
+		logger.Log(fmt.Sprintf("ERROR: service (%s) returns %s %s in %s \n %s", url, resp.Status, errs, duration, resp.Body))
+		return false, errs
 	}
 
 	if err := json.Unmarshal([]byte(body), &employmentStruct); err != nil {
 		logger.Log(fmt.Sprintf("ERROR: service (%s) returns %s in %s", url, errs, duration))
-		return false, errs[0]
+		return false, errs
 	}
 
 	// Check the nested json
@@ -256,8 +254,124 @@ func hasExistingEmployment(attributes api.OrcidAttributes) (bool, error) {
 			}
 		}
 	}
-	logger.Log(fmt.Sprintf("INFO: %s has UVA Employment: %t", attributes.Cid, hasEmployment))
+	logger.Log(fmt.Sprintf("INFO: %s has UVA Employment: %t", attributes.Orcid, hasEmployment))
 	return hasEmployment, nil
+}
+
+var educationXML = `<?xml version="1.0" encoding="UTF-8"?>
+<education:education
+	xmlns:common="http://www.orcid.org/ns/common" xmlns:education="http://www.orcid.org/ns/education"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.orcid.org/ns/education ../education-3.0.xsd ">
+	<common:organization>
+		<common:name>University of Virginia</common:name>
+		<common:address>
+			<common:city>Charlottesville</common:city>
+			<common:region>VA</common:region>
+			<common:country>US</common:country>
+		</common:address>
+		<common:disambiguated-organization>
+			<common:disambiguated-organization-identifier>2358</common:disambiguated-organization-identifier>
+			<common:disambiguation-source>RINGGOLD</common:disambiguation-source>
+		</common:disambiguated-organization>
+	</common:organization>
+</education:education>`
+
+//
+// SendEmployment updates the user's ORCID with UVA Employent info
+//
+func SendEducation(attributes api.OrcidAttributes) {
+
+	// First check for existing UVA Employment
+	if hasEmp, err := hasExistingEducation(attributes); err != nil || hasEmp {
+		return
+	}
+
+	url := fmt.Sprintf("%s/%s/education", config.Configuration.OrcidSecureURL, attributes.Orcid)
+	// construct the auth field
+	auth := fmt.Sprintf("Bearer %s", attributes.OauthAccessToken)
+	start := time.Now()
+	resp, _, errs := gorequest.New().
+		SetDebug(config.Configuration.Debug).
+		Post(url).
+		Set("Accept", "application/xml").
+		Set("Content-Type", "application/xml").
+		Set("Authorization", auth).
+		Send(educationXML).
+		Timeout(time.Duration(config.Configuration.ServiceTimeout) * time.Second).
+		End()
+	duration := time.Since(start)
+
+	defer io.Copy(ioutil.Discard, resp.Body)
+	defer resp.Body.Close()
+	// check for errors
+	if errs != nil || resp.StatusCode != http.StatusCreated {
+		logger.Log(fmt.Sprintf("ERROR: service (%s) returns %s %s in %s \n %s", url, resp.Status, errs, duration, resp.Body))
+		return
+	}
+	logger.Log(fmt.Sprintf("INFO: UVA Education created for %s", attributes.Orcid))
+
+	return
+}
+
+//
+// hasExistingEmployment checks for existing UVA Employment matching our OrcidClientID
+//
+func hasExistingEducation(attributes api.OrcidAttributes) (bool, error) {
+	hasUVAEducation := false
+	// Only need to know employment here
+	var educationStruct struct {
+		AffiliationGroup []struct {
+			Summaries []struct {
+				Education struct {
+					Source struct {
+						SourceClientID struct {
+							Path string `json:"path"`
+						} `json:"source-client-id"`
+					} `json:"source"`
+				} `json:"education-summary"`
+			} `json:"summaries"`
+		} `json:"affiliation-group"`
+	}
+	url := fmt.Sprintf("%s/%s/educations", config.Configuration.OrcidSecureURL, attributes.Orcid)
+	// construct the auth field
+	auth := fmt.Sprintf("Bearer %s", attributes.OauthAccessToken)
+	start := time.Now()
+	resp, body, errs := gorequest.New().
+		SetDebug(config.Configuration.Debug).
+		Get(url).
+		Set("Accept", "application/json").
+		Set("Content-Type", "application/json").
+		Set("Authorization", auth).
+		Timeout(time.Duration(config.Configuration.ServiceTimeout) * time.Second).
+		End()
+	duration := time.Since(start)
+
+	defer io.Copy(ioutil.Discard, resp.Body)
+	defer resp.Body.Close()
+	// check for errors
+	if errs != nil {
+		logger.Log(fmt.Sprintf("ERROR: service (%s) returns %s in %s", url, errs, duration))
+		return false, errs[0]
+	}
+
+	if err := json.Unmarshal([]byte(body), &educationStruct); err != nil {
+		logger.Log(fmt.Sprintf("ERROR: service (%s) returns %s in %s", url, errs, duration))
+		return false, errs[0]
+	}
+
+	// Check the nested json
+	for _, g := range educationStruct.AffiliationGroup {
+		for _, s := range g.Summaries {
+			// Check if existing employments match our client ID
+			if s.Education.Source.SourceClientID.Path == config.Configuration.OrcidClientID {
+				hasUVAEducation = true
+			}
+		}
+	}
+	//logger.Log(fmt.Sprintf("hasEducation: %s ", resp.Body))
+	logger.Log(fmt.Sprintf("INFO: %s has UVA education: %t", attributes.Orcid, hasUVAEducation))
+	return hasUVAEducation, nil
 }
 
 func getOauthToken() (string, int, error) {

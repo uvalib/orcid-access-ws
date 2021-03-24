@@ -87,7 +87,7 @@ func SetOrcidAttributes(w http.ResponseWriter, r *http.Request) {
 			}
 		}
 		if sendEducation {
-
+			orcid.SendEducation(attributes)
 		}
 		if sendEmployment {
 			orcid.SendEmployment(attributes)
