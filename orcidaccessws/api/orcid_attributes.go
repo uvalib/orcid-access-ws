@@ -11,6 +11,7 @@ type OrcidAttributes struct {
 	OauthAccessToken  string `json:"oauth_access_token,omitempty"`
 	OauthRefreshToken string `json:"oauth_refresh_token,omitempty"`
 	OauthScope        string `json:"scope,omitempty"`
+	UserTypes         string `json:"user_types,omitempty"`
 	CreatedAt         string `json:"created_at,omitempty"`
 	UpdatedAt         string `json:"updated_at,omitempty"`
 }

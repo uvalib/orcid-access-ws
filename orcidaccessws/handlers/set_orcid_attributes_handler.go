@@ -3,15 +3,19 @@ package handlers
 import (
 	"encoding/json"
 	"fmt"
+	"io"
+	"io/ioutil"
+	"net/http"
+	"regexp"
+	"strings"
+
 	"github.com/gorilla/mux"
 	"github.com/uvalib/orcid-access-ws/orcidaccessws/api"
 	"github.com/uvalib/orcid-access-ws/orcidaccessws/authtoken"
 	"github.com/uvalib/orcid-access-ws/orcidaccessws/config"
 	"github.com/uvalib/orcid-access-ws/orcidaccessws/dao"
 	"github.com/uvalib/orcid-access-ws/orcidaccessws/logger"
-	"io"
-	"io/ioutil"
-	"net/http"
+	"github.com/uvalib/orcid-access-ws/orcidaccessws/orcid"
 )
 
 //
@@ -65,6 +69,29 @@ func SetOrcidAttributes(w http.ResponseWriter, r *http.Request) {
 		encodeStandardResponse(w, status,
 			fmt.Sprintf("%s (%s)", http.StatusText(status), err))
 		return
+	}
+
+	// Send Employment or Education to ORCID
+	if !isEmpty(attributes.UserTypes) {
+		sendEmployment := false
+		sendEducation := false
+		types := strings.Split(attributes.UserTypes, ";")
+		employmentCheck := regexp.MustCompile(`Staff|Employee|Faculty`)
+
+		for _, userType := range types {
+			matched := employmentCheck.MatchString(userType)
+			if matched {
+				sendEmployment = true
+			} else {
+				sendEducation = true
+			}
+		}
+		if sendEducation {
+
+		}
+		if sendEmployment {
+			orcid.SendEmployment(attributes)
+		}
 	}
 
 	status := http.StatusOK

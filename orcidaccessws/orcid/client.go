@@ -3,16 +3,17 @@ package orcid
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/parnurzeal/gorequest"
-	"github.com/pkg/errors"
-	"github.com/uvalib/orcid-access-ws/orcidaccessws/api"
-	"github.com/uvalib/orcid-access-ws/orcidaccessws/config"
-	"github.com/uvalib/orcid-access-ws/orcidaccessws/logger"
 	"io"
 	"io/ioutil"
 	"net/http"
 	"strings"
 	"time"
+
+	"github.com/parnurzeal/gorequest"
+	"github.com/pkg/errors"
+	"github.com/uvalib/orcid-access-ws/orcidaccessws/api"
+	"github.com/uvalib/orcid-access-ws/orcidaccessws/config"
+	"github.com/uvalib/orcid-access-ws/orcidaccessws/logger"
 )
 
 var emptyUpdateCode = ""
@@ -140,6 +141,123 @@ func UpdateOrcidActivity(orcid string, oauthToken string, activity api.ActivityU
 
 	// unclear why we are here but an error occurred
 	return emptyUpdateCode, http.StatusInternalServerError, errors.New("Unhandled error case")
+}
+
+var employmentXML = `<?xml version="1.0" encoding="UTF-8"?>
+<employment:employment
+	xmlns:employment="http://www.orcid.org/ns/employment" xmlns:common="http://www.orcid.org/ns/common"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.orcid.org/ns/employment ../employment-3.0.xsd ">
+	<common:organization>
+		<common:name>University of Virginia</common:name>
+		<common:address>
+			<common:city>Charlottesville</common:city>
+			<common:region>VA</common:region>
+			<common:country>US</common:country>
+		</common:address>
+		<common:disambiguated-organization>
+			<common:disambiguated-organization-identifier>2358</common:disambiguated-organization-identifier>
+			<common:disambiguation-source>RINGGOLD</common:disambiguation-source>
+		</common:disambiguated-organization>
+	</common:organization>
+</employment:employment>`
+
+//
+// SendEmployment updates the user's ORCID with UVA Employent info
+//
+func SendEmployment(attributes api.OrcidAttributes) error {
+
+	// First check for existing UVA Employment
+	if hasEmp, err := hasExistingEmployment(attributes); err != nil {
+		return err
+	} else if hasEmp {
+		return nil
+	}
+
+	url := fmt.Sprintf("%s/%s/employment", config.Configuration.OrcidSecureURL, attributes.Orcid)
+	// construct the auth field
+	auth := fmt.Sprintf("Bearer %s", attributes.OauthAccessToken)
+	start := time.Now()
+	resp, _, errs := gorequest.New().
+		SetDebug(config.Configuration.Debug).
+		Post(url).
+		Set("Accept", "application/xml").
+		Set("Content-Type", "application/xml").
+		Set("Authorization", auth).
+		Send(employmentXML).
+		Timeout(time.Duration(config.Configuration.ServiceTimeout) * time.Second).
+		End()
+	duration := time.Since(start)
+
+	defer io.Copy(ioutil.Discard, resp.Body)
+	defer resp.Body.Close()
+	// check for errors
+	if errs != nil {
+		logger.Log(fmt.Sprintf("ERROR: service (%s) returns %s in %s", url, errs, duration))
+		return errs[0]
+	}
+	logger.Log(fmt.Sprintf("Employment created for %s: %s", attributes.Cid, resp.Status))
+
+	return nil
+}
+
+//
+// hasExistingEmployment checks for existing UVA Employment matching our OrcidClientID
+//
+func hasExistingEmployment(attributes api.OrcidAttributes) (bool, error) {
+	hasEmployment := false
+	// Only need to know employment here
+	var employmentStruct struct {
+		AffiliationGroup []struct {
+			Summaries []struct {
+				Employment struct {
+					Source struct {
+						SourceClientID struct {
+							Path string `json:"path"`
+						} `json:"source-client-id"`
+					} `json:"source"`
+				} `json:"employment-summary"`
+			} `json:"summaries"`
+		} `json:"affiliation-group"`
+	}
+	url := fmt.Sprintf("%s/%s/employments", config.Configuration.OrcidSecureURL, attributes.Orcid)
+	// construct the auth field
+	auth := fmt.Sprintf("Bearer %s", attributes.OauthAccessToken)
+	start := time.Now()
+	resp, body, errs := gorequest.New().
+		SetDebug(config.Configuration.Debug).
+		Get(url).
+		Set("Accept", "application/json").
+		Set("Content-Type", "application/json").
+		Set("Authorization", auth).
+		Timeout(time.Duration(config.Configuration.ServiceTimeout) * time.Second).
+		End()
+	duration := time.Since(start)
+
+	defer io.Copy(ioutil.Discard, resp.Body)
+	defer resp.Body.Close()
+	// check for errors
+	if errs != nil {
+		logger.Log(fmt.Sprintf("ERROR: service (%s) returns %s in %s", url, errs, duration))
+		return false, errs[0]
+	}
+
+	if err := json.Unmarshal([]byte(body), &employmentStruct); err != nil {
+		logger.Log(fmt.Sprintf("ERROR: service (%s) returns %s in %s", url, errs, duration))
+		return false, errs[0]
+	}
+
+	// Check the nested json
+	for _, g := range employmentStruct.AffiliationGroup {
+		for _, s := range g.Summaries {
+			// Check if existing employments match our client ID
+			if s.Employment.Source.SourceClientID.Path == config.Configuration.OrcidClientID {
+				hasEmployment = true
+			}
+		}
+	}
+	logger.Log(fmt.Sprintf("INFO: %s has UVA Employment: %t", attributes.Cid, hasEmployment))
+	return hasEmployment, nil
 }
 
 func getOauthToken() (string, int, error) {
