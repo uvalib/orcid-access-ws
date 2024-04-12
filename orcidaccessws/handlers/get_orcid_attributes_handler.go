@@ -10,9 +10,7 @@ import (
 	"net/http"
 )
 
-//
 // GetOrcidAttributes -- get orcid attributes handler
-//
 func GetOrcidAttributes(w http.ResponseWriter, r *http.Request) {
 
 	vars := mux.Vars(r)
@@ -39,7 +37,7 @@ func GetOrcidAttributes(w http.ResponseWriter, r *http.Request) {
 		logger.Log(fmt.Sprintf("ERROR: %s", err.Error()))
 		status := http.StatusInternalServerError
 		encodeOrcidAttributesResponse(w, status,
-			fmt.Sprintf("%s (%s)", http.StatusText(status), err),
+			fmt.Sprintf("%s (%s)", http.StatusText(status), err.Error()),
 			nil)
 		return
 	}

@@ -13,9 +13,7 @@ import (
 const defaulsSearchStartIx = "0"
 const defaultSearchMaxResults = "50"
 
-//
 // SearchOrcid -- the search orcid handler
-//
 func SearchOrcid(w http.ResponseWriter, r *http.Request) {
 
 	//vars := mux.Vars( r )

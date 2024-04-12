@@ -9,9 +9,7 @@ import (
 	"net/http"
 )
 
-//
 // GetAllOrcidAttributes - get all orcid attributes handler
-//
 func GetAllOrcidAttributes(w http.ResponseWriter, r *http.Request) {
 
 	token := r.URL.Query().Get("auth")
@@ -36,7 +34,7 @@ func GetAllOrcidAttributes(w http.ResponseWriter, r *http.Request) {
 		logger.Log(fmt.Sprintf("ERROR: %s", err.Error()))
 		status := http.StatusInternalServerError
 		encodeOrcidAttributesResponse(w, status,
-			fmt.Sprintf("%s (%s)", http.StatusText(status), err),
+			fmt.Sprintf("%s (%s)", http.StatusText(status), err.Error()),
 			nil)
 		return
 	}

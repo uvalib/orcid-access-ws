@@ -1,8 +1,6 @@
 package api
 
-//
 // OrcidDetails -- orcid details structure
-//
 type OrcidDetails struct {
 	Relevancy    string   `json:"relevancy,omitempty"`
 	Orcid        string   `json:"orcid,omitempty"`

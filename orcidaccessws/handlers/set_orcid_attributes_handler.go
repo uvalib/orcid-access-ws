@@ -18,9 +18,7 @@ import (
 	"github.com/uvalib/orcid-access-ws/orcidaccessws/orcid"
 )
 
-//
 // SetOrcidAttributes -- set the orcid attributes handler
-//
 func SetOrcidAttributes(w http.ResponseWriter, r *http.Request) {
 
 	vars := mux.Vars(r)
@@ -47,7 +45,8 @@ func SetOrcidAttributes(w http.ResponseWriter, r *http.Request) {
 	if err := decoder.Decode(&attributes); err != nil {
 		logger.Log(fmt.Sprintf("ERROR: decoding set attributes request payload %s", err))
 		status := http.StatusBadRequest
-		encodeStandardResponse(w, status, http.StatusText(status))
+		encodeStandardResponse(w, status,
+			fmt.Sprintf("%s (%s)", http.StatusText(status), err.Error()))
 		return
 	}
 
@@ -67,7 +66,7 @@ func SetOrcidAttributes(w http.ResponseWriter, r *http.Request) {
 		logger.Log(fmt.Sprintf("ERROR: %s", err.Error()))
 		status := http.StatusInternalServerError
 		encodeStandardResponse(w, status,
-			fmt.Sprintf("%s (%s)", http.StatusText(status), err))
+			fmt.Sprintf("%s (%s)", http.StatusText(status), err.Error()))
 		return
 	}
 

@@ -10,9 +10,7 @@ import (
 	"net/http"
 )
 
-//
 // DeleteOrcidAttributes -- delete orcid attributes handler
-//
 func DeleteOrcidAttributes(w http.ResponseWriter, r *http.Request) {
 
 	vars := mux.Vars(r)

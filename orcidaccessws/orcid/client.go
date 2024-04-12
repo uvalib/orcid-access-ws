@@ -23,9 +23,7 @@ var currentAccessToken = ""
 // we want to handle this differently from other requests because it is used as part of healthchecking
 var authTimeout = 5 * time.Second
 
-//
 // UpdateOrcidActivity -- update the user activity
-//
 func UpdateOrcidActivity(orcid string, oauthToken string, activity api.ActivityUpdate) (string, int, error) {
 
 	logActivityUpdateRequest(activity)
@@ -162,9 +160,7 @@ var employmentXML = `<?xml version="1.0" encoding="UTF-8"?>
 	</common:organization>
 </employment:employment>`
 
-//
 // SendEmployment updates the user's ORCID with UVA Employent info
-//
 func SendEmployment(attributes api.OrcidAttributes) {
 
 	// First check for existing UVA Employment
@@ -199,9 +195,7 @@ func SendEmployment(attributes api.OrcidAttributes) {
 	return
 }
 
-//
 // hasExistingEmployment checks for existing UVA Employment matching our OrcidClientID
-//
 func hasExistingEmployment(attributes api.OrcidAttributes) (bool, []error) {
 	hasEmployment := false
 	// Only need to know employment here
@@ -277,9 +271,7 @@ var educationXML = `<?xml version="1.0" encoding="UTF-8"?>
 	</common:organization>
 </education:education>`
 
-//
 // SendEmployment updates the user's ORCID with UVA Employent info
-//
 func SendEducation(attributes api.OrcidAttributes) {
 
 	// First check for existing UVA Employment
@@ -314,9 +306,7 @@ func SendEducation(attributes api.OrcidAttributes) {
 	return
 }
 
-//
 // hasExistingEmployment checks for existing UVA Employment matching our OrcidClientID
-//
 func hasExistingEducation(attributes api.OrcidAttributes) (bool, error) {
 	hasUVAEducation := false
 	// Only need to know employment here
@@ -428,9 +418,7 @@ func getOauthToken() (string, int, error) {
 	return oar.AccessToken, http.StatusOK, nil
 }
 
-//
 // RenewAccessToken -- renew the access token
-//
 func RenewAccessToken(staleToken string) (string, string, int, error) {
 
 	// construct target URL
@@ -468,9 +456,7 @@ func RenewAccessToken(staleToken string) (string, string, int, error) {
 	return emptyUpdateCode, emptyUpdateCode, http.StatusInternalServerError, errors.New("Not implemented")
 }
 
-//
 // GetOrcidDetails -- get details for the specified ORCID
-//
 func GetOrcidDetails(orcid string) (*api.OrcidDetails, int, error) {
 
 	// construct target URL
@@ -579,9 +565,7 @@ func GetOrcidDetails(orcid string) (*api.OrcidDetails, int, error) {
 //	return transformSearchResponse(sr.SearchResults), sr.SearchResults.TotalFound, http.StatusOK, nil
 //}
 
-//
 // GetPublicEndpointStatus -- get the public endpoint status
-//
 func GetPublicEndpointStatus() error {
 
 	// construct target URL
@@ -597,9 +581,7 @@ func GetPublicEndpointStatus() error {
 	return issueAuthorizedGet(url, "text/plain", token)
 }
 
-//
 // GetSecureEndpointStatus -- get the secure endpoint status
-//
 func GetSecureEndpointStatus() error {
 
 	// construct target URL
@@ -614,10 +596,8 @@ func GetSecureEndpointStatus() error {
 	return issueAuthorizedGet(url, "text/plain", token)
 }
 
-//
 // issue a GET to the specified URL and use a bearer token for aurthorization
 // ignore the response payload and return an error if we get a non-200 response
-//
 func issueAuthorizedGet(url string, accept string, authToken string) error {
 
 	// construct the auth field
@@ -653,9 +633,7 @@ func issueAuthorizedGet(url string, accept string, authToken string) error {
 	return nil
 }
 
-//
 // singleton type access to the access token
-//
 func getAccessToken() (string, error) {
 
 	// do we need an access token

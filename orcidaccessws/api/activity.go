@@ -4,17 +4,13 @@ import (
 	"sort"
 )
 
-//
 // ActivityUpdate -- the activity update request
-//
 type ActivityUpdate struct {
 	UpdateCode string     `json:"update_code,omitempty"`
 	Work       WorkSchema `json:"work,omitempty"`
 }
 
-//
 // WorkSchema -- the work schema
-//
 type WorkSchema struct {
 	Title           string   `json:"title,omitempty"`
 	Abstract        string   `json:"abstract,omitempty"`
@@ -24,18 +20,14 @@ type WorkSchema struct {
 	ResourceType    string   `json:"resource_type,omitempty"`
 }
 
-//
 // Person -- the basic person details used for authors
-//
 type Person struct {
 	Index     int    `json:"index"`
 	FirstName string `json:"first_name,omitempty"`
 	LastName  string `json:"last_name,omitempty"`
 }
 
-//
 // SortPeople -- helpers to sort the people lists
-//
 func SortPeople(people []Person) []Person {
 	sortedPeople := make([]Person, len(people))
 	copy(sortedPeople, people)

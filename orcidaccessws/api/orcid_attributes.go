@@ -1,8 +1,6 @@
 package api
 
-//
 // OrcidAttributes -- orcid attributes structure
-//
 type OrcidAttributes struct {
 	ID                string `json:"id,omitempty"`
 	Cid               string `json:"cid,omitempty"`

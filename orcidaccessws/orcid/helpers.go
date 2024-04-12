@@ -14,9 +14,7 @@ import (
 	"text/template"
 )
 
-//
 // log the contents of an activity update request
-//
 func logActivityUpdateRequest(activity api.ActivityUpdate) {
 
 	if config.Configuration.Debug {
@@ -81,9 +79,7 @@ func makeUpdateActivityBody(activity api.ActivityUpdate) (string, error) {
 	return s, nil
 }
 
-//
 // check the error response to identify an appropriate http status response
-//
 func mapErrorResponseToStatus(err error) int {
 	//logger.Log(fmt.Sprintf("ERROR: [%s]", err.Error()))
 	if strings.Contains(err.Error(), " timeout") {
@@ -159,9 +155,7 @@ func constructDetails(person *orcidPersonResponse) *api.OrcidDetails {
 	return (od)
 }
 
-//
 // when including content embedded in XML, we should HTML encode it.
-//
 func htmlEncodePersonArray(array []api.Person) []api.Person {
 
 	encoded := make([]api.Person, len(array), len(array))
@@ -186,9 +180,7 @@ func htmlEncodeString(value string) string {
 	return encoded
 }
 
-//
 // Split a date in the form YYYY-MM-DD into its components
-//
 func splitDate(date string) (string, string, string) {
 	tokens := strings.Split(date, "-")
 	var YYYY, MM, DD string

@@ -14,9 +14,7 @@ import (
 var debugHTTP = false
 var serviceTimeout = 30
 
-//
 // HealthCheck -- calls the service health check method
-//
 func HealthCheck(endpoint string) int {
 
 	url := fmt.Sprintf("%s/healthcheck", endpoint)
@@ -38,9 +36,7 @@ func HealthCheck(endpoint string) int {
 	return resp.StatusCode
 }
 
-//
 // VersionCheck -- calls the service version check method
-//
 func VersionCheck(endpoint string) (int, string) {
 
 	url := fmt.Sprintf("%s/version", endpoint)
@@ -68,9 +64,7 @@ func VersionCheck(endpoint string) (int, string) {
 	return resp.StatusCode, r.Version
 }
 
-//
 // MetricsCheck -- calls the service metrics method
-//
 func MetricsCheck(endpoint string) (int, string) {
 
 	url := fmt.Sprintf("%s/metrics", endpoint)
@@ -92,9 +86,7 @@ func MetricsCheck(endpoint string) (int, string) {
 	return resp.StatusCode, body
 }
 
-//
 // GetOrcidAttributes -- call the get orcid attributes method on the service
-//
 func GetOrcidAttributes(endpoint string, cid string, token string) (int, []*api.OrcidAttributes) {
 
 	url := fmt.Sprintf("%s/cid/%s?auth=%s", endpoint, cid, token)
@@ -122,9 +114,7 @@ func GetOrcidAttributes(endpoint string, cid string, token string) (int, []*api.
 	return resp.StatusCode, r.Attributes
 }
 
-//
 // GetAllOrcidAttributes -- call get all orcid attributes on the service
-//
 func GetAllOrcidAttributes(endpoint string, token string) (int, []*api.OrcidAttributes) {
 
 	url := fmt.Sprintf("%s/cid?auth=%s", endpoint, token)
@@ -152,9 +142,7 @@ func GetAllOrcidAttributes(endpoint string, token string) (int, []*api.OrcidAttr
 	return resp.StatusCode, r.Attributes
 }
 
-//
 // SetOrcidAttributes -- call set orcid attributes on the service
-//
 func SetOrcidAttributes(endpoint string, cid string, token string, attributes api.OrcidAttributes) int {
 
 	url := fmt.Sprintf("%s/cid/%s?auth=%s", endpoint, cid, token)
@@ -178,9 +166,7 @@ func SetOrcidAttributes(endpoint string, cid string, token string, attributes ap
 	return resp.StatusCode
 }
 
-//
 // DelOrcidAttributes -- call delete orcid attributes on the service
-//
 func DelOrcidAttributes(endpoint string, cid string, token string) int {
 
 	url := fmt.Sprintf("%s/cid/%s?auth=%s", endpoint, cid, token)
@@ -208,9 +194,7 @@ func DelOrcidAttributes(endpoint string, cid string, token string) int {
 	return resp.StatusCode
 }
 
-//
 // UpdateActivity -- call update activity on the service
-//
 func UpdateActivity(endpoint string, cid string, token string, activity api.ActivityUpdate) (int, string) {
 
 	url := fmt.Sprintf("%s/cid/%s/activity?auth=%s", endpoint, cid, token)
@@ -240,9 +224,7 @@ func UpdateActivity(endpoint string, cid string, token string, activity api.Acti
 	return resp.StatusCode, r.UpdateCode
 }
 
-//
 // GetOrcidDetails -- call get orcid details on the service
-//
 func GetOrcidDetails(endpoint string, orcid string, token string) (int, *api.OrcidDetails) {
 
 	url := fmt.Sprintf("%s/orcid/%s?auth=%s", endpoint, orcid, token)
@@ -270,9 +252,7 @@ func GetOrcidDetails(endpoint string, orcid string, token string) (int, *api.Orc
 	return resp.StatusCode, r.Details
 }
 
-//
 // SearchOrcid -- call search orcid on the service
-//
 func SearchOrcid(endpoint string, search string, start string, max string, token string) (int, []*api.OrcidDetails, int) {
 
 	url := fmt.Sprintf("%s/orcid?q=%s&start=%s&max=%s&auth=%s", endpoint, search, start, max, token)

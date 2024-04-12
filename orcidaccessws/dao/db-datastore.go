@@ -17,9 +17,7 @@ type storage struct {
 	*sql.DB
 }
 
-//
 // newDBStore -- create a DB version of the storage singleton
-//
 func newDBStore() (Storage, error) {
 
 	dataSourceName := fmt.Sprintf("%s:%s@tcp(%s)/%s?allowOldPasswords=1&tls=%s&sql_notes=false&timeout=%s&readTimeout=%s&writeTimeout=%s",
@@ -48,16 +46,12 @@ func newDBStore() (Storage, error) {
 	return &storage{db}, nil
 }
 
-//
 // CheckDB -- check our database health
-//
 func (s *storage) Check() error {
 	return s.Ping()
 }
 
-//
 // GetAllOrcidAttributes -- get all orcid records
-//
 func (s *storage) GetAllOrcidAttributes() ([]*api.OrcidAttributes, error) {
 
 	rows, err := s.Query("SELECT * FROM orcid_attributes ORDER BY id ASC")
@@ -69,16 +63,12 @@ func (s *storage) GetAllOrcidAttributes() ([]*api.OrcidAttributes, error) {
 	return orcidResults(rows)
 }
 
-//
 // GetOrcidAttributesByCid -- get all by ID (should only be 1)
-//
 func (s *storage) GetOrcidAttributesByCid(id string) ([]*api.OrcidAttributes, error) {
 	return (getOrcidAttributesByCid(s, id))
 }
 
-//
 // DelOrcidAttributesByCid -- delete by ID (should only be 1)
-//
 func (s *storage) DelOrcidAttributesByCid(id string) error {
 
 	stmt, err := s.Prepare("DELETE FROM orcid_attributes WHERE cid = ? LIMIT 1")
@@ -91,9 +81,7 @@ func (s *storage) DelOrcidAttributesByCid(id string) error {
 	return err
 }
 
-//
 // SetOrcidAttributesByCid -- set orcid attributes by ID
-//
 func (s *storage) SetOrcidAttributesByCid(id string, attributes api.OrcidAttributes) error {
 
 	existing, err := getOrcidAttributesByCid(s, id)

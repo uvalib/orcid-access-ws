@@ -11,9 +11,7 @@ import (
 	//"github.com/uvalib/orcid-access-ws/orcidaccessws/orcid"
 )
 
-//
 // GetOrcidDetails -- get the orcid details handler
-//
 func GetOrcidDetails(w http.ResponseWriter, r *http.Request) {
 
 	vars := mux.Vars(r)

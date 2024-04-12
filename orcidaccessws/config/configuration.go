@@ -8,9 +8,7 @@ import (
 	"github.com/uvalib/orcid-access-ws/orcidaccessws/logger"
 )
 
-//
 // Config -- our configuration structure
-//
 type Config struct {
 	ServicePort string
 
@@ -39,9 +37,7 @@ type Config struct {
 	Debug bool
 }
 
-//
 // Configuration -- our configuration instance
-//
 var Configuration = loadConfig()
 
 func loadConfig() Config {
