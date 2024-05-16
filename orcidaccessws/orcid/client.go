@@ -578,7 +578,7 @@ func GetPublicEndpointStatus() error {
 		return err
 	}
 
-	return issueAuthorizedGet(url, "text/plain", token)
+	return issueAuthorizedGet(url, "application/json", token)
 }
 
 // GetSecureEndpointStatus -- get the secure endpoint status
@@ -593,7 +593,7 @@ func GetSecureEndpointStatus() error {
 	if err != nil {
 		return err
 	}
-	return issueAuthorizedGet(url, "text/plain", token)
+	return issueAuthorizedGet(url, "application/json", token)
 }
 
 // issue a GET to the specified URL and use a bearer token for aurthorization
