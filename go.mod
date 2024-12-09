@@ -12,7 +12,7 @@ require (
 	github.com/pkg/errors v0.9.1
 	github.com/smartystreets/assertions v0.0.0-20190116191733-b6c0e53d7304 // indirect
 	github.com/smartystreets/goconvey v0.0.0-20181108003508-044398e4856c // indirect
-	golang.org/x/net v0.25.0 // indirect
+	golang.org/x/net v0.32.0 // indirect
 	gopkg.in/yaml.v2 v2.4.0
 )
 
