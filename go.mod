@@ -2,7 +2,7 @@ module github.com/uvalib/orcid-access-ws
 
 require (
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
-	github.com/go-sql-driver/mysql v1.9.2
+	github.com/go-sql-driver/mysql v1.9.3
 	github.com/gorilla/mux v1.8.1
 	github.com/parnurzeal/gorequest v0.3.0
 	github.com/pkg/errors v0.9.1
@@ -17,9 +17,9 @@ require (
 	github.com/moul/http2curl v1.0.0 // indirect
 	github.com/smartystreets/assertions v0.0.0-20190116191733-b6c0e53d7304 // indirect
 	github.com/smartystreets/goconvey v0.0.0-20181108003508-044398e4856c // indirect
-	golang.org/x/net v0.41.0 // indirect
+	golang.org/x/net v0.48.0 // indirect
 )
 
-go 1.23.0
+go 1.24.0
 
 toolchain go1.24.4
